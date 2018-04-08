@@ -16,7 +16,7 @@ def is_prime(n):
 
 
 # @timeit
-def prime_factor(n):
+def factorization(n):
     prime_factor_list = []
     while not n % 2:
         prime_factor_list.append(2)
@@ -34,7 +34,25 @@ def prime_factor(n):
 
     return prime_factor_list
 
-def multi_factor(array):
+def supp(n):
+    return len(prime_factor(n))
+
+# Multiplication block encoding
+def v(array):
     return reduce((lambda x,y: x * y), array)
 
+# 14 = 1001 - 30 = 1110
+def inverse_v(n):
+    ret = [0, 0, 0, 0]
+    ret[0] = 1 if n % 2 == 0 else 0
+    ret[1] = 1 if n % 3 == 0 else 0
+    ret[2] = 1 if n % 5 == 0 else 0
+    ret[3] = 1 if n % 7 == 0 else 0
+    return ret
 
+
+def gcd(a,b):
+    if(b==0):
+        return a
+    else:
+        return gcd(b,a%b)
