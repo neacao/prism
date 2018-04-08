@@ -41,6 +41,18 @@ def supp(n):
 def v(array):
     return reduce((lambda x,y: x * y), array)
 
+def mask(array):
+    flag = False
+    for i in xrange(0, len(array), 1):
+        if flag == True:
+            array[i] = 1
+        elif array[i] == 1:
+            flag = True
+            array[i] = 0
+
+    return array
+
+
 # 14 = 1001 - 30 = 1110
 def inverse_v(n):
     ret = [0, 0, 0, 0]

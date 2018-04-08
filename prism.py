@@ -2,4 +2,4 @@
 
 from util import *
 
-print inverse_v(14)
+print mask([0,1,0,0])
