@@ -14,8 +14,6 @@ def is_prime(n):
         i += 2
     return True
 
-
-# @timeit
 def factorization(n):
     prime_factor_list = []
     while not n % 2:
@@ -33,15 +31,19 @@ def factorization(n):
         i += 2
 
     return prime_factor_list
+# --- Factorization: 31752 = 2^3 * 3^4 * 7^2
 
-def supp(n):
-    return len(prime_factor(n))
+# Prerequiste: Calculate only sequence primal encoded
+def supp(number):
+    return len(set(factorization(number)))
+# --- Min support: 2^3 * 3^4 * 7^2 = 3
 
-# Multiplication block encoding
-def v(array):
+
+def multiplyBlockEncoding(array):
     return reduce((lambda x,y: x * y), array)
+# --- multiplyBlockEncoding: [2, 3, 7] = 42
 
-def mask(array):
+def maskBitEncoded(array):
     flag = False
     for i in xrange(0, len(array), 1):
         if flag == True:
@@ -51,16 +53,21 @@ def mask(array):
             array[i] = 0
 
     return array
+# --- maskBlockEncoding: [0, 1, 0, 0] = [0, 0, 1, 1]
 
 
-# 14 = 1001 - 30 = 1110
-def inverse_v(n):
+def maskPrimalEncoded(number):
+    
+    return 1
+
+def inverseMultiplyBlockEncoding(n):
     ret = [0, 0, 0, 0]
     ret[0] = 1 if n % 2 == 0 else 0
     ret[1] = 1 if n % 3 == 0 else 0
     ret[2] = 1 if n % 5 == 0 else 0
     ret[3] = 1 if n % 7 == 0 else 0
     return ret
+# --- inverseMultiplyBlockEncoding: 42 = [1, 1, 0, 1]
 
 
 def gcd(a,b):
@@ -68,3 +75,4 @@ def gcd(a,b):
         return a
     else:
         return gcd(b,a%b)
+# --- gcd: gcd(18,9) = 9
