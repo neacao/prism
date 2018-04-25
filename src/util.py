@@ -76,3 +76,20 @@ def gcd(a,b):
     else:
         return gcd(b,a%b)
 # --- gcd: gcd(18,9) = 9
+
+
+def findNumberDivisible(currentNumber, target):
+    for number in xrange(currentNumber, currentNumber + target):
+        if number % target == 0:
+            return number
+    return 0
+# findNumberDivisible(7, 5) -> 10
+
+
+
+
+
+
+
+
+
