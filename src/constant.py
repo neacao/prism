@@ -11,3 +11,5 @@ SEQUENCES = [
 
 G_LENGTH = 4
 G_ARRAY = [2, 3, 5, 7]
+
+NO_LOGS = True

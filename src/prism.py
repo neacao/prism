@@ -19,7 +19,8 @@ def encodeBitPosition(key, array):
 	for index in xrange(length, divisibleNumber):
 		result.append(0)
 
-	print "[Pos Encode Bit]:", result
+	if NO_LOGS == False:
+		print "[Pos Encode Bit]:", result
 	return result
 
 
@@ -40,7 +41,8 @@ def encodePrimalPosition(key, array):
 
 		result.append(tmp)
 
-	print "[Pos Encode Primal]:", result
+	if NO_LOGS == False:
+		print "[Pos Encode Primal]:", result
 	return result
 
 
@@ -50,7 +52,7 @@ def encodeBitSequences(key, sequences):
 			foundFlag = False
 
 			for itemset in sequence:
-				index = itemset.find(item)
+				index = itemset.find(key)
 				if index != -1:
 					foundFlag = True
 					break
@@ -63,15 +65,16 @@ def encodeBitSequences(key, sequences):
 	# Padding 0
 	length = len(result)
 	divisibleNumber = findNumberDivisible(length, G_LENGTH)
-	for index in xrange(len(bitEncodedSequence), divisibleNumber):
+	for index in xrange(length, divisibleNumber):
 		result.append(0)
 
-	print "[Seq Encode Bit]:", result
+	if NO_LOGS == False:
+		print "[Seq Encode Bit]:", result
 	return result
 
 
 def encodePrimalSequences(key, sequences): # Sequences is a 2D array
-	bitEncodedSequences = encodeBitSequence(key, sequences)
+	bitEncodedSequences = encodeBitSequences(key, sequences)
 	result = []
 	length = len(bitEncodedSequences)
 
@@ -86,7 +89,8 @@ def encodePrimalSequences(key, sequences): # Sequences is a 2D array
 		if bitEncodedSequences[index + 3] == 1: tmp *= 7
 		result.append(tmp)
 	
-	print "[Seq Encode Primal]:", result
+	if NO_LOGS == False:
+		print "[Seq Encode Primal]:", result
 	return result
 
 
@@ -94,17 +98,16 @@ def processPrimalEncodingPos():
 	items = ITEMS
 	sequences = SEQUENCES
 
-	fullPrimalSeqBlocks = [] * len(items)
+	fullPrimalPosBlocks = [] * len(items)
 	for item in items:
 		itemPrimalBlocks = [] * len(sequences)
 
 		for sequence in sequences:
 			itemPrimalBlocks.append(encodePrimalPosition(item, sequence))
 
-		fullPrimalBlocks.append(itemPrimalBlocks)
+		fullPrimalPosBlocks.append(itemPrimalBlocks)
 
-	for index in xrange(0, len(items)):
-		print items[index], " ", fullPrimalBlocks[index]
+	return fullPrimalPosBlocks
 
 
 def processPrimalEncodingSeq():
@@ -115,10 +118,17 @@ def processPrimalEncodingSeq():
 	for item in items:
 		fullPrimalSeqBlocks.append(encodePrimalSequences(item, sequences))
 
-	for index in xrange(0, len(items)):
-		print items[index], " ", fullPrimalSeqBlocks[index]
+	return fullPrimalSeqBlocks
+
 
 if __name__ == "__main__":
-	processPrimalEncodingPos()
-	processPrimalEncodingSeq()
+	fullPrimalPosBlocks = processPrimalEncodingPos()
+	fullPrimalSeqBlocks = processPrimalEncodingSeq()
+
+	for index in xrange(0, len(ITEMS)):
+		print ITEMS[index], " ", fullPrimalSeqBlocks[index], "\t", fullPrimalPosBlocks[index]
+
+
+
+
 
