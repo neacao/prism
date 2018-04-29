@@ -118,7 +118,10 @@ def findNumberDivisible(currentNumber, target):
 
 
 def test():
-    print maskPrimalEncoded([14, 3, 210, 1])
+    if not list(filter(lambda x: x > 2, [0, 1, 2, 3])):
+        print "List is empty"
+    else:
+        print "List containt a value"
 
 if __name__ == "__main__":
     test()

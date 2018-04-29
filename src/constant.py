@@ -4,7 +4,7 @@
 	
 	primalPos = an 1D array primal encoded position of a sequence for each key
 	primalsPos = an 2D array primal encode position of all sequences for each key
-
+	emptyBlock = a block that all elements are equal 0
 '''
 
 
