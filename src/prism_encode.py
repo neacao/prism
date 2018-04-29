@@ -104,7 +104,13 @@ def processPrimalEncodingPos():
 		for sequence in sequences:
 			itemPrimalBlocks.append(encodePrimalPosition(item, sequence))
 
+		length = len(sequences)
+		divisibleNumber = findNumberDivisible(length, G_LENGTH)
+		for index in xrange(length, divisibleNumber):
+			itemPrimalBlocks.append( [1] * len(itemPrimalBlocks[0]) ) # Padding
+
 		fullPrimalPosBlocks.append(itemPrimalBlocks)
+
 
 	return fullPrimalPosBlocks
 
@@ -116,7 +122,7 @@ def processPrimalEncodingSeq():
 	fullPrimalSeqBlocks = [] * len(items)
 	for item in items:
 		fullPrimalSeqBlocks.append(encodePrimalSequences(item, sequences))
-
+		
 	return fullPrimalSeqBlocks
 
 

@@ -98,6 +98,7 @@ def maskPrimalPosition(primalPos):
 
         except ValueError:
             result.append(1)
+    return result
 
 
 def maskPrimalEncodedBetter(number):
@@ -118,10 +119,7 @@ def findNumberDivisible(currentNumber, target):
 
 
 def test():
-    if not list(filter(lambda x: x > 2, [0, 1, 2, 3])):
-        print "List is empty"
-    else:
-        print "List containt a value"
+    return 1
 
 if __name__ == "__main__":
     test()

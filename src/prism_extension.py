@@ -22,24 +22,24 @@ def itemExtension(key, targetKey, primalsPos, primalsPosTarget, primalSeq, prima
 		return 0
  	
  	print "### [itemExt]: {0}{1}".format(key, targetKey)
-	# print "| primalsPos\t\t{0}\n| primalsPosTarget\t{1}".format(primalsPos, primalsPosTarget)
-	# print "| primalSeq\t\t{0}\n| primalSeqTarget\t{1}".format(primalSeq, primalSeqTarget)
+	print "| primalsPos\t\t{0}\n| primalsPosTarget\t{1}".format(primalsPos, primalsPosTarget)
+	print "| primalSeq\t\t{0}\n| primalSeqTarget\t{1}".format(primalSeq, primalSeqTarget)
 
 	primalsPosJoin = []
 	primalSeqJoin = []
 	lengthPrimalSeq = len(primalSeq)
 
-	for index in xrange(0, lengthPrimalSeq):
-		gcdValue = gcd( primalSeq[index], primalSeqTarget[index] )
+	for blockIndex in xrange(0, lengthPrimalSeq):
+		gcdValue = gcd( primalSeq[blockIndex], primalSeqTarget[blockIndex] )
 
 		primalSeqJoin.append(gcdValue)
 
 		inverseBitSeq = inverseMultiplyBitEncoding(gcdValue)
 
-		startPosition = index * G_LENGTH
-		for posIndex in xrange(startPosition, startPosition + G_LENGTH):
-			if inverseBitSeq[posIndex - startPosition] == 1: # key & targetKey appear simultaneously
-				primalPosJoin = calculatePrimalPos( primalsPos[posIndex], primalsPosTarget[posIndex] )
+		seqStartIndex = blockIndex * G_LENGTH
+		for seqIndex in xrange(seqStartIndex, seqStartIndex + G_LENGTH):
+			if inverseBitSeq[seqIndex - seqStartIndex] == 1: # key & targetKey appear simultaneously
+				primalPosJoin = calculatePrimalPos( primalsPos[seqIndex], primalsPosTarget[seqIndex] )
 				primalsPosJoin.append(primalPosJoin)
 
 	print "|-> [itemExt]: {0}{1}\t".format(key, targetKey),  primalSeqJoin, " - ", primalsPosJoin
@@ -53,32 +53,34 @@ def seqExtension(key, targetKey, primalsPos, primalsPosTarget, primalSeq, primal
 		return 0
  	
 	print "### [seqExt]: {0}->{1}".format(key, targetKey)
-	# print "| primalsPos\t\t{0}\n| primalsPosTarget\t{1}".format(primalsPos, primalsPosTarget)
-	# print "| primalSeq\t\t{0}\n| primalSeqTarget\t{1}".format(primalSeq, primalSeqTarget)
+	print "| {0}: {1}\t\t{2}".format(key, primalSeq, primalsPos)
+	print "| {0}: {1}\t\t{2}".format(targetKey, primalSeqTarget, primalsPosTarget)
 
 	primalsPosJoin = []
 	primalSeqJoin = []
 	lengthPrimalSeq = len(primalSeq)
 
-	for index in xrange(0, lengthPrimalSeq):
-		gcdValue = gcd( primalSeq[index], primalSeqTarget[index] )
+	for blockIndex in xrange(0, lengthPrimalSeq):
+		gcdValue = gcd( primalSeq[blockIndex], primalSeqTarget[blockIndex] )
 		# print "  Priaml Seq Join:\t{0} at block {1}".format(gcdValue, index)
 
 		inverseBitSeq = inverseMultiplyBitEncoding(gcdValue)
 
-		startPosition = index * G_LENGTH
-		for posIndex in xrange(startPosition, startPosition + G_LENGTH):
-			if inverseBitSeq[posIndex - startPosition] == 1: # key appear front of targetKey
-				
-				maskPrimalPos = maskPrimalPosition(primalsPos[posIndex])
-				primalPosJoin = calculatePrimalPos( maskPrimalPos, primalsPosTarget[posIndex] )
-				# print "  Primal Pos Join:\t{0} at pos {1}".format(primalPosJoin, posIndex)
+		seqStartIndex = blockIndex * G_LENGTH
+		for seqIndex in xrange(seqStartIndex, seqStartIndex + G_LENGTH):
+			maskPrimalPos = maskPrimalPosition(primalsPos[seqIndex])
+			primalPosJoin = calculatePrimalPos( maskPrimalPos, primalsPosTarget[seqIndex] )
 
+			# TODO: Improve later - keep cur version to test
+			if inverseBitSeq[seqIndex - seqStartIndex] == 1: # key appear front of targetKey
 				if isEmptyPrimalPos(primalPosJoin) == True:
-					gcdValue /= G_ARRAY[posIndex % G_LENGTH]
+					gcdValue /= G_ARRAY[seqIndex % G_LENGTH]
+					primalsPosJoin.append( [1] * len(primalPosJoin) )
 
 				else:
 					primalsPosJoin.append(primalPosJoin)
+			else:
+				primalsPosJoin.append( [1] * len(primalPosJoin) ) 
 
 		primalSeqJoin.append(gcdValue)
 				
