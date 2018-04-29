@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from functools import reduce
+from constant import *
 
 def is_prime(n):
     if n == 1:
@@ -31,17 +32,40 @@ def factorization(n):
         i += 2
 
     return prime_factor_list
-# --- Factorization: 31752 = 2^3 * 3^4 * 7^2
+# factorization(31752) = 2^3 * 3^4 * 7^2
 
-# Prerequiste: Calculate only sequence primal encoded
+
 def supp(number):
     return len(set(factorization(number)))
-# --- Min support: 2^3 * 3^4 * 7^2 = 3
+# supp(31752) = 3
 
 
-def multiplyBlockEncoding(array):
+def multiplyPrimalEncoding(array):
     return reduce((lambda x,y: x * y), array)
-# --- multiplyBlockEncoding: [2, 3, 7] = 42
+# multiplyBlockEncoding: [2, 3, 7] = 42
+
+
+def multiplyBitEncoding(array):
+    result = 1
+    # Using G_LENGTH = 4 for testing purpose
+    if array[0] == 1: result *= 2
+    if array[1] == 1: result *= 3
+    if array[2] == 1: result *= 5
+    if array[3] == 1: result *= 7
+    return result
+# multiplyBitEncoding([1, 1, 0, 1]) = 42 
+
+
+# Support up to     
+def inverseMultiplyBitEncoding(number):
+    ret = [0, 0, 0, 0]
+    ret[0] = 1 if number % 2 == 0 else 0
+    ret[1] = 1 if number % 3 == 0 else 0
+    ret[2] = 1 if number % 5 == 0 else 0
+    ret[3] = 1 if number % 7 == 0 else 0
+    return ret
+# inverseMultiplyBlockEncoding(42) = [1, 1, 0, 1]
+
 
 def maskBitEncoded(array):
     flag = False
@@ -56,38 +80,48 @@ def maskBitEncoded(array):
 # --- maskBlockEncoding: [0, 1, 0, 0] = [0, 0, 1, 1]
 
 
-def maskPrimalEncoded(number):
-    
-    return 1
+# Support block-size equal 4 (up to 210) only
+def maskPrimalPosition(primalPos):
+    bitEncodedArray = list(map(lambda number: inverseMultiplyBitEncoding(number), primalPos))
 
-def inverseMultiplyBlockEncoding(n):
-    ret = [0, 0, 0, 0]
-    ret[0] = 1 if n % 2 == 0 else 0
-    ret[1] = 1 if n % 3 == 0 else 0
-    ret[2] = 1 if n % 5 == 0 else 0
-    ret[3] = 1 if n % 7 == 0 else 0
-    return ret
-# --- inverseMultiplyBlockEncoding: 42 = [1, 1, 0, 1]
+    # TODO: Improve this
+    result = []
+    for index in xrange(0, len(bitEncodedArray)):
+        bitEncoded = bitEncodedArray[index]
+        try:
+            firstPos = bitEncoded.index(1)
+            result.append(G_ARRAY_MASK[firstPos])
+
+            for restList in bitEncodedArray[index+1:]:
+                result.append( G_ARRAY_MULTIPLE )
+            return result
+
+        except ValueError:
+            result.append(1)
+
+
+def maskPrimalEncodedBetter(number):
+    return 1
 
 
 def gcd(a,b):
-    if(b==0):
-        return a
-    else:
-        return gcd(b,a%b)
+    return a if b == 0 else gcd(b,a%b) 
 # --- gcd: gcd(18,9) = 9
 
 
 def findNumberDivisible(currentNumber, target):
     for number in xrange(currentNumber, currentNumber + target):
         if number % target == 0:
-            return number
+            return number if number >= 8 else 8
     return 0
 # findNumberDivisible(7, 5) -> 10
 
 
+def test():
+    print maskPrimalEncoded([14, 3, 210, 1])
 
-
+if __name__ == "__main__":
+    test()
 
 
 
