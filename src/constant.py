@@ -7,6 +7,7 @@
 	emptyBlock = a block that all elements are equal 0
 '''
 
+MIN_SUPP = 2
 
 ITEMS = ["a", "b", "c"]
 
@@ -21,8 +22,14 @@ SEQUENCES = [
 G_LENGTH = 4
 G_ARRAY = [2, 3, 5, 7]
 G_ARRAY_MULTIPLE = reduce( lambda x, y: x * y, G_ARRAY)
+G_ARRAY_MASK = [105, 35, 7, 1]
 
 NO_LOGS = True
 
-
-G_ARRAY_MASK = [105, 35, 7, 1]
+COUNTING_SUPPORT_ARRAY = {
+	1: 0,
+	2: 1, 3: 1, 5: 1, 7: 1, 11: 1, 13: 1, 17: 1, 19: 1,
+	6: 2, 10: 2, 14: 2, 15: 2, 21: 2, 35: 2,
+	30: 3, 42: 3, 70: 3, 105: 3,
+	210: 4
+}

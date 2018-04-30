@@ -53,8 +53,8 @@ def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primals
 		return 0
  	
 	print "### [seqExt]: {0}->{1}".format(key, targetKey)
-	print "| {0}: {1}\t\t{2}".format(key, primalSeq, primalsPos)
-	print "| {0}: {1}\t\t{2}".format(targetKey, primalSeqTarget, primalsPosTarget)
+	print "| {0}:\t\t\t{1} - {2}".format(key, primalSeq, primalsPos)
+	print "| {0}:\t\t\t{1} - {2}".format(targetKey, primalSeqTarget, primalsPosTarget)
 
 	primalsPosJoin = []
 	primalSeqJoin = []
@@ -71,7 +71,7 @@ def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primals
 			maskPrimalPos = maskPrimalPosition(primalsPos[seqIndex])
 			primalPosJoin = calculatePrimalPos( maskPrimalPos, primalsPosTarget[seqIndex] )
 
-			print "gcd( {0}, {1} ) = {2}".format(maskPrimalPos, primalsPosTarget[seqIndex], primalPosJoin)
+			# print "gcd( {0}, {1} ) = {2}".format(maskPrimalPos, primalsPosTarget[seqIndex], primalPosJoin)
 
 			# TODO: Improve later - keep cur version to test
 			if inverseBitSeq[seqIndex - seqStartIndex] == 1: # key appear front of targetKey
@@ -85,7 +85,8 @@ def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primals
 				primalsPosJoin.append( [1] * len(primalPosJoin) )
 
 		primalSeqJoin.append(gcdValue)
-				
+		
+	print "| Support value: {0}".format(countingSupport(primalSeqJoin))		
 	print "|-> [seqExt]: {0}->{1}\t".format(key, targetKey),  primalSeqJoin, " - ", primalsPosJoin
 	return (primalSeqJoin, primalsPosJoin)
 

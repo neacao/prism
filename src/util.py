@@ -35,9 +35,11 @@ def factorization(n):
 # factorization(31752) = 2^3 * 3^4 * 7^2
 
 
-def supp(number):
-    return len(set(factorization(number)))
-# supp(31752) = 3
+def countingSupport(primalSeq):
+    result = 0
+    for element in primalSeq:
+        result += COUNTING_SUPPORT_ARRAY[element]
+    return result
 
 
 def multiplyPrimalEncoding(array):
