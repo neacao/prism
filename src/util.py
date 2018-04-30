@@ -121,6 +121,11 @@ def findNumberDivisible(currentNumber, target):
 
 
 def test():
+    n1 = [1, 2, 3]
+    n2 = n1[:]
+    n2[2] = 4
+    print n1
+
     return 1
 
 if __name__ == "__main__":
