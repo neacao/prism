@@ -53,8 +53,8 @@ def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primals
 		return 0
  	
 	print "### [seqExt]: {0}->{1}".format(key, targetKey)
-	print "| {0}:\t\t{1} - {2}".format(key, primalSeq, primalsPos)
-	print "| {0}:\t\t{1} - {2}".format(targetKey, primalSeqTarget, primalsPosTarget)
+	print "| {0}:\t{1} - {2}".format(key, primalSeq, primalsPos)
+	print "| {0}:\t{1} - {2}".format(targetKey, primalSeqTarget, primalsPosTarget)
 
 	primalsPosJoin = []
 	primalSeqJoin = []

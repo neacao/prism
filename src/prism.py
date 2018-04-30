@@ -8,11 +8,8 @@ from prism_extension import *
 def processSeqExtension(result, lastFrequent, items, primalSeqExt, primalPosSeqExt, primalSeqAllIteams, primalsPosAllItems):
 	lengthOfItems = len(items)
 
-	primalSeqExtCur = primalSeqExt[:]
-	primalPosSeqExtCur = primalPosSeqExt[:]
-
 	for _index in xrange(0, lengthOfItems):
-		(_primalSeqExt, _primalPosSeqExt) = seqExtension(lastFrequent, items[_index], primalSeqExtCur, primalSeqAllIteams[_index], primalPosSeqExtCur, primalsPosAllItems[_index])
+		(_primalSeqExt, _primalPosSeqExt) = seqExtension(lastFrequent, items[_index], primalSeqExt[:], primalSeqAllIteams[_index], primalPosSeqExt[:], primalsPosAllItems[_index])
 
 		supp = countingSupport(_primalSeqExt)
 		if supp >= MIN_SUPP:
@@ -26,13 +23,10 @@ def processSeqExtension(result, lastFrequent, items, primalSeqExt, primalPosSeqE
 			})
 
 			print "+ Frequent seq: {0}\n".format(lastFrequent)
-			processSeqExtension(result, lastFrequent, items, _primalSeqExt, _primalPosSeqExt, primalSeqAllIteams, primalsPosAllItems)
-			# lastFrequent = lastFrequent[:3]
+			processSeqExtension(result, lastFrequent, items, _primalSeqExt[:], _primalPosSeqExt[:], primalSeqAllIteams, primalsPosAllItems)
+			# print "----> Before split seq: {0}\n".format(lastFrequent)
+			lastFrequent = lastFrequent[:-3]
 			print "----> After seq: {0}\n".format(lastFrequent)
-			# print "After pos: {0}\n".format(_primalPosSeqExt)
-
-			primalSeqExtCur = _primalSeqExt
-			primalPosSeqExtCur = _primalPosSeqExt
 
 		else:
 			print "~ Reject: {0}->{1}\n".format(lastFrequent, items[_index])
