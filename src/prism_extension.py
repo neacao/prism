@@ -46,7 +46,7 @@ def itemExtension(key, targetKey, primalsPos, primalsPosTarget, primalSeq, prima
 	return (primalSeqJoin, primalsPosJoin)
 
 
-def seqExtension(key, targetKey, primalsPos, primalsPosTarget, primalSeq, primalSeqTarget):
+def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primalsPosTarget):
 	if (len(primalsPos) != len(primalsPosTarget) or 
 		len(primalSeq) != len(primalSeqTarget)):
 		print "[PRISM_SEQ_EXTENSION.ERROR] Invalid input params"
@@ -71,6 +71,8 @@ def seqExtension(key, targetKey, primalsPos, primalsPosTarget, primalSeq, primal
 			maskPrimalPos = maskPrimalPosition(primalsPos[seqIndex])
 			primalPosJoin = calculatePrimalPos( maskPrimalPos, primalsPosTarget[seqIndex] )
 
+			print "gcd( {0}, {1} ) = {2}".format(maskPrimalPos, primalsPosTarget[seqIndex], primalPosJoin)
+
 			# TODO: Improve later - keep cur version to test
 			if inverseBitSeq[seqIndex - seqStartIndex] == 1: # key appear front of targetKey
 				if isEmptyPrimalPos(primalPosJoin) == True:
@@ -80,7 +82,7 @@ def seqExtension(key, targetKey, primalsPos, primalsPosTarget, primalSeq, primal
 				else:
 					primalsPosJoin.append(primalPosJoin)
 			else:
-				primalsPosJoin.append( [1] * len(primalPosJoin) ) 
+				primalsPosJoin.append( [1] * len(primalPosJoin) )
 
 		primalSeqJoin.append(gcdValue)
 				
