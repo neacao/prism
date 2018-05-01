@@ -105,19 +105,3 @@ def isEmptyPrimalPos(primalPosJoin):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
