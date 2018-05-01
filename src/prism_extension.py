@@ -12,14 +12,15 @@ def calculatePrimalPos(primalPos, primalPosTarget):
 	return result 
 
 
-##########
-# primalsPos & primalsPosTarget is an 2D array
-##########
-def itemExtension(key, targetKey, primalsPos, primalsPosTarget, primalSeq, primalSeqTarget):
+def itemExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primalsPosTarget):
 	if (len(primalsPos) != len(primalsPosTarget) or 
 		len(primalSeq) != len(primalSeqTarget)):
 		print "[PRISM_SEQ_EXTENSION.ERROR] Invalid input params"
-		return 0
+		print primalsPos
+		print primalsPosTarget
+		print primalSeq
+		print primalSeqTarget
+		return
  	
  	print "### [itemExt]: {0}{1}".format(key, targetKey)
 	print "| primalsPos\t\t{0}\n| primalsPosTarget\t{1}".format(primalsPos, primalsPosTarget)
@@ -31,16 +32,22 @@ def itemExtension(key, targetKey, primalsPos, primalsPosTarget, primalSeq, prima
 
 	for blockIndex in xrange(0, lengthPrimalSeq):
 		gcdValue = gcd( primalSeq[blockIndex], primalSeqTarget[blockIndex] )
-
 		primalSeqJoin.append(gcdValue)
 
 		inverseBitSeq = inverseMultiplyBitEncoding(gcdValue)
 
 		seqStartIndex = blockIndex * G_LENGTH
 		for seqIndex in xrange(seqStartIndex, seqStartIndex + G_LENGTH):
+			curPrimalPos = primalsPos[seqIndex]
+			targetPrimakPos = primalsPosTarget[seqIndex]
+
 			if inverseBitSeq[seqIndex - seqStartIndex] == 1: # key & targetKey appear simultaneously
-				primalPosJoin = calculatePrimalPos( primalsPos[seqIndex], primalsPosTarget[seqIndex] )
+				primalPosJoin = calculatePrimalPos( curPrimalPos, targetPrimakPos )
 				primalsPosJoin.append(primalPosJoin)
+
+			else:
+				primalsPosJoin.append( [1] * len(curPrimalPos) ) # Add padding
+
 
 	print "|-> [itemExt]: {0}{1}\t".format(key, targetKey),  primalSeqJoin, " - ", primalsPosJoin
 	return (primalSeqJoin, primalsPosJoin)
@@ -50,7 +57,7 @@ def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primals
 	if (len(primalsPos) != len(primalsPosTarget) or 
 		len(primalSeq) != len(primalSeqTarget)):
 		print "[PRISM_SEQ_EXTENSION.ERROR] Invalid input params"
-		return 0
+		return
  	
 	print "### [seqExt]: {0}->{1}".format(key, targetKey)
 	print "| {0}:\t{1} - {2}".format(key, primalSeq, primalsPos)
@@ -73,7 +80,7 @@ def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primals
 
 			# print "gcd( {0}, {1} ) = {2}".format(maskPrimalPos, primalsPosTarget[seqIndex], primalPosJoin)
 
-			# TODO: Improve later - keep cur version to test
+			# TODO: Improve [ remove empty block ] - keep cur version to test
 			if inverseBitSeq[seqIndex - seqStartIndex] == 1: # key appear front of targetKey
 				if isEmptyPrimalPos(primalPosJoin) == True:
 					gcdValue /= G_ARRAY[seqIndex % G_LENGTH]
