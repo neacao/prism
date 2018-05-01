@@ -22,9 +22,9 @@ def itemExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primal
 		print primalSeqTarget
 		return
  	
- 	print "### [itemExt]: {0}{1}".format(key, targetKey)
-	print "| primalsPos\t\t{0}\n| primalsPosTarget\t{1}".format(primalsPos, primalsPosTarget)
-	print "| primalSeq\t\t{0}\n| primalSeqTarget\t{1}".format(primalSeq, primalSeqTarget)
+	# print "### [itemExt]: {0}{1}".format(key, targetKey)
+	# print "| primalsPos\t\t{0}\n| primalsPosTarget\t{1}".format(primalsPos, primalsPosTarget)
+	# print "| primalSeq\t\t{0}\n| primalSeqTarget\t{1}".format(primalSeq, primalSeqTarget)
 
 	primalsPosJoin = []
 	primalSeqJoin = []
@@ -49,7 +49,7 @@ def itemExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primal
 				primalsPosJoin.append( [1] * len(curPrimalPos) ) # Add padding
 
 
-	print "|-> [itemExt]: {0}{1}\t".format(key, targetKey),  primalSeqJoin, " - ", primalsPosJoin
+	# print "|-> [itemExt]: {0}{1}\t".format(key, targetKey),  primalSeqJoin, " - ", primalsPosJoin
 	return (primalSeqJoin, primalsPosJoin)
 
 
@@ -59,9 +59,9 @@ def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primals
 		print "[PRISM_SEQ_EXTENSION.ERROR] Invalid input params"
 		return
  	
-	print "### [seqExt]: {0}->{1}".format(key, targetKey)
-	print "| {0}:\t{1} - {2}".format(key, primalSeq, primalsPos)
-	print "| {0}:\t{1} - {2}".format(targetKey, primalSeqTarget, primalsPosTarget)
+	# print "### [seqExt]: {0}->{1}".format(key, targetKey)
+	# print "| {0}:\t{1} - {2}".format(key, primalSeq, primalsPos)
+	# print "| {0}:\t{1} - {2}".format(targetKey, primalSeqTarget, primalsPosTarget)
 
 	primalsPosJoin = []
 	primalSeqJoin = []
@@ -93,8 +93,7 @@ def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primals
 
 		primalSeqJoin.append(gcdValue)
 
-	print "| Support value: {0}".format(countingSupport(primalSeqJoin))		
-	print "|-> [seqExt]: {0}->{1}\t".format(key, targetKey),  primalSeqJoin, " - ", primalsPosJoin
+	# print "|-> [seqExt]: {0}->{1}\t".format(key, targetKey),  primalSeqJoin, " - ", primalsPosJoin
 	return (primalSeqJoin, primalsPosJoin)
 
 
