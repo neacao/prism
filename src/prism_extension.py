@@ -16,10 +16,6 @@ def itemExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primal
 	if (len(primalsPos) != len(primalsPosTarget) or 
 		len(primalSeq) != len(primalSeqTarget)):
 		print "[PRISM_SEQ_EXTENSION.ERROR] Invalid input params"
-		print primalsPos
-		print primalsPosTarget
-		print primalSeq
-		print primalSeqTarget
 		return
  	
 	# print "### [itemExt]: {0}{1}".format(key, targetKey)

@@ -2,6 +2,7 @@
 
 from constant import *
 from util import *
+from prism_encode_advance import *
 
 def encodeBitPosition(key, array):
 	result = []
@@ -32,7 +33,7 @@ def encodePrimalPosition(key, array):
 		index = blockIndex * G_LENGTH
 		tmp = 1
 		
-		# Testing purpose, using G_LENGTH = 4
+		# Testing purpose, using G_LENGTH = 8
 		if bitEncodedPos[index] == 1: tmp *= 2
 		if bitEncodedPos[index + 1] == 1: tmp *= 3
 		if bitEncodedPos[index + 2] == 1: tmp *= 5
@@ -43,7 +44,6 @@ def encodePrimalPosition(key, array):
 	if NO_LOGS == False:
 		print "[Pos Encode Primal]:", result
 	return result
-
 
 def encodeBitSequences(key, sequences):
 	result = []
@@ -101,8 +101,10 @@ def processPrimalEncodingPos():
 	for item in items:
 		itemPrimalBlocks = [] * len(sequences)
 
+		# Primal position encode for each item
 		for sequence in sequences:
-			itemPrimalBlocks.append(encodePrimalPosition(item, sequence))
+			# itemPrimalBlocks.append(encodePrimalPosition(item, sequence))
+			itemPrimalBlocks.append( encodePrimalPosition(item, sequence) )
 
 		length = len(sequences)
 		divisibleNumber = findNumberDivisible(length, G_LENGTH)

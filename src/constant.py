@@ -19,9 +19,15 @@ SEQUENCES = [
 	["ab", "ab", "ab", "a", "bc"]
 ]
 
-G_LENGTH = 4
 G_ARRAY = [2, 3, 5, 7]
-G_ARRAY_MULTIPLE = reduce( lambda x, y: x * y, G_ARRAY)
+G_ARRAY_MULTIPLE = reduce( lambda x, y: x * y, G_ARRAY )
+G_LENGTH = len(G_ARRAY)
+
+G_ARRAY_ADVANCE = [2, 3, 5, 7, 11, 13, 17, 19]
+G_LENGTH_ADVANCE = len(G_ARRAY_ADVANCE)
+
+
+
 G_ARRAY_MASK = [105, 35, 7, 1]
 
 NO_LOGS = True
@@ -33,3 +39,16 @@ COUNTING_SUPPORT_ARRAY = {
 	30: 3, 42: 3, 70: 3, 105: 3,
 	210: 4
 }
+
+# PREREQUISITE: number must be from 1 to 9699690
+def rank(number):
+	if number < 1 or number > 9699690:
+		return 0
+
+	try:
+		index = SQUARE_FREE_GENERATOR.index(number)
+		return index
+		
+	except ValueError:
+		print ValueError
+	return 0

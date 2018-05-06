@@ -2,6 +2,7 @@
 
 from functools import reduce
 from constant import *
+from lookup_table import *
 
 def is_prime(n):
     if n == 1:
@@ -14,6 +15,7 @@ def is_prime(n):
             return False
         i += 2
     return True
+
 
 def factorization(n):
     prime_factor_list = []
@@ -45,6 +47,10 @@ def countingSupport(primalSeq):
 def multiplyPrimalEncoding(array):
     return reduce((lambda x,y: x * y), array)
 # multiplyBlockEncoding: [2, 3, 7] = 42
+
+
+def encodeBit(primeArray):
+    return 0
 
 
 def multiplyBitEncoding(array):
@@ -108,7 +114,7 @@ def maskPrimalEncodedBetter(number):
 
 
 def gcd(a,b):
-    return a if b == 0 else gcd(b,a%b) 
+    return a if b == 0 else gcd(b,a%b)
 # --- gcd: gcd(18,9) = 9
 
 
@@ -120,15 +126,20 @@ def findNumberDivisible(currentNumber, target):
 # findNumberDivisible(7, 5) -> 10
 
 
-def test():
-    sample = [
-        {"id": 1, "title": "Some 1"},
-        {"id": 2, "title": "Some 2"}
-    ]
+def rankOfValue(value):
+    # Factorization
+    fNumber = factorization(value)
 
-    first = sample[1]
-    first["title"] = "Some changed"
-    print sample[1]
+
+    # Parse to bit encoded
+
+    # Parse to 2
+    return 0
+
+### END
+
+def test():
+    print (bool)(130 & 0x80)
 
 if __name__ == "__main__":
     test()
