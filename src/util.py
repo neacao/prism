@@ -74,6 +74,19 @@ def inverseMultiplyBitEncoding(number):
     return ret
 # inverseMultiplyBlockEncoding(42) = [1, 1, 0, 1]
 
+def inverseMultiplyBitEncodingAdv(number):
+    ret = [0] * 8
+    ret[0] = 1 if number % 2 == 0 else 0
+    ret[1] = 1 if number % 3 == 0 else 0
+    ret[2] = 1 if number % 5 == 0 else 0
+    ret[3] = 1 if number % 7 == 0 else 0
+    ret[4] = 1 if number % 11 == 0 else 0
+    ret[5] = 1 if number % 13 == 0 else 0
+    ret[6] = 1 if number % 17 == 0 else 0
+    ret[7] = 1 if number % 19 == 0 else 0
+
+    return ret
+
 
 def maskBitEncoded(array):
     flag = False
@@ -137,6 +150,11 @@ def rankOfValue(value):
     return 0
 
 ### END
+
+def printBitArrayFromPrimal(value):
+    array = inverseMultiplyBitEncodingAdv(value)
+    print array
+    return
 
 def test():
     print (bool)(130 & 0x80)
