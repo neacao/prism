@@ -49,9 +49,6 @@ def multiplyPrimalEncoding(array):
 # multiplyBlockEncoding: [2, 3, 7] = 42
 
 
-def encodeBit(primeArray):
-    return 0
-
 
 def multiplyBitEncoding(array):
     result = 1
@@ -84,7 +81,6 @@ def inverseMultiplyBitEncodingAdv(number):
     ret[5] = 1 if number % 13 == 0 else 0
     ret[6] = 1 if number % 17 == 0 else 0
     ret[7] = 1 if number % 19 == 0 else 0
-
     return ret
 
 
@@ -138,23 +134,7 @@ def findNumberDivisible(currentNumber, target):
     return 0
 # findNumberDivisible(7, 5) -> 10
 
-
-def rankOfValue(value):
-    # Factorization
-    fNumber = factorization(value)
-
-
-    # Parse to bit encoded
-
-    # Parse to 2
-    return 0
-
 ### END
-
-def printBitArrayFromPrimal(value):
-    array = inverseMultiplyBitEncodingAdv(value)
-    print array
-    return
 
 def test():
     print (bool)(130 & 0x80)

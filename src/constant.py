@@ -12,7 +12,7 @@ MIN_SUPP = 2
 ITEMS = ["a", "b", "c"]
 
 SEQUENCES = [
-	["ab", "b", "b", "ab", "b", "a"],
+	["ab", "b", "b", "ab", "b", "a", "b", "b", "a"],
 	["ab", "b", "b"],
 	["b", "ab"],
 	["b", "b", "b"],
@@ -31,7 +31,6 @@ COUNTING_SUPPORT_ARRAY = {
 	30: 3, 42: 3, 70: 3, 105: 3,
 	210: 4
 }
-
 
 NO_LOGS = True
 

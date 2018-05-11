@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from lookup_table import *
-from util import printBitArrayFromPrimal
 
 # BITs is counting from right to left
 # computeBitValueOfPrimalValue(30) = 224 = 11100000
@@ -63,8 +62,8 @@ def test():
 	# print computePrimalValueOfBitValue(224) # Must equal 30
 	# print computeGCDOfPrimalsValue(30, 6) # Must equal 6
 	# print computeSupportOfPrimalValue(30) # Must equal 3 
-	# print computeMaskValueOfPrimalValue(30) # Must equal 
-
+	# print computeMaskValueOfPrimalValue(30) # Must equal 4849845
+	return 1
 
 if __name__ == "__main__":
 	test()

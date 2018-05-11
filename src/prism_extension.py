@@ -48,7 +48,6 @@ def itemExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primal
 	# print "|-> [itemExt]: {0}{1}\t".format(key, targetKey),  primalSeqJoin, " - ", primalsPosJoin
 	return (primalSeqJoin, primalsPosJoin)
 
-
 def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primalsPosTarget):
 	if (len(primalsPos) != len(primalsPosTarget) or 
 		len(primalSeq) != len(primalSeqTarget)):
@@ -96,7 +95,6 @@ def seqExtension(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primals
 # Return True if the primalPosJoins are all empty block
 def isEmptyPrimalPos(primalPosJoin):
 	return True if not list(filter(lambda number: number > 1, primalPosJoin)) else False
-
 
 
 
