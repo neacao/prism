@@ -127,13 +127,6 @@ def gcd(a,b):
 # --- gcd: gcd(18,9) = 9
 
 
-def findNumberDivisible(currentNumber, target):
-    for number in xrange(currentNumber, currentNumber + target):
-        if number % target == 0:
-            return number if number >= 8 else 8
-    return 0
-# findNumberDivisible(7, 5) -> 10
-
 ### END
 
 def test():

@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
-from constant import *
+import sys
+sys.path.insert(0, '/Users/nea/Desktop/Course/src/')
+
 from util import *
-from prism_encode_advance import *
+from constant import *
 
 def encodeBitPosition(key, array):
 	result = []

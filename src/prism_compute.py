@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from lookup_table import *
+from constant import *
 
 # BITs is counting from right to left
 # computeBitValueOfPrimalValue(30) = 224 = 11100000
@@ -56,6 +57,13 @@ def computeRankOfPrimalValue(value):
 		print "Not found Rank of this:", value
 		return 0
 
+
+def findNumberDivisible(currentNumber, target):
+  for number in xrange(currentNumber, currentNumber + target):
+      if number % target == 0:
+        return number if number >= G_LENGTH_ADVANCE else G_LENGTH_ADVANCE
+  return 0
+# findNumberDivisible(7, 5) -> 10
 
 def test():
 	# print computeBitValueOfPrimalValue(30) # Must equal 224

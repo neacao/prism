@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import sys
+sys.path.insert(0, '/Users/nea/Desktop/Course/src/')
+
 from constant import *
 from prism_compute import *
 from util import *
