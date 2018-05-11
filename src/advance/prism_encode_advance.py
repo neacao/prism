@@ -65,8 +65,11 @@ def processEncodePrimalPosAdv(items, sequences):
 
 	for item in items:
 		primalPosOffset = []
-		itemPrimalsPos = []
-		lastPrimalBlockOffset = 1 # Couting current primal block offset		
+		lastPrimalBlockOffset = 1 # Couting current primal block offset	
+
+		itemPrimalsPosBlock = [[]] * ((numberOfSeq + G_LENGTH_ADVANCE - 1) / G_LENGTH_ADVANCE)
+		itemPrimalsPosBlockIndex = 0
+		itemPrimalsPosBlock[itemPrimalsPosBlockIndex] = []
 
 		for seqIndex in xrange(0, numberOfSeq):
 			primalPos = encodePrimalPositionAdv(item, sequences[seqIndex])
@@ -75,9 +78,13 @@ def processEncodePrimalPosAdv(items, sequences):
 			if length > 0:
 				primalPosOffset.append( lastPrimalBlockOffset )
 				lastPrimalBlockOffset += length
-				itemPrimalsPos.append( primalPos )
+				itemPrimalsPosBlock[itemPrimalsPosBlockIndex] += primalPos
 			
-		primalsPosAllItems.append(itemPrimalsPos)
+			if seqIndex != 0 and ((seqIndex + 1) % G_LENGTH_ADVANCE == 0):
+				itemPrimalsPosBlockIndex += 1
+				itemPrimalsPosBlock[itemPrimalsPosBlockIndex] = []
+
+		primalsPosAllItems.append(itemPrimalsPosBlock)
 		posOffsetsAllItems.append(primalPosOffset)
 
 	return (posOffsetsAllItems, primalsPosAllItems)
@@ -102,6 +109,7 @@ def encodeBitSeqAdv(item, sequences):
 
 def encodePrimalSeq(item, sequences):
 	bitSeqEncoded = encodeBitSeqAdv(item, sequences)
+
 	result = []
 	length = len(bitSeqEncoded)
 
@@ -122,7 +130,9 @@ def encodePrimalSeq(item, sequences):
 			if bitSeqEncoded[primeIndex + index] == 1:
 				val *= G_ARRAY_ADVANCE[primeIndex]
 
-		result.append(val)
+		if val > 1:
+			result.append(val)
+
 
 	if NO_LOGS == False:
 		print "[Seq Encode Primal]:", result
@@ -143,7 +153,7 @@ if __name__ == "__main__":
 	primalSeqAllItems = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
 	for index in xrange(0, len(ITEMS)):
-		print ITEMS[index], primalSeqAllItems[index], posOffsetsAllItems[index], "\n=>", primalPosAllItems[index]
+		print ITEMS[index], primalSeqAllItems[index], posOffsetsAllItems[index], primalPosAllItems[index]
 
 
 

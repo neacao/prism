@@ -130,7 +130,17 @@ def gcd(a,b):
 ### END
 
 def test():
-    print (bool)(130 & 0x80)
+    array = [[]] * 2
+    arr1 = [1, 2, 3]
+    arr2 = [4, 5, 6]
+
+    # array[0] = []
+    array[0].append(1)
+    array[0].append(2)
+    array[1].append(6)
+    array[1].append(7)
+
+    print array
 
 if __name__ == "__main__":
     test()
