@@ -65,33 +65,28 @@ def processEncodePrimalPosAdv(items, sequences):
 
 	for item in items:
 		numberOfBlock = ((numberOfSeq + G_LENGTH_ADVANCE - 1) / G_LENGTH_ADVANCE)
+		lastPrimalBlockOffset = 1 # Couting current primal block offset	
+
+		itemPrimalsPos = []
 
 		primalPosOffsetBlock = [[]] * numberOfBlock
 		primalPosOffsetBlockIndex = 0
 		primalPosOffsetBlock[primalPosOffsetBlockIndex] = []
-
-		lastPrimalBlockOffset = 1 # Couting current primal block offset	
-
-		itemPrimalsPosBlock = [[]] * numberOfBlock
-		itemPrimalsPosBlockIndex = 0
-		itemPrimalsPosBlock[itemPrimalsPosBlockIndex] = []
 
 		for seqIndex in xrange(0, numberOfSeq):
 			primalPos = encodePrimalPositionAdv(item, sequences[seqIndex])
 			length = len(primalPos)
 
 			if length > 0:
-				primalPosOffsetBlock[itemPrimalsPosBlockIndex].append( lastPrimalBlockOffset )
+				primalPosOffsetBlock[primalPosOffsetBlockIndex].append( (lastPrimalBlockOffset, length) )
 				lastPrimalBlockOffset += length
-				itemPrimalsPosBlock[itemPrimalsPosBlockIndex] += primalPos
+				itemPrimalsPos += primalPos
 			
 			if seqIndex != 0 and ((seqIndex + 1) % G_LENGTH_ADVANCE == 0):
-				itemPrimalsPosBlockIndex += 1
-				itemPrimalsPosBlock[itemPrimalsPosBlockIndex] = []
 				primalPosOffsetBlockIndex += 1
 				primalPosOffsetBlock[primalPosOffsetBlockIndex] = []
 
-		primalsPosAllItems.append(itemPrimalsPosBlock)
+		primalsPosAllItems.append(itemPrimalsPos)
 		posOffsetsAllItems.append(primalPosOffsetBlock)
 
 	return (posOffsetsAllItems, primalsPosAllItems)
@@ -160,8 +155,8 @@ if __name__ == "__main__":
 
 	for index in xrange(0, len(ITEMS)):
 		print ITEMS[index], primalSeqAllItems[index], posOffsetsAllItems[index]
-		for primalPosBlock in primalPosAllItems[index]:
-			print primalPosBlock
+		for element in primalPosAllItems[index]:
+			print element
 
 
 
