@@ -64,10 +64,15 @@ def processEncodePrimalPosAdv(items, sequences):
 	numberOfSeq = len(sequences)
 
 	for item in items:
-		primalPosOffset = []
+		numberOfBlock = ((numberOfSeq + G_LENGTH_ADVANCE - 1) / G_LENGTH_ADVANCE)
+
+		primalPosOffsetBlock = [[]] * numberOfBlock
+		primalPosOffsetBlockIndex = 0
+		primalPosOffsetBlock[primalPosOffsetBlockIndex] = []
+
 		lastPrimalBlockOffset = 1 # Couting current primal block offset	
 
-		itemPrimalsPosBlock = [[]] * ((numberOfSeq + G_LENGTH_ADVANCE - 1) / G_LENGTH_ADVANCE)
+		itemPrimalsPosBlock = [[]] * numberOfBlock
 		itemPrimalsPosBlockIndex = 0
 		itemPrimalsPosBlock[itemPrimalsPosBlockIndex] = []
 
@@ -76,16 +81,18 @@ def processEncodePrimalPosAdv(items, sequences):
 			length = len(primalPos)
 
 			if length > 0:
-				primalPosOffset.append( lastPrimalBlockOffset )
+				primalPosOffsetBlock[itemPrimalsPosBlockIndex].append( lastPrimalBlockOffset )
 				lastPrimalBlockOffset += length
 				itemPrimalsPosBlock[itemPrimalsPosBlockIndex] += primalPos
 			
 			if seqIndex != 0 and ((seqIndex + 1) % G_LENGTH_ADVANCE == 0):
 				itemPrimalsPosBlockIndex += 1
 				itemPrimalsPosBlock[itemPrimalsPosBlockIndex] = []
+				primalPosOffsetBlockIndex += 1
+				primalPosOffsetBlock[primalPosOffsetBlockIndex] = []
 
 		primalsPosAllItems.append(itemPrimalsPosBlock)
-		posOffsetsAllItems.append(primalPosOffset)
+		posOffsetsAllItems.append(primalPosOffsetBlock)
 
 	return (posOffsetsAllItems, primalsPosAllItems)
 
@@ -130,8 +137,7 @@ def encodePrimalSeq(item, sequences):
 			if bitSeqEncoded[primeIndex + index] == 1:
 				val *= G_ARRAY_ADVANCE[primeIndex]
 
-		if val > 1:
-			result.append(val)
+		result.append(val)
 
 
 	if NO_LOGS == False:
@@ -153,7 +159,9 @@ if __name__ == "__main__":
 	primalSeqAllItems = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
 	for index in xrange(0, len(ITEMS)):
-		print ITEMS[index], primalSeqAllItems[index], posOffsetsAllItems[index], primalPosAllItems[index]
+		print ITEMS[index], primalSeqAllItems[index], posOffsetsAllItems[index]
+		for primalPosBlock in primalPosAllItems[index]:
+			print primalPosBlock
 
 
 
