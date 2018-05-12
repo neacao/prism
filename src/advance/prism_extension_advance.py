@@ -115,18 +115,23 @@ def itemExtensionAdv(key, targetKey,
 
 				lastPrimalsPosOffsetExt += primalsPosJoinLength
 
-	print primalsPosOffsetListExt
-	print primalsPosExt
+	return (primalsSeqExt, primalsPosOffsetListExt, primalsPosExt)
 
 
 def test():
 	(posOffsetsAllItems, primalPosAllItems) = processEncodePrimalPosAdv(ITEMS, SEQUENCES)
 	primalSeqAllItems = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
-	itemExtensionAdv("a", "b", 
+	(primalsSeqExt, primalsPosOffsetListExt, primalsPosExt) = itemExtensionAdv(
+		"a", "b", 
 		primalSeqAllItems[0], primalSeqAllItems[1],
 		posOffsetsAllItems[0], posOffsetsAllItems[1],
-		primalPosAllItems[0], primalPosAllItems[1])
+		primalPosAllItems[0], primalPosAllItems[1]
+	)
+
+	print primalsSeqExt
+	print primalsPosOffsetListExt
+	print primalsPosExt
 
 '''
 	for index in xrange(0, len(ITEMS)):
