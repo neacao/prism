@@ -65,6 +65,14 @@ def findNumberDivisible(currentNumber, target):
   return 0
 # findNumberDivisible(7, 5) -> 10
 
+
+def inverseMultiplyBitEncodingAdv(number):
+    ret = [0] * G_LENGTH_ADVANCE
+    for index in xrange(0, G_LENGTH_ADVANCE):
+    	ret[index] = 1 if number % G_ARRAY_ADVANCE[index] == 0 else 0
+    return ret
+
+
 def test():
 	# print computeBitValueOfPrimalValue(30) # Must equal 224
 	# print computePrimalValueOfBitValue(224) # Must equal 30

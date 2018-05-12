@@ -5,66 +5,146 @@ sys.path.insert(0, '/Users/nea/Desktop/Course/src/')
 
 from constant import *
 from prism_compute import *
-from util import *
+from prism_encode_advance import *
 
-def calculatePrimalPosJoinEachSequence(primalPos, primalPosTarget):
-	primalPosJoin = [] 
+def gcdSeqJoin(primalsSeqExt, primalSeq, primalSeqTarget):
+	primalSeqJoin = computeGCDOfPrimalsValue(primalSeq, primalSeqTarget)
+	return primalSeqJoin
 
-	for index in xrange(0, len(primalPos)):
-		primalPosJoin.append( computeGCDOfPrimalsValue( primalPos[index], primalPosTarget[index] ) )
 
-	return primalPosJoin
+def getLengthToLoopOnOffsetList(primalPosOffset, primalPosOffsetTarget):
+	lengOfOffset = min( len(primalPosOffset), len(primalPosOffsetTarget) )
+	return lengOfOffset
 
-def itemExtensionAdv(key, targetKey, primalSeq, primalSeqTarget, primalsPos, primalsPosTarget):
-	if (len(primalsPos) != len(primalsPosTarget) 
-		or len(primalSeq) != len(primalSeqTarget)):
-		print "[PRISM_SEQ_EXTENSION.ERROR] Invalid input params"
+
+def calculatePrimalsPosEachSeq(primalsPosOffset, primalsPosOffsetTarget, primalsPos, primalsPosTarget):
+	# Get the primal pos block length
+	numberOfPrimalsPos 			= min( primalsPosOffset["length"], primalsPosOffsetTarget["length"] )
+	startOffsetIndex				= primalsPosOffset["offset"]
+	startOffsetIndexTarget	= primalsPosOffsetTarget["offset"]
+
+	primalsPosExt = []
+
+	for primalPosIndex in xrange(0, numberOfPrimalsPos):
+		curPrimalPos 				= primalsPos[primalPosIndex + startOffsetIndex - 1]
+		curPrimalPosTarget 	= primalsPosTarget[primalPosIndex + startOffsetIndexTarget - 1]
+
+		curPrimalPosBlockIndex = curPrimalPos["blockIndex"]
+		curPrimalPosBlockIndexTarget = curPrimalPosTarget["blockIndex"]
+
+		if curPrimalPosBlockIndex == curPrimalPosBlockIndexTarget:
+
+			curPrimalPosVal 			= curPrimalPos["primalPos"]
+			curPrimalPosValTarget = curPrimalPosTarget["primalPos"]
+
+			primalPosExt = computeGCDOfPrimalsValue( curPrimalPosVal, curPrimalPosValTarget )
+			if primalPosExt > 1:
+				primalsPosExt.append({
+					"primalPos": primalPosExt,
+					"blockIndex": primalPosIndex
+				})
+
+			else:
+				print "===> IGNORE GCD:", curPrimalPos, curPrimalPosTarget
+
+		else:
+			print "===> IGNORE BLOCK INDEX:", curPrimalPos, curPrimalPosTarget
+
+	return primalsPosExt
+
+
+def itemExtensionAdv(key, targetKey, 
+	primalsSeq, primalsSeqTarget, 
+	primalsPosListOffsetList, primalsPosListOffsetListTarget,
+	primalsPos, primalsPosTarget):
+
+	if len(primalsSeq) != len(primalsSeqTarget):
+		print "[PRISM_SEQ_EXTENSION.ERROR] Invalid input params: \n- {0}\n- {1}".format(primalsSeq, primalsSeqTarget)
 		return
  	
 	# print "### [itemExt]: {0}{1}".format(key, targetKey)
-	# print "| primalsPos\t\t{0}\n| primalsPosTarget\t{1}".format(primalsPos, primalsPosTarget)
+	# print "| primalsPosList\t\t{0}\n| primalsPosListTarget\t{1}".format(primalsPosList, primalsPosListTarget)
 	# print "| primalSeq\t\t{0}\n| primalSeqTarget\t{1}".format(primalSeq, primalSeqTarget)
 
-	primalSeqExt 	= []
+	primalsSeqExt = []
 	primalsPosExt = []
-	numberOfSeqBlock = len(primalSeq)
+	numberOfBlockSeq 	= len(primalsSeq)
+	
+	primalsPosOffsetListExt = [[]] * numberOfBlockSeq
 
-	minPrimalsPosLength = min( len(primalsPos), len(primalsPosTarget) )
+	lastPrimalsPosOffsetExt = 1
 
 	# Loop on number of sequence block - each block contain 8 sequences
-	for blockIndex in xrange(0, numberOfSeqBlock):
+	for blockSeqIndex in xrange(0, numberOfBlockSeq):
+		primalsPosOffsetListExt[blockSeqIndex] = []
 
-		curPrimalSeq 				= primalSeq[blockIndex]
-		curPrimalSeqTarget 	= primalSeqTarget[blockIndex]
+		curPrimalSeq 				= primalsSeq[blockSeqIndex]
+		curPrimalSeqTarget 	= primalsSeqTarget[blockSeqIndex]
 
-		seqGCDValue = computeGCDOfPrimalsValue(curPrimalSeq, curPrimalSeqTarget)
-		primalSeqExt.append(seqGCDValue)
+		# Make a join of primal sequence
+		primalSeqJoin = gcdSeqJoin(primalsSeqExt, curPrimalSeq, curPrimalSeqTarget)		
+		primalsSeqExt.append(primalSeqJoin)
+
+		# Inverse the value to calculate primals position
+		bitSeqJoin = inverseMultiplyBitEncodingAdv(primalSeqJoin)
 		
-		bitSeq = inverseMultiplyBitEncodingAdv(seqGCDValue)
-		seqStartIndex = blockIndex * G_LENGTH_ADVANCE
+		# Get offset block to calculate primals position for each sequence
+		curPrimalPosOffsetBlock 			= primalsPosListOffsetList[blockSeqIndex]
+		curPrimalPosOffsetBlockTarget = primalsPosListOffsetListTarget[blockSeqIndex]
 
-		minLength = min(minPrimalsPosLength, seqStartIndex + G_LENGTH_ADVANCE)
+		# Get lenfth of each offset block
+		lengOfOffset = getLengthToLoopOnOffsetList( curPrimalPosOffsetBlock, curPrimalPosOffsetBlockTarget )
 
-		for seqIndex in xrange(seqStartIndex, minLength):
-			curPrimalPos 				= primalsPos[seqIndex]
-			curPrimalPosTarget 	= primalsPosTarget[seqIndex]
+		# Loop on each offset block
+		for primalPosOffsetIndex in xrange(0, lengOfOffset):
+			if bitSeqJoin[primalPosOffsetIndex] & 0x01:
 
-			# Is exist
-			if bitSeq[seqIndex - seqStartIndex] & 0x01:
-				primalPosJoin = calculatePrimalPosJoinEachSequence( curPrimalPos, curPrimalPosTarget )
-				primalsPosExt.append(primalPosJoin)
+				curPrimalPosOffset 				= curPrimalPosOffsetBlock[primalPosOffsetIndex]
+				curPrimalPosOffsetTarget 	= curPrimalPosOffsetBlockTarget[primalPosOffsetIndex]
 
-			else: 
-				# primalsPosExt += [1] * len(curPrimalPos)	
-				print "Ignore "
+				primalsPosJoin = calculatePrimalsPosEachSeq(curPrimalPosOffset, curPrimalPosOffsetTarget, primalsPos, primalsPosTarget)
+				primalsPosJoinLength = len(primalsPosJoin)
 
-	print "|-> [itemExt]: {0}{1}\t".format(key, targetKey),  primalSeqExt, " - ", primalsPosExt
-	return (primalSeqExt, primalsPosExt)
+				for primalPos in primalsPosJoin:
+					primalsPosExt.append(primalPos)
+
+				primalsPosOffsetListExt[blockSeqIndex].append({
+					"length": primalsPosJoinLength,
+					"offset": lastPrimalsPosOffsetExt
+				})
+
+				lastPrimalsPosOffsetExt += primalsPosJoinLength
+
+	print primalsPosOffsetListExt
+	print primalsPosExt
 
 
 def test():
-	print itemExtensionAdv("a", "b", [330], [2310], [[182], [2], [3], [1], [210]], [[2310], [30], [6], [30], [330]])
-	return 0
+	(posOffsetsAllItems, primalPosAllItems) = processEncodePrimalPosAdv(ITEMS, SEQUENCES)
+	primalSeqAllItems = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
+
+	itemExtensionAdv("a", "b", 
+		primalSeqAllItems[0], primalSeqAllItems[1],
+		posOffsetsAllItems[0], posOffsetsAllItems[1],
+		primalPosAllItems[0], primalPosAllItems[1])
+
+'''
+	for index in xrange(0, len(ITEMS)):
+		print ITEMS[index], primalSeqAllItems[index], posOffsetsAllItems[index]
+		for element in primalPosAllItems[index]:
+			print element
+
+	a [30, 2] [[{'length': 2, 'offset': 1}, {'length': 1, 'offset': 3}, {'length': 1, 'offset': 4}], [{'length': 1, 'offset': 5}]]
+	{'primalPos': 14, 'blockIndex': 0}
+	{'primalPos': 3, 'blockIndex': 1}
+	{'primalPos': 2, 'blockIndex': 0}
+	{'primalPos': 3, 'blockIndex': 0}
+	{'primalPos': 210, 'blockIndex': 0}
+	...
+
+	1. Why we need length inside offset
+'''
+	
 
 if __name__ == "__main__":
 	test()

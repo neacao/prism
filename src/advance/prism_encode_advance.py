@@ -78,7 +78,10 @@ def processEncodePrimalPosAdv(items, sequences):
 			length = len(primalPos)
 
 			if length > 0:
-				primalPosOffsetBlock[primalPosOffsetBlockIndex].append( (lastPrimalBlockOffset, length) )
+				primalPosOffsetBlock[primalPosOffsetBlockIndex].append({
+					"offset": lastPrimalBlockOffset,
+					"length": length
+				})
 				lastPrimalBlockOffset += length
 				itemPrimalsPos += primalPos
 			
