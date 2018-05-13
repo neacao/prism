@@ -80,7 +80,8 @@ def processEncodePrimalPosAdv(items, sequences):
 			if length > 0:
 				primalPosOffsetBlock[primalPosOffsetBlockIndex].append({
 					"offset": lastPrimalBlockOffset,
-					"length": length
+					"length": length,
+					"encode": G_ARRAY_ADVANCE[seqIndex]
 				})
 				lastPrimalBlockOffset += length
 				itemPrimalsPos += primalPos
