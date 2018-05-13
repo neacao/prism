@@ -8,6 +8,7 @@ from constant import *
 
 from prism_encode_advance import *
 from prism_extension_adv import *
+from prism_compute import *
 
 def processExtension(result, lastFrequent, lastSeqBlocks, lastOffsets, lastPosBlocks, seqBlocksList, posOffsetsList, posBlocksList, items, isSeqExt):
 	lengthOfItems = len(items)
@@ -58,31 +59,44 @@ def processExtension(result, lastFrequent, lastSeqBlocks, lastOffsets, lastPosBl
 
 
 if __name__ == "__main__":
-	# posBlocksList = processPrimalEncodingPos()
-	# seqBlocksList = processPrimalEncodingSeq()
 
 	(posOffsetsList, posBlocksList) = processEncodePrimalPosAdv(ITEMS, SEQUENCES)
 	seqBlocksList = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
-	result = []
-	processExtension(result, ITEMS[0], 
-		seqBlocksList[0], posOffsetsList[0], posBlocksList[0], 
-		seqBlocksList, posOffsetsList, posBlocksList,
-		ITEMS, True)
+	numberOfItems = len(ITEMS)
+	result = [[]] * numberOfItems
 
-	for element in result:
-		print "{0} - {1}".format(element["frequent"], element["support"])
+	for index in xrange(0, numberOfItems):
+		processExtension(result[index], ITEMS[index], 
+			seqBlocksList[index], posOffsetsList[index], posBlocksList[index], 
+			seqBlocksList, posOffsetsList, posBlocksList,
+			ITEMS, True
+		)
 
-	# result2 = []
-	# processExtension(result2, ITEMS[0], 
-	# 	seqBlocksList[0], posOffsetsList[0], posBlocksList[0], 
-	# 	seqBlocksList, posOffsetsList, posBlocksList,
-	# 	ITEMS, False)
+		processExtension(result[index], ITEMS[index], 
+			seqBlocksList[index], posOffsetsList[index], posBlocksList[index], 
+			seqBlocksList, posOffsetsList, posBlocksList,
+			ITEMS, False
+		)
 
-	# for element in result2:
-	# 	print "{0} - {1}".format(element["frequent"], element["support"])
+		for element in result[index]:
+			print "{0} - {1}".format(element["frequent"], element["support"])
+	
 
-	# Items extension only
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

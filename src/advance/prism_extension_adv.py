@@ -48,10 +48,10 @@ def calculatePrimalsPosEachSeq(posOffset, posOffsetTarget, posBlocks, posBlocksT
 					"primalPos": posBlockJoin,
 					"blockIndex": blockIndex
 				})
-			else:
-				print "===> IGNORE GCD:", posBlock, posBlockTarget
-		else:
-			print "===> IGNORE BLOCK INDEX:", posBlock, posBlockTarget
+		# 	else:
+		# 		print "===> IGNORE GCD:", posBlock, posBlockTarget
+		# else:
+		# 	print "===> IGNORE BLOCK INDEX:", posBlock, posBlockTarget
 
 	return posBlocksExt
 
@@ -69,22 +69,33 @@ def calculateExtensionAdv(key, targetKey,
 	lazyPosOffsetIndex 				= 0
 	lazyPosOffsetIndexTarget 	= 0
 
-	maxNumberOffsetBlocks = max( len(posOffsets), len(posOffsetsTarget) )
+	posOffsetsLength 				= len(posOffsets)
+	posOffsetsLengthTarget 	= len(posOffsetsTarget)
+	maxNumberOffsetBlocks 	= max( posOffsetsLength, posOffsetsLengthTarget )
 
 	# Loop on offsets to caculate position blocks
-	while lazyPosOffsetIndex < maxNumberOffsetBlocks and lazyPosOffsetIndexTarget < maxNumberOffsetBlocks:
+	while lazyPosOffsetIndex < posOffsetsLength and lazyPosOffsetIndexTarget < posOffsetsLengthTarget:
+
+		if lazyPosOffsetIndex == len(posOffsets):
+			print "Checking:", posOffsets, posOffsetsTarget
 
 		encode 				= posOffsets[lazyPosOffsetIndex]["encode"]
 		encodeTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]["encode"]
 
 		# Move the pointer to the right
-		while(seqBlockExt % encode != 0):
+		while seqBlockExt % encode != 0 and lazyPosOffsetIndex < posOffsetsLength - 1:
 			lazyPosOffsetIndex += 1
 			encode = posOffsets[lazyPosOffsetIndex]["encode"]
 
-		while(seqBlockExt % encodeTarget != 0):
+		if lazyPosOffsetIndex == posOffsetsLength:
+			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
+
+		while seqBlockExt % encodeTarget != 0 and lazyPosOffsetIndexTarget < posOffsetsLengthTarget - 1:
 			lazyPosOffsetIndexTarget += 1
 			encodeTarget = posOffsetsTarget[lazyPosOffsetIndexTarget]["encode"]
+
+		if lazyPosOffsetIndexTarget == posOffsetsLengthTarget:
+			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
 
 		posBlock 				= posOffsets[lazyPosOffsetIndex]
 		posBlockTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]
