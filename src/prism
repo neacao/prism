@@ -7,9 +7,9 @@ from util import *
 from constant import *
 
 from prism_encode_advance import *
-from prism_extension_advance import *
+from prism_extension_adv import *
 
-def processExtension(result, lastFrequent, lastSeqBlocks, lastOffsets, lastPosBlocks, items, seqBlocksList, posOffsetsList, posBlocksList, isSeqExt):
+def processExtension(result, lastFrequent, lastSeqBlocks, lastOffsets, lastPosBlocks, seqBlocksList, posOffsetsList, posBlocksList, items, isSeqExt):
 	lengthOfItems = len(items)
 
 	for itemIndex in xrange(0, lengthOfItems):
@@ -21,11 +21,6 @@ def processExtension(result, lastFrequent, lastSeqBlocks, lastOffsets, lastPosBl
 		# Continue if it's in itemset extension with same item
 		if isSeqExt == False and lastFrequent.find(curItem) != -1:
 			continue
-
-		# if isSeqExt == True:
-		# 	(primalSeqJoin, primalPosJoin) = seqExtension(lastFrequent, curItem, lastSeqBlocks[:], seqBlock[:], lastPosBlocks[:], posBlocks[:])
-		# else:
-		# 	(primalSeqJoin, primalPosJoin) = itemExtension(lastFrequent, curItem, lastSeqBlocks[:], seqBlock[:], lastPosBlocks[:], posBlocks[:])
 
 		(seqBlocksExt, posOffsetsExt, posBlocksExt) = processExtensionAdv(
 			lastFrequent, curItem,
@@ -43,12 +38,12 @@ def processExtension(result, lastFrequent, lastSeqBlocks, lastOffsets, lastPosBl
 				lastFrequent += "{0}".format(curItem)
 
 			# Ensure to make a copy instead of assign reference
-			_lastSeqBlocks = copy.deepcopy(seqBlocksExt)
+			_lastSeqBlocks 	= copy.deepcopy(seqBlocksExt)
 			_lastPosOffsets = copy.deepcopy(posOffsetsExt)
-			_lastPosBlocks = copy.deepcopy(posBlocksExt)
+			_lastPosBlocks 	= copy.deepcopy(posBlocksExt)
 
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, items, seqBlocksList, posOffsetsList ,posBlocksList, True)
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, items, seqBlocksList, posOffsetsList, posBlocksList, False)
+			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, seqBlocksList, posOffsetsList, posBlocksList, items, True)
+			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, seqBlocksList, posOffsetsList, posBlocksList, items, False)
 
 			result.append({
 				"frequent": lastFrequent,
@@ -72,10 +67,20 @@ if __name__ == "__main__":
 	result = []
 	processExtension(result, ITEMS[0], 
 		seqBlocksList[0], posOffsetsList[0], posBlocksList[0], 
-		ITEMS, seqBlocksList, posOffsetsList, posBlocksList, True)
+		seqBlocksList, posOffsetsList, posBlocksList,
+		ITEMS, True)
 
 	for element in result:
 		print "{0} - {1}".format(element["frequent"], element["support"])
+
+	# result2 = []
+	# processExtension(result2, ITEMS[0], 
+	# 	seqBlocksList[0], posOffsetsList[0], posBlocksList[0], 
+	# 	seqBlocksList, posOffsetsList, posBlocksList,
+	# 	ITEMS, False)
+
+	# for element in result2:
+	# 	print "{0} - {1}".format(element["frequent"], element["support"])
 
 	# Items extension only
 

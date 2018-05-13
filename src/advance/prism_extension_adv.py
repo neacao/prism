@@ -10,7 +10,7 @@ from prism_encode_advance import *
 	Brief: calculate posistion block each sequence
 	Return: a list of pos block joining
 '''
-def calculatePrimalsPosEachSeq2(posOffset, posOffsetTarget, posBlocks, posBlocksTarget, isSeqExt = False):
+def calculatePrimalsPosEachSeq(posOffset, posOffsetTarget, posBlocks, posBlocksTarget, isSeqExt = False):
 	# Get the primal pos block length
 	minNumberOfPosBlocks 		= min( posOffset["length"], posOffsetTarget["length"] )
 	posBlockIndex 					= posOffset["offset"]
@@ -48,10 +48,8 @@ def calculatePrimalsPosEachSeq2(posOffset, posOffsetTarget, posBlocks, posBlocks
 					"primalPos": posBlockJoin,
 					"blockIndex": blockIndex
 				})
-
 			else:
 				print "===> IGNORE GCD:", posBlock, posBlockTarget
-
 		else:
 			print "===> IGNORE BLOCK INDEX:", posBlock, posBlockTarget
 
@@ -94,7 +92,7 @@ def calculateExtensionAdv(key, targetKey,
 		# Make a copy to avoid data be reassigned in calculate... function
 		_posBlocks = copy.deepcopy(posBlocks)
 
-		posBlocksJoin 			= calculatePrimalsPosEachSeq2(posBlock, posBlockTarget, _posBlocks, posBlocksTarget, isSeqExt)
+		posBlocksJoin 			= calculatePrimalsPosEachSeq(posBlock, posBlockTarget, _posBlocks, posBlocksTarget, isSeqExt)
 		posBlocksJoinLength = len(posBlocksJoin)
 
 		# No empty block
@@ -107,7 +105,6 @@ def calculateExtensionAdv(key, targetKey,
 				"encode": encode
 			})
 			lastOffset += posBlocksJoinLength
-
 		# Remove empty block in sequence from seqBlockExt
 		else:
 			seqBlockExt /= encode
@@ -116,6 +113,7 @@ def calculateExtensionAdv(key, targetKey,
 		lazyPosOffsetIndexTarget 	+= 1
 
 	return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
+
 
 # Calcualte seq extension of all sequence blocks
 def processExtensionAdv(key, targetKey, seqBlocks, seqBlocksTarget, posOffsetsList, posOffsetsListTarget, posBlocks, posBlocksTarget, isSeqExt):
@@ -145,6 +143,9 @@ def processExtensionAdv(key, targetKey, seqBlocks, seqBlocksTarget, posOffsetsLi
 		posBlocksExt += _posBlocksExt
 
 	return (seqBlocksExt, posOffsetsListExt, posBlocksExt)
+
+
+
 
 def test():
 	(posOffsetsList, posBlocksList) = processEncodePrimalPosAdv(ITEMS, SEQUENCES)
