@@ -5,10 +5,9 @@ sys.path.insert(0, '/Users/nea/Desktop/Course/src/advance')
 
 from util import *
 from constant import *
-
-from prism_encode_advance import *
-from prism_extension_adv import *
 from prism_compute import *
+from prism_encode_adv import *
+from prism_extension_adv import *
 
 def processExtension(result, lastFrequent, lastSeqBlocks, lastOffsets, lastPosBlocks, seqBlocksList, posOffsetsList, posBlocksList, items, isSeqExt):
 	lengthOfItems = len(items)
