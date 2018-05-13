@@ -10,7 +10,7 @@ from prism_encode_advance import *
 	Brief: calculate posistion block each sequence
 	Return: a list of pos block joining
 '''
-def calculatePrimalsPosEachSeq2(posOffset, posOffsetTarget, posBlocks, posBlocksTarget, isMask = False, isTesting = False):
+def calculatePrimalsPosEachSeq2(posOffset, posOffsetTarget, posBlocks, posBlocksTarget, isSeqExt = False):
 	# Get the primal pos block length
 	minNumberOfPosBlocks 		= min( posOffset["length"], posOffsetTarget["length"] )
 	posBlockIndex 					= posOffset["offset"]
@@ -18,7 +18,7 @@ def calculatePrimalsPosEachSeq2(posOffset, posOffsetTarget, posBlocks, posBlocks
 
 	posBlocksExt = []
 
-	if isMask == True:
+	if isSeqExt == True:
 		maskValue = computeMaskValueOfPrimalValue( posBlocks[posBlockIndex - 1]["primalPos"] )
 		posBlocks[posBlockIndex - 1]["primalPos"] = maskValue
 
@@ -59,7 +59,11 @@ def calculatePrimalsPosEachSeq2(posOffset, posOffsetTarget, posBlocks, posBlocks
 
 
 # Calculate extension of each sequence block
-def seqExtensionAdv2(key, targetKey, seqBlock, seqBlockTarget, posOffsets, posOffsetsTarget, posBlocks, posBlocksTarget, lastOffset):
+def calculateExtensionAdv(key, targetKey, 
+	seqBlock, seqBlockTarget, 
+	posOffsets, posOffsetsTarget, 
+	posBlocks, posBlocksTarget, 
+	lastOffset, isSeqExt = False):
 	seqBlockExt 	= computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
 	posOffsetsExt = []
 	posBlocksExt	= []
@@ -90,7 +94,7 @@ def seqExtensionAdv2(key, targetKey, seqBlock, seqBlockTarget, posOffsets, posOf
 		# Make a copy to avoid data be reassigned in calculate... function
 		_posBlocks = copy.deepcopy(posBlocks)
 
-		posBlocksJoin 			= calculatePrimalsPosEachSeq2(posBlock, posBlockTarget, _posBlocks, posBlocksTarget, True)
+		posBlocksJoin 			= calculatePrimalsPosEachSeq2(posBlock, posBlockTarget, _posBlocks, posBlocksTarget, isSeqExt)
 		posBlocksJoinLength = len(posBlocksJoin)
 
 		# No empty block
@@ -114,7 +118,7 @@ def seqExtensionAdv2(key, targetKey, seqBlock, seqBlockTarget, posOffsets, posOf
 	return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
 
 # Calcualte seq extension of all sequence blocks
-def processSeqExtensionAdv(key, targetKey, seqBlocks, seqBlocksTarget, posOffsetsList, posOffsetsListTarget, posBlocks, posBlocksTarget):
+def processExtensionAdv(key, targetKey, seqBlocks, seqBlocksTarget, posOffsetsList, posOffsetsListTarget, posBlocks, posBlocksTarget, isSeqExt):
 	seqBlocksExt = []
 	posOffsetsListExt = [[]] * len(seqBlocks)
 	posBlocksExt = []
@@ -127,16 +131,17 @@ def processSeqExtensionAdv(key, targetKey, seqBlocks, seqBlocksTarget, posOffset
 		posOffsets 				= posOffsetsList[seqIndex]
 		posOffsetsTarget 	= posOffsetsListTarget[seqIndex]
 
-		(seqBlockExt, posOffsetsExt, _posBlocksExt, _lastOffset) = seqExtensionAdv2(
+		(seqBlockExt, posOffsetsExt, _posBlocksExt, _lastOffset) = calculateExtensionAdv(
 			key, targetKey,
 			seqBlocks[seqIndex]	, seqBlocksTarget[seqIndex],
 			posOffsetsList[seqIndex], posOffsetsListTarget[seqIndex],
-			posBlocks, posBlocksTarget, lastOffset
+			posBlocks, posBlocksTarget, lastOffset,
+			isSeqExt
 		)
 
 		_lastOffset = lastOffset
 		seqBlocksExt.append(seqBlockExt)
-		posOffsetsListExt[seqIndex].append(posOffsetsExt)
+		posOffsetsListExt[seqIndex] += posOffsetsExt
 		posBlocksExt += _posBlocksExt
 
 	return (seqBlocksExt, posOffsetsListExt, posBlocksExt)
@@ -145,11 +150,12 @@ def test():
 	(posOffsetsList, posBlocksList) = processEncodePrimalPosAdv(ITEMS, SEQUENCES)
 	seqBlocksList = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
-	(seqBlockExt, posOffsetsExt, posBlocksExt) = processSeqExtensionAdv(
+	(seqBlockExt, posOffsetsExt, posBlocksExt) = processExtensionAdv(
 		"a", "b",
 		seqBlocksList[0], seqBlocksList[1],
 		posOffsetsList[0], posOffsetsList[1],
-		posBlocksList[0], posBlocksList[1]
+		posBlocksList[0], posBlocksList[1],
+		True
 	)
 
 	print "Result:", seqBlockExt

@@ -31,6 +31,13 @@ def computeSupportOfPrimalValue(value):
 	return result
 
 
+def computeSupportOfPrimalValueArray(array):
+	result = 0
+	for element in array:
+		result += computeSupportOfPrimalValue(element)
+	return result
+
+
 # computeMaskValueOfPrimalValue(30) = 4849845
 def computeMaskValueOfPrimalValue(value):
 	rank = computeRankOfPrimalValue(value)
