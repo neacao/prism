@@ -121,13 +121,9 @@ def test():
     arr1 = [1, 2, 3]
     arr2 = [4, 5, 6]
 
-    # array[0] = []
-    array[0].append(1)
-    array[0].append(2)
-    array[1].append(6)
-    array[1].append(7)
-
-    print array
+    arr1 += [8, 9]
+    arr1.append([10, 2])
+    print arr1
 
 if __name__ == "__main__":
     test()

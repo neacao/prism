@@ -95,8 +95,8 @@ def seqExtensionAdv2(key, targetKey, seqBlock, seqBlockTarget, posOffsets, posOf
 
 		# No empty block
 		if posBlocksJoinLength > 0:
-			for posBlock in posBlocksJoin:
-				posBlocksExt.append(posBlock)
+			posBlocksExt += posBlocksJoin
+			
 			posOffsetsExt.append({
 				"offset": lastOffset,
 				"length": posBlocksJoinLength,
@@ -113,19 +113,43 @@ def seqExtensionAdv2(key, targetKey, seqBlock, seqBlockTarget, posOffsets, posOf
 
 	return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
 
+# Calcualte seq extension of all sequence blocks
+def processSeqExtensionAdv(key, targetKey, seqBlocks, seqBlocksTarget, posOffsetsList, posOffsetsListTarget, posBlocks, posBlocksTarget):
+	seqBlocksExt = []
+	posOffsetsListExt = [[]] * len(seqBlocks)
+	posBlocksExt = []
+
+	numberOfSeqBlocks = len(seqBlocks)
+	lastOffset = 1
+
+	# Loop on sequence block
+	for seqIndex in xrange(0, numberOfSeqBlocks):
+		posOffsets 				= posOffsetsList[seqIndex]
+		posOffsetsTarget 	= posOffsetsListTarget[seqIndex]
+
+		(seqBlockExt, posOffsetsExt, _posBlocksExt, _lastOffset) = seqExtensionAdv2(
+			key, targetKey,
+			seqBlocks[seqIndex]	, seqBlocksTarget[seqIndex],
+			posOffsetsList[seqIndex], posOffsetsListTarget[seqIndex],
+			posBlocks, posBlocksTarget, lastOffset
+		)
+
+		_lastOffset = lastOffset
+		seqBlocksExt.append(seqBlockExt)
+		posOffsetsListExt[seqIndex].append(posOffsetsExt)
+		posBlocksExt += _posBlocksExt
+
+	return (seqBlocksExt, posOffsetsListExt, posBlocksExt)
 
 def test():
 	(posOffsetsList, posBlocksList) = processEncodePrimalPosAdv(ITEMS, SEQUENCES)
 	seqBlocksList = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
-	print posOffsetsList[0][0]
-
-	(seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset) = seqExtensionAdv2(
+	(seqBlockExt, posOffsetsExt, posBlocksExt) = processSeqExtensionAdv(
 		"a", "b",
-		seqBlocksList[0][0], seqBlocksList[1][0],
-		posOffsetsList[0][0], posOffsetsList[1][0],
-		posBlocksList[0], posBlocksList[1],
-		1,
+		seqBlocksList[0], seqBlocksList[1],
+		posOffsetsList[0], posOffsetsList[1],
+		posBlocksList[0], posBlocksList[1]
 	)
 
 	print "Result:", seqBlockExt
