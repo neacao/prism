@@ -58,7 +58,6 @@ def processExtension(result, lastFrequent, lastSeqBlocks, lastOffsets, lastPosBl
 
 
 if __name__ == "__main__":
-
 	(posOffsetsList, posBlocksList) = processEncodePrimalPosAdv(ITEMS, SEQUENCES)
 	seqBlocksList = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
@@ -78,21 +77,15 @@ if __name__ == "__main__":
 			ITEMS, False
 		)
 
-		for element in result[index]:
-			print "{0} - {1}".format(element["frequent"], element["support"])
+	# for element in result[index]:
+	# 	print "{0} - {1}".format(element["frequent"], element["support"])
 	
-
-
-
-
-
-
-
-
-
-
-
-
+	testCase = "b->b->a"
+	# Find a sequence pattern
+	for element in result[index]:	 
+		isExist = True if element["frequent"].find(testCase) != -1 else False
+		if isExist:
+			print "{0} - {1}".format(element["frequent"], element["support"])
 
 
 
