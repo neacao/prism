@@ -1,13 +1,15 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 import sys, copy
-sys.path.insert(0, '/Users/nea/Desktop/Course/src/advance')
+sys.path.insert(0, 'advance')
+sys.path.insert(0, '../data')
 
 from util import *
 from constant import *
 from prism_compute import *
 from prism_encode_adv import *
 from prism_extension_adv import *
+import data_handler as Data
 
 def processExtension(result, lastFrequent,
  lastSeqBlocks, lastOffsets, lastPosBlocks, 
@@ -61,6 +63,7 @@ def processExtension(result, lastFrequent,
 
 
 if __name__ == "__main__":
+
 	(posOffsetsList, posBlocksList) = processEncodePrimalPosAdv(ITEMS, SEQUENCES)
 	seqBlocksList = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
