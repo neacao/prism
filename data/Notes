@@ -1,0 +1,16 @@
+
+1. Encode student's transcript for last 4 years end at 2017
+	a. Total semesters should be equal 8
+		I. Manually collect the row/column to get the records
+	b. Each itemset shall be a semester of each student
+	c. Each sequence shall be a whole semeters of each student
+	d. Put the filter to remove those student with score is less than 4
+	e. Write to encodedData.data
+
+2. Mining the data above
+	a. Max is 8 semester -> only 1 block for each sequence (currently using 8)
+	b. Visualize the data structure
+	c. Write the mining to didMiningData.json 
+
+3. Try to make some tests with the 2017's class opening plan
+

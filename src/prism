@@ -9,7 +9,10 @@ from prism_compute import *
 from prism_encode_adv import *
 from prism_extension_adv import *
 
-def processExtension(result, lastFrequent, lastSeqBlocks, lastOffsets, lastPosBlocks, seqBlocksList, posOffsetsList, posBlocksList, items, isSeqExt):
+def processExtension(result, lastFrequent,
+ lastSeqBlocks, lastOffsets, lastPosBlocks, 
+ seqBlocksList, posOffsetsList, posBlocksList, 
+ items, isSeqExt):
 	lengthOfItems = len(items)
 
 	for itemIndex in xrange(0, lengthOfItems):
@@ -80,7 +83,7 @@ if __name__ == "__main__":
 	# for element in result[index]:
 	# 	print "{0} - {1}".format(element["frequent"], element["support"])
 	
-	testCase = "b->b->a"
+	testCase = "ab"
 	# Find a sequence pattern
 	for element in result[index]:	 
 		isExist = True if element["frequent"].find(testCase) != -1 else False
