@@ -126,8 +126,9 @@ if __name__ == "__main__":
 	(itemsPosBlocks, itemsPosOffsets) = processEncodePrimalBlockAllSequences(ITEMS, SEQUENCES)
 	seqBlocks = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
-	for index in xrange(0, len(ITEMS)):
-		print ITEMS[index], seqBlocks[index]
+
+	# for index in xrange(0, len(ITEMS)):
+	# 	print ITEMS[index], seqBlocks[index]
 
 
 

@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import sys, copy
+sys.path.insert(0, "./")
 
 from prism_compute import *
-from prism_encode_advance import *
+import prism_encode_adv as Encoder
 
 '''
 	Brief: calculate posistion block each sequence
@@ -11,19 +12,19 @@ from prism_encode_advance import *
 '''
 def calculatePrimalsPosEachSeq(posOffset, posOffsetTarget, posBlocks, posBlocksTarget, isSeqExt = False):
 	# Get the primal pos block length
-	minNumberOfPosBlocks 		= min( posOffset["length"], posOffsetTarget["length"] )
-	posBlockIndex 					= posOffset["offset"]
-	posBlockIndexTarget 		= posOffsetTarget["offset"]
+	minNumberOfPosBlocks 		= min( posOffset["numberOfBlocksInSeq"], posOffsetTarget["numberOfBlocksInSeq"] )
+	posBlockIndex 					= posOffset["blockStartOffset"]
+	posBlockIndexTarget 		= posOffsetTarget["blockStartOffset"]
 
 	posBlocksExt = []
 
 	if isSeqExt == True:
-		maskValue = computeMaskValueOfPrimalValue( posBlocks[posBlockIndex - 1]["primalPos"] )
-		posBlocks[posBlockIndex - 1]["primalPos"] = maskValue
+		maskValue = computeMaskValueOfPrimalValue( posBlocks[posBlockIndex - 1]["primalValue"] )
+		posBlocks[posBlockIndex - 1]["primalValue"] = maskValue
 
 		for index in xrange(1, minNumberOfPosBlocks):
 			realIndex = primalPosIndex + posBlockIndex - 1
-			posBlocks[realIndex]["primalPos"] = maxRankValue()
+			posBlocks[realIndex]["primalValue"] = maxRankValue()
 
 
 	for blockIndex in xrange(0, minNumberOfPosBlocks):
@@ -33,19 +34,19 @@ def calculatePrimalsPosEachSeq(posOffset, posOffsetTarget, posBlocks, posBlocksT
 		posBlock 				= posBlocks[realIndex]
 		posBlockTarget 	= posBlocksTarget[realIndexTarget]
 
-		posBlockIndex 			= posBlock["blockIndex"]
-		posBlockIndexTarget	= posBlockTarget["blockIndex"]
+		posBlockIndex 			= posBlock["seqBlockIndex"]
+		posBlockIndexTarget	= posBlockTarget["seqBlockIndex"]
 
 		if posBlockIndex == posBlockIndexTarget:
-			posBlockVal 			= posBlock["primalPos"]
-			posBlockValTarget = posBlockTarget["primalPos"]
+			posBlockVal 			= posBlock["primalValue"]
+			posBlockValTarget = posBlockTarget["primalValue"]
 
 			posBlockJoin = computeGCDOfPrimalsValue( posBlockVal, posBlockValTarget )
 
 			if posBlockJoin > 1:
 				posBlocksExt.append({
-					"primalPos": posBlockJoin,
-					"blockIndex": blockIndex
+					"primalValue": posBlockJoin,
+					"blockStartOffset": blockIndex
 				})
 		# 	else:
 		# 		print "===> IGNORE GCD:", posBlock, posBlockTarget
@@ -78,20 +79,20 @@ def calculateExtensionAdv(key, targetKey,
 		if lazyPosOffsetIndex == len(posOffsets):
 			print "Checking:", posOffsets, posOffsetsTarget
 
-		encode 				= posOffsets[lazyPosOffsetIndex]["encode"]
-		encodeTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]["encode"]
+		encode 				= posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
+		encodeTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
 
 		# Move the pointer to the right
 		while seqBlockExt % encode != 0 and lazyPosOffsetIndex < posOffsetsLength - 1:
 			lazyPosOffsetIndex += 1
-			encode = posOffsets[lazyPosOffsetIndex]["encode"]
+			encode = posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
 
 		if lazyPosOffsetIndex == posOffsetsLength:
 			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
 
 		while seqBlockExt % encodeTarget != 0 and lazyPosOffsetIndexTarget < posOffsetsLengthTarget - 1:
 			lazyPosOffsetIndexTarget += 1
-			encodeTarget = posOffsetsTarget[lazyPosOffsetIndexTarget]["encode"]
+			encodeTarget = posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
 
 		if lazyPosOffsetIndexTarget == posOffsetsLengthTarget:
 			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
@@ -110,9 +111,9 @@ def calculateExtensionAdv(key, targetKey,
 			posBlocksExt += posBlocksJoin
 			
 			posOffsetsExt.append({
-				"offset": lastOffset,
-				"length": posBlocksJoinLength,
-				"encode": encode
+				"blockStartOffset": lastOffset,
+				"numberOfBlocksInSeq": posBlocksJoinLength,
+				"seqPrimeIndex": encode
 			})
 			lastOffset += posBlocksJoinLength
 		# Remove empty block in sequence from seqBlockExt
@@ -157,8 +158,8 @@ def processExtensionAdv(key, targetKey, seqBlocks, seqBlocksTarget, posOffsetsLi
 
 
 def test():
-	(posOffsetsList, posBlocksList) = processEncodePrimalPosAdv(ITEMS, SEQUENCES)
-	seqBlocksList = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
+	(posBlocksList, posOffsetsList) = Encoder.processEncodePrimalBlockAllSequences(ITEMS, SEQUENCES)
+	seqBlocksList = Encoder.processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
 	(seqBlockExt, posOffsetsExt, posBlocksExt) = processExtensionAdv(
 		"a", "b",
@@ -169,11 +170,8 @@ def test():
 	)
 
 	print "Result:", seqBlockExt
-	print posOffsetsExt
-	print posBlocksExt
-
-	return 1
-
+	return
+	
 
 if __name__ == "__main__":
 	test()
