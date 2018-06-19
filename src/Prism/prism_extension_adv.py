@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import sys, copy
-sys.path.insert(0, '/Users/nea/Desktop/Course/src/')
 
 from prism_compute import *
 from prism_encode_advance import *
@@ -154,7 +153,6 @@ def processExtensionAdv(key, targetKey, seqBlocks, seqBlocksTarget, posOffsetsLi
 		posBlocksExt += _posBlocksExt
 
 	return (seqBlocksExt, posOffsetsListExt, posBlocksExt)
-
 
 
 
