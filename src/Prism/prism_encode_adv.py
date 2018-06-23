@@ -28,7 +28,7 @@ def encodePrimalBlockInSequence(item, sequence):
 		if primeArrayIndex == primeArrayLenght or idx == itemsetLength - 1:
 			# Append if it appeard
 			if primalValue > 1:
-				result.append({ "seqBlockIndex": primalBlockIndex, "primalValue": primalValue })
+				result.append({ "blockInSeqIndex": primalBlockIndex, "primalValue": primalValue })
 
 			# Reset value
 			primalValue = 1
