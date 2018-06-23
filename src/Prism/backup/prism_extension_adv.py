@@ -3,7 +3,6 @@
 import sys, copy
 sys.path.insert(0, "./")
 
-from util import *
 from prism_compute import *
 import prism_encode_adv as Encoder
 
@@ -167,11 +166,11 @@ def test():
 	seqBlocksList = Encoder.processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
 	(seqBlockExt, posOffsetsExt, posBlocksExt) = extend(
-		"G", "D1",
-		seqBlocksList[1], seqBlocksList[0],
-		posOffsetsList[1], posOffsetsList[0],
-		posBlocksList[1], posBlocksList[0],
-		False
+		"a", "a",
+		seqBlocksList[0], seqBlocksList[0],
+		posOffsetsList[0], posOffsetsList[0],
+		posBlocksList[0], posBlocksList[0],
+		True
 	)
 
 	print "Result:", seqBlockExt

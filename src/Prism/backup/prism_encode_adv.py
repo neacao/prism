@@ -4,7 +4,6 @@ import sys
 
 from constant import *
 from prism_compute import *
-from util import *
 
 # Done
 def encodePrimalBlockInSequence(item, sequence):
@@ -22,8 +21,7 @@ def encodePrimalBlockInSequence(item, sequence):
 	# Loop on itemset list in a sequence
 	for idx in xrange(0, itemsetLength):
 		itemset = sequence[idx]
-		# primalValue *= primeArray[primeArrayIndex] if itemset.find(item) != -1 else 1
-		primalValue *= primeArray[primeArrayIndex] if string(itemset).findAdv(item) != -1 else 1
+		primalValue *= primeArray[primeArrayIndex] if itemset.find(item) != -1 else 1
 		primeArrayIndex += 1
 
 		# Enough for a block of itemsets in a sequence or last itemset in sequence
