@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.7
 
-import sys, copy
+import sys, copy, json
 sys.path.insert(0, 'Resource')
 sys.path.insert(0, 'Prism')
 sys.path.insert(0, '../data')
@@ -12,6 +12,7 @@ import data_handler as Data
 from constant import *
 from helper import *
 
+TRAIN_DATA_PATH = "./trained.data"
 
 def processExtension(result, lastFrequent,
  lastSeqBlocks, lastOffsets, lastPosBlocks, 
@@ -72,38 +73,66 @@ def processExtension(result, lastFrequent,
 	return
  
 
-if __name__ == "__main__":
+def save(result):
+	with open(TRAIN_DATA_PATH, "w") as fp:
+		json.dump(result, fp)
 
+
+def train():
 	(sequences, items) = Data.loadData()
 
 	(itemsPosBlocks, itemsPosOffsets) = Encoder.processEncodePrimalBlockAllSequences(items, sequences)
 	seqBlocks = Encoder.processEncodePrimalSeqAdv(items, sequences)
 
 	numberOfItems = len(items)
-	result = [[]] * numberOfItems
+	result = [] * numberOfItems
 
 	for index in xrange(0, numberOfItems):
-		processExtension(result[index], items[index], 
+		processExtension(result, items[index], 
 			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
 			seqBlocks, itemsPosOffsets, itemsPosBlocks,
 			items, True
 		)
 
-		processExtension(result[index], items[index], 
+		processExtension(result, items[index], 
 			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
 			seqBlocks, itemsPosOffsets, itemsPosBlocks,
 			items, False
 		)
-
-	# for element in result[index]:
-	# 	print "{0} - {1}".format(element["frequent"], element["support"])
 	
-	testCase = "H.G->Q"
-	for element in result[index]:	 
-		isExist = True if element["frequent"].find(testCase) != -1 else False
+	for element in result:
+		print "{0} - {1}".format(element["frequent"], element["support"])
+	
+	save(result)
+
+
+def loadDataTrained():
+	with open(TRAIN_DATA_PATH) as fp:
+		trainedData = json.load(fp)
+	return trainedData
+
+
+def predict(query):
+	trainedData = loadDataTrained()
+
+	for element in trainedData:
+		isExist = True if element["frequent"].find(query) != -1 else False
 		if isExist:
 			print "{0} - {1}".format(element["frequent"], element["support"])
 
+	return
+
+
+if __name__ == "__main__":
+	argv = sys.argv
+	func = argv[1]
+
+	if func == "train":
+		train()
+
+	elif func == "predict":
+		query = argv[2]
+		predict(query)
 
 
 
