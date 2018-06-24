@@ -8,11 +8,11 @@ sys.path.insert(0, '../data')
 import prism_compute as Computer
 import prism_encode_adv as Encoder
 import prism_extension_adv as Prism
-import data_handler as Data
+import dataHandler as Data
 from constant import *
 from helper import *
 
-TRAIN_DATA_PATH = "./trained.data"
+TRAIN_DATA_PATH = "Resource/trained.data"
 
 def processExtension(result, lastFrequent,
  lastSeqBlocks, lastOffsets, lastPosBlocks, 
@@ -42,6 +42,7 @@ def processExtension(result, lastFrequent,
 		)
 
 		supp = Computer.computeSupportOfPrimalValueArray(seqBlocksExt)
+		# print "seqBlockExt {0} has support {1}".format(seqBlocksExt, supp)
 
 		if supp >= MIN_SUPP:
 			if isSeqExt == True:
@@ -94,11 +95,11 @@ def train():
 			items, True
 		)
 
-		processExtension(result, items[index], 
-			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
-			seqBlocks, itemsPosOffsets, itemsPosBlocks,
-			items, False
-		)
+		# processExtension(result, items[index], 
+		# 	seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
+		# 	seqBlocks, itemsPosOffsets, itemsPosBlocks,
+		# 	items, False
+		# )
 	
 	for element in result:
 		print "{0} - {1}".format(element["frequent"], element["support"])

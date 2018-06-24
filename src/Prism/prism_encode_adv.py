@@ -44,30 +44,29 @@ def encodePrimalBlockInSequence(item, sequence):
 
 # Done
 def encodePrimalBlockAllSequences(item, sequences):
+	primeArray = G_ARRAY_ADVANCE
+	primeArrayLength = len(primeArray)
+
 	posBlocks = []
-	posOffsets = [[]] # Using 2D (array of array) to cache the offset based on block of sequence
-	posOffsets[0] = []
+	posOffsets = [[]] * primeArrayLength # Using 2D (array of array) to cache the offset based on block of sequence
+	posOffsetsIndex = 0
 	lastPosOffet = 1
 	numberOfSeq = len(sequences)
 
-	primeArray = G_ARRAY_ADVANCE
-
 	for seqIndex in xrange(0, numberOfSeq):
+		posOffsetsIndex = (seqIndex + 1) % primeArrayLength
 		seq = sequences[seqIndex]
 		posBlock = encodePrimalBlockInSequence(item, seq) # [ { blockIndex: , primalPos: }, ...]
 		posBlockLength = len(posBlock)
 
 		if posBlockLength > 0: # Sequence content the thing
 			posBlocks += posBlock
-			posOffsets[-1].append({
+			posOffsets[posOffsetsIndex].append({
 				"blockStartOffset": lastPosOffet,
 				"numberOfBlocksInSeq": posBlockLength,
-				"seqPrimeIndex": primeArray[seqIndex] # Caching the prime value for extend process purpose later
+				"seqPrimeIndex": primeArray[seqIndex % primeArrayLength] # Caching the prime value for extend process purpose later
 			})
 			lastPosOffet += posBlockLength
-
-		if seqIndex != 0 and seqIndex == numberOfSeq - 1: # New block of sequence
-			posOffsets += []
 		
 	return (posBlocks, posOffsets)
 
@@ -131,9 +130,5 @@ if __name__ == "__main__":
 
 	# for index in xrange(0, len(ITEMS)):
 	# 	print ITEMS[index], seqBlocks[index]
-
-
-
-
 
 

@@ -33,11 +33,9 @@ def computeSupportOfPrimalValue(value):
 
 def computeSupportOfPrimalValueArray(array):
 	result = 0
-	if not array:
-		return result
-		
 	for element in array:
-		result += computeSupportOfPrimalValue(element)
+		if element > 0:
+			result += computeSupportOfPrimalValue(element)
 	return result
 
 
