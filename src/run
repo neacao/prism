@@ -10,7 +10,7 @@ import prism_encode_adv as Encoder
 import prism_extension_adv as Prism
 import data_handler as Data
 from constant import *
-from util import *
+from helper import *
 
 
 def processExtension(result, lastFrequent,
@@ -75,12 +75,6 @@ def processExtension(result, lastFrequent,
 if __name__ == "__main__":
 
 	(sequences, items) = Data.loadData()
-	# for seq in sequences:
-	# 	# print type(seq[0])
-	# 	print seq[0]
-	# print "=" * 50
-	# print items
-	# exit(0)
 
 	(itemsPosBlocks, itemsPosOffsets) = Encoder.processEncodePrimalBlockAllSequences(items, sequences)
 	seqBlocks = Encoder.processEncodePrimalSeqAdv(items, sequences)

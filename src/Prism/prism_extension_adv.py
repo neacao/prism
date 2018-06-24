@@ -3,9 +3,9 @@
 import sys, copy
 sys.path.insert(0, "./")
 
-from util import *
-from prism_compute import *
 import prism_encode_adv as Encoder
+from helper import *
+from prism_compute import *
 
 '''
 	- Brief: calculate posistion block each sequence

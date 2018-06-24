@@ -4,7 +4,7 @@ import sys
 
 from constant import *
 from prism_compute import *
-from util import *
+from helper import *
 
 # Done
 def encodePrimalBlockInSequence(item, sequence):
