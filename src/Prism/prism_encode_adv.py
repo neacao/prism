@@ -99,7 +99,7 @@ def encodePrimalSequence(item, sequences):
 
 	for index in xrange(0, numberOfSeq):
 		seq = sequences[index]
-		filterArray = filter(lambda itemset: itemset.find(item) != -1, seq)
+		filterArray = filter(lambda itemset: string(itemset).findAdv(item) != -1, seq)
 		primeValue *= 1 if not filterArray else primeArray[primeArrayIndex] # if not empty
 		
 		primeArrayIndex += 1
