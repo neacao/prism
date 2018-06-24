@@ -1,6 +1,6 @@
 
 
-MIN_SUPP 	= 2
+
 
 # ITEMS 		= ["a", "b", "c"]
 ITEMS = ['D1', 'G', 'G2', 'U', 'E', 'Q', 'H']
@@ -23,12 +23,9 @@ SEQUENCES = [
 ]
 
 NO_LOGS = True
-
+MIN_SUPP 	= 2
 G_ARRAY_ADVANCE = [2, 3, 5, 7, 11, 13, 17, 19]
-
 G_LENGTH_ADVANCE = len(G_ARRAY_ADVANCE)
-
-
 
 
 

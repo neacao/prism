@@ -33,6 +33,9 @@ def computeSupportOfPrimalValue(value):
 
 def computeSupportOfPrimalValueArray(array):
 	result = 0
+	if not array:
+		return result
+		
 	for element in array:
 		result += computeSupportOfPrimalValue(element)
 	return result
@@ -61,7 +64,7 @@ def computeRankOfPrimalValue(value):
 		return _index
 
 	except ValueError:
-		print "Not found Rank of this:", value
+		print "==> Not found Rank of this:", value
 		return 0
 
 

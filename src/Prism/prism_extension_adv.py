@@ -67,7 +67,9 @@ def computeSingleBlockOfSequence(key, targetKey,
 	posOffsets, posOffsetsTarget, 
 	posBlocks, posBlocksTarget, 
 	lastOffset, isSeqExt = False):
+
 	seqBlockExt 	= computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
+
 	posOffsetsExt = []
 	posBlocksExt	= []
 

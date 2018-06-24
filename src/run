@@ -5,11 +5,11 @@ sys.path.insert(0, 'Resource')
 sys.path.insert(0, 'Prism')
 sys.path.insert(0, '../data')
 
-from constant import *
 import prism_compute as Computer
 import prism_encode_adv as Encoder
 import prism_extension_adv as Prism
 import data_handler as Data
+from constant import *
 from util import *
 
 
@@ -17,6 +17,7 @@ def processExtension(result, lastFrequent,
  lastSeqBlocks, lastOffsets, lastPosBlocks, 
  seqBlocksList, posOffsetsList, posBlocksList, 
  items, isSeqExt):
+	
 	lengthOfItems = len(items)
 
 	for itemIndex in xrange(0, lengthOfItems):
@@ -29,6 +30,8 @@ def processExtension(result, lastFrequent,
 		if isSeqExt == False and string(lastFrequent).findAdv(curItem) != -1:
 			continue
 
+		# print "Last frequent {0} extendSeq {1} with currentItem {2}".format(lastFrequent, isSeqExt, curItem)
+
 		(seqBlocksExt, posOffsetsExt, posBlocksExt) = Prism.extend(
 			lastFrequent, curItem,
 			lastSeqBlocks, seqBlockTarget,
@@ -38,8 +41,6 @@ def processExtension(result, lastFrequent,
 		)
 
 		supp = Computer.computeSupportOfPrimalValueArray(seqBlocksExt)
-
-		# print " => Last frequence: {0} support {1}".format(lastFrequent, supp)
 
 		if supp >= MIN_SUPP:
 			if isSeqExt == True:
@@ -69,33 +70,41 @@ def processExtension(result, lastFrequent,
 			lastFrequent = lastFrequent[:-numerOfCharsRemove]
 
 	return
-
+ 
 
 if __name__ == "__main__":
-	(itemsPosBlocks, itemsPosOffsets) = Encoder.processEncodePrimalBlockAllSequences(ITEMS, SEQUENCES)
-	seqBlocks = Encoder.processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
-	numberOfItems = len(ITEMS)
+	(sequences, items) = Data.loadData()
+	# for seq in sequences:
+	# 	# print type(seq[0])
+	# 	print seq[0]
+	# print "=" * 50
+	# print items
+	# exit(0)
+
+	(itemsPosBlocks, itemsPosOffsets) = Encoder.processEncodePrimalBlockAllSequences(items, sequences)
+	seqBlocks = Encoder.processEncodePrimalSeqAdv(items, sequences)
+
+	numberOfItems = len(items)
 	result = [[]] * numberOfItems
 
 	for index in xrange(0, numberOfItems):
-		processExtension(result[index], ITEMS[index], 
+		processExtension(result[index], items[index], 
 			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
 			seqBlocks, itemsPosOffsets, itemsPosBlocks,
-			ITEMS, True
+			items, True
 		)
 
-		processExtension(result[index], ITEMS[index], 
+		processExtension(result[index], items[index], 
 			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
 			seqBlocks, itemsPosOffsets, itemsPosBlocks,
-			ITEMS, False
+			items, False
 		)
 
 	# for element in result[index]:
 	# 	print "{0} - {1}".format(element["frequent"], element["support"])
 	
 	testCase = "H.G->Q"
-	# Find a sequence pattern
 	for element in result[index]:	 
 		isExist = True if element["frequent"].find(testCase) != -1 else False
 		if isExist:
