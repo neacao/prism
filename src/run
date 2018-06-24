@@ -13,6 +13,7 @@ from constant import *
 from helper import *
 
 TRAIN_DATA_PATH = "Resource/trained.data"
+HACK = 0
 
 def processExtension(result, lastFrequent,
  lastSeqBlocks, lastOffsets, lastPosBlocks, 
@@ -20,6 +21,8 @@ def processExtension(result, lastFrequent,
  items, isSeqExt):
 	
 	lengthOfItems = len(items)
+	global HACK
+	HACK += 1
 
 	for itemIndex in xrange(0, lengthOfItems):
 		curItem 							= items[itemIndex]
@@ -27,11 +30,15 @@ def processExtension(result, lastFrequent,
 		posOffsetsListTarget 	= posOffsetsList[itemIndex]
 		posBlocksTarget 			= posBlocksList[itemIndex]
 
+		# if HACK == 100:
+		# 	exit(0)
+
 		# Avoid duplicate labeling if extend itemset
 		if isSeqExt == False and string(lastFrequent).findAdv(curItem) != -1:
+			# print "Ignore {0} from {1}".format(curItem, lastFrequent)
 			continue
 
-		# print "Last frequent {0} extendSeq {1} with currentItem {2}".format(lastFrequent, isSeqExt, curItem)
+		print "Last frequent {0} extendSeq {1} with currentItem {2}".format(lastFrequent, isSeqExt, curItem)
 
 		(seqBlocksExt, posOffsetsExt, posBlocksExt) = Prism.extend(
 			lastFrequent, curItem,
@@ -42,7 +49,7 @@ def processExtension(result, lastFrequent,
 		)
 
 		supp = Computer.computeSupportOfPrimalValueArray(seqBlocksExt)
-		# print "seqBlockExt {0} has support {1}".format(seqBlocksExt, supp)
+		print "seqBlockExt {0} has support {1}".format(seqBlocksExt, supp)
 
 		if supp >= MIN_SUPP:
 			if isSeqExt == True:
@@ -95,11 +102,11 @@ def train():
 			items, True
 		)
 
-		# processExtension(result, items[index], 
-		# 	seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
-		# 	seqBlocks, itemsPosOffsets, itemsPosBlocks,
-		# 	items, False
-		# )
+		processExtension(result, items[index], 
+			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
+			seqBlocks, itemsPosOffsets, itemsPosBlocks,
+			items, False
+		)
 	
 	for element in result:
 		print "{0} - {1}".format(element["frequent"], element["support"])

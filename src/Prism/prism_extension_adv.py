@@ -57,7 +57,6 @@ def computePosBlocksInSequence(posOffset, posOffsetTarget, posBlocks, posBlocksT
 		# 		print "===> IGNORE GCD:", posBlock, posBlockTarget
 		# else:
 		# 	print "===> IGNORE BLOCK INDEX:", posBlock, posBlockTarget
-
 	return posBlocksExt
 
 
@@ -69,6 +68,11 @@ def computeSingleBlockOfSequence(key, targetKey,
 	lastOffset, isSeqExt = False):
 
 	seqBlockExt 	= computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
+	if seqBlockExt == 1:
+		return 1, [], [], lastOffset
+
+	print "key {0} target {1} - checking seqJoin {2}".format(key, targetKey, seqBlockExt)
+	print "seqBlock: {0} - targetBlock: {1}".format(seqBlock, seqBlockTarget) 
 
 	posOffsetsExt = []
 	posBlocksExt	= []
@@ -130,7 +134,11 @@ def computeSingleBlockOfSequence(key, targetKey,
 		lazyPosOffsetIndex 				+= 1
 		lazyPosOffsetIndexTarget 	+= 1
 
-	return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
+	# Avoid empty join block
+	if not posBlocksExt:
+		return (1, [], [], lastOffset)
+	else:
+		return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
 
 
 # Calcualate seq extension of all sequence blocks

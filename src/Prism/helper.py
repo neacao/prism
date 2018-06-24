@@ -18,12 +18,13 @@ class string(str):
 
 		# Recaculate position to make sure the words is matching
 		realWord = self[idx]
-		_idx = idx
+		_idx = idx + 1
 		lengOfSelf = len(self)
 
-		while realWord[-1] != "." and _idx < lengOfSelf - 1:
-			_idx += 1
-			realWord += self[_idx]
+		for index in xrange(_idx, lengOfSelf):
+			curChar = self[index]
+			if curChar == "." or curChar == "-":
+				break
+			realWord += curChar
 
-		realWord = realWord[:-1] if realWord[-1] == "." else realWord
 		return idx if realWord == word else -1

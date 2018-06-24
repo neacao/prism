@@ -47,14 +47,14 @@ def encodePrimalBlockAllSequences(item, sequences):
 	primeArray = G_ARRAY_ADVANCE
 	primeArrayLength = len(primeArray)
 
+	numberOfSeq = len(sequences)
 	posBlocks = []
-	posOffsets = [[]] * primeArrayLength # Using 2D (array of array) to cache the offset based on block of sequence
+	posOffsets = [[]] * ((numberOfSeq + 1) / primeArrayLength) # Using 2D (array of array) to cache the offset based on block of sequence
 	posOffsetsIndex = 0
 	lastPosOffet = 1
-	numberOfSeq = len(sequences)
 
 	for seqIndex in xrange(0, numberOfSeq):
-		posOffsetsIndex = (seqIndex + 1) % primeArrayLength
+		posOffsetsIndex = seqIndex / primeArrayLength
 		seq = sequences[seqIndex]
 		posBlock = encodePrimalBlockInSequence(item, seq) # [ { blockIndex: , primalPos: }, ...]
 		posBlockLength = len(posBlock)
