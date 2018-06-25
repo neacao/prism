@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 
@@ -20,7 +20,7 @@ def encodePrimalBlockInSequence(item, sequence):
 	itemsetLength = len(sequence)
 
 	# Loop on itemset list in a sequence
-	for idx in xrange(0, itemsetLength):
+	for idx in range(0, itemsetLength):
 		itemset = sequence[idx]
 		# primalValue *= primeArray[primeArrayIndex] if itemset.find(item) != -1 else 1
 		primalValue *= primeArray[primeArrayIndex] if string(itemset).findAdv(item) != -1 else 1
@@ -37,8 +37,8 @@ def encodePrimalBlockInSequence(item, sequence):
 			primalBlockIndex += 1
 			primeArrayIndex = 0
 
-	if NO_LOGS == False:
-		print "[Position Primal Encoded]:", result
+	# if NO_LOGS == False:
+		#print "[Position Primal Encoded]:", result
 	return result
 
 
@@ -49,12 +49,16 @@ def encodePrimalBlockAllSequences(item, sequences):
 
 	numberOfSeq = len(sequences)
 	posBlocks = []
-	posOffsets = [[]] * ((numberOfSeq + 1) / primeArrayLength) # Using 2D (array of array) to cache the offset based on block of sequence
+	posOffsets = [[]] * (int)((numberOfSeq + primeArrayLength - 1) / primeArrayLength) # Using 2D (array of array) to cache the offset based on block of sequence
 	posOffsetsIndex = 0
 	lastPosOffet = 1
 
-	for seqIndex in xrange(0, numberOfSeq):
-		posOffsetsIndex = seqIndex / primeArrayLength
+	# #print "Leng init {0} for total seq {1}".format(len(posOffsets), numberOfSeq)
+
+	for seqIndex in range(0, numberOfSeq):
+		posOffsetsIndex = (int)(seqIndex / primeArrayLength)
+		# #print "Cur pos offset index: ", posOffsetsIndex
+
 		seq = sequences[seqIndex]
 		posBlock = encodePrimalBlockInSequence(item, seq) # [ { blockIndex: , primalPos: }, ...]
 		posBlockLength = len(posBlock)
@@ -96,7 +100,7 @@ def encodePrimalSequence(item, sequences):
 
 	numberOfSeq = len(sequences)
 
-	for index in xrange(0, numberOfSeq):
+	for index in range(0, numberOfSeq):
 		seq = sequences[index]
 		filterArray = filter(lambda itemset: string(itemset).findAdv(item) != -1, seq)
 		primeValue *= 1 if not filterArray else primeArray[primeArrayIndex] # if not empty
@@ -128,7 +132,7 @@ if __name__ == "__main__":
 	seqBlocks = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
 
 
-	# for index in xrange(0, len(ITEMS)):
-	# 	print ITEMS[index], seqBlocks[index]
+	# for index in range(0, len(ITEMS)):
+	# 	#print ITEMS[index], seqBlocks[index]
 
 

@@ -27,12 +27,12 @@ def computePosBlocksInSequence(posOffset, posOffsetTarget, posBlocks, posBlocksT
 		maskValue = computeMaskValueOfPrimalValue( posBlocks[posBlockIndex - 1]["primalValue"] )
 		posBlocks[posBlockIndex - 1]["primalValue"] = maskValue
 
-		for index in xrange(1, minNumberOfPosBlocks):
+		for index in range(1, minNumberOfPosBlocks):
 			realIndex = index + posBlockIndex - 1
 			posBlocks[realIndex]["primalValue"] = maxRankValue()
 
 
-	for blockIndex in xrange(0, minNumberOfPosBlocks):
+	for blockIndex in range(0, minNumberOfPosBlocks):
 		realIndex 			= blockIndex + posBlockIndex - 1
 		realIndexTarget = blockIndex + posBlockIndexTarget - 1
 
@@ -54,9 +54,9 @@ def computePosBlocksInSequence(posOffset, posOffsetTarget, posBlocks, posBlocksT
 					"blockInSeqIndex": blockIndex
 				})
 		# 	else:
-		# 		print "===> IGNORE GCD:", posBlock, posBlockTarget
+		# 		#print "===> IGNORE GCD:", posBlock, posBlockTarget
 		# else:
-		# 	print "===> IGNORE BLOCK INDEX:", posBlock, posBlockTarget
+		# 	#print "===> IGNORE BLOCK INDEX:", posBlock, posBlockTarget
 	return posBlocksExt
 
 
@@ -71,8 +71,8 @@ def computeSingleBlockOfSequence(key, targetKey,
 	if seqBlockExt == 1:
 		return 1, [], [], lastOffset
 
-	print "key {0} target {1} - checking seqJoin {2}".format(key, targetKey, seqBlockExt)
-	print "seqBlock: {0} - targetBlock: {1}".format(seqBlock, seqBlockTarget) 
+	# #print "key {0} target {1} - checking seqJoin {2}".format(key, targetKey, seqBlockExt)
+	# #print "seqBlock: {0} - targetBlock: {1}".format(seqBlock, seqBlockTarget) 
 
 	posOffsetsExt = []
 	posBlocksExt	= []
@@ -88,7 +88,7 @@ def computeSingleBlockOfSequence(key, targetKey,
 	while lazyPosOffsetIndex < posOffsetsLength and lazyPosOffsetIndexTarget < posOffsetsLengthTarget:
 
 		if lazyPosOffsetIndex == len(posOffsets):
-			print "Checking:", posOffsets, posOffsetsTarget
+			print("Checking:" + posOffsets + " " + posOffsetsTarget)
 
 		encode 				= posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
 		encodeTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
@@ -151,7 +151,7 @@ def extend(key, targetKey, seqBlocks, seqBlocksTarget, posOffsetsList, posOffset
 	lastOffset = 1
 
 	# Loop on sequence block
-	for seqIndex in xrange(0, numberOfSeqBlocks):
+	for seqIndex in range(0, numberOfSeqBlocks):
 		posOffsets 				= posOffsetsList[seqIndex]
 		posOffsetsTarget 	= posOffsetsListTarget[seqIndex]
 
@@ -184,9 +184,9 @@ def test():
 		False
 	)
 
-	print "Result:", seqBlockExt
-	print posBlocksExt
-	print posOffsetsExt
+	#print "Result:", seqBlockExt
+	#print posBlocksExt
+	#print posOffsetsExt
 	return
 	
 

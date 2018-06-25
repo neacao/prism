@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 import sys, copy, json
 sys.path.insert(0, 'Resource')
@@ -16,7 +16,7 @@ TRAIN_DATA_PATH = "Resource/trained.data"
 HACK = 0
 
 def processExtension(result, lastFrequent,
- lastSeqBlocks, lastOffsets, lastPosBlocks, 
+ lastSeqBlocks, lastOffsets, lastPosBlocks, lastItemIndex,
  seqBlocksList, posOffsetsList, posBlocksList, 
  items, isSeqExt):
 	
@@ -24,7 +24,7 @@ def processExtension(result, lastFrequent,
 	global HACK
 	HACK += 1
 
-	for itemIndex in xrange(0, lengthOfItems):
+	for itemIndex in range(lastItemIndex, lengthOfItems):
 		curItem 							= items[itemIndex]
 		seqBlockTarget 				= seqBlocksList[itemIndex]
 		posOffsetsListTarget 	= posOffsetsList[itemIndex]
@@ -34,11 +34,11 @@ def processExtension(result, lastFrequent,
 		# 	exit(0)
 
 		# Avoid duplicate labeling if extend itemset
-		if isSeqExt == False and string(lastFrequent).findAdv(curItem) != -1:
-			# print "Ignore {0} from {1}".format(curItem, lastFrequent)
-			continue
+		# if isSeqExt == False and string(lastFrequent).findAdv(curItem) != -1:
+		# 	#print "Ignore {0} from {1}".format(curItem, lastFrequent)
+		# 	continue
 
-		print "Last frequent {0} extendSeq {1} with currentItem {2}".format(lastFrequent, isSeqExt, curItem)
+		# #print "Last frequent {0} extendSeq {1} with currentItem {2}".format(lastFrequent, isSeqExt, curItem)
 
 		(seqBlocksExt, posOffsetsExt, posBlocksExt) = Prism.extend(
 			lastFrequent, curItem,
@@ -49,7 +49,7 @@ def processExtension(result, lastFrequent,
 		)
 
 		supp = Computer.computeSupportOfPrimalValueArray(seqBlocksExt)
-		print "seqBlockExt {0} has support {1}".format(seqBlocksExt, supp)
+		# #print "seqBlockExt {0} has support {1}".format(seqBlocksExt, supp)
 
 		if supp >= MIN_SUPP:
 			if isSeqExt == True:
@@ -62,8 +62,8 @@ def processExtension(result, lastFrequent,
 			_lastPosOffsets = copy.deepcopy(posOffsetsExt)
 			_lastPosBlocks 	= copy.deepcopy(posBlocksExt)
 
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, seqBlocksList, posOffsetsList, posBlocksList, items, True)
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, seqBlocksList, posOffsetsList, posBlocksList, items, False)
+			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 0, seqBlocksList, posOffsetsList, posBlocksList, items, True)
+			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, itemIndex + 1, seqBlocksList, posOffsetsList, posBlocksList, items, False)
 
 			result.append({
 				"frequent": lastFrequent,
@@ -89,27 +89,38 @@ def save(result):
 def train():
 	(sequences, items) = Data.loadData()
 
+	# Sorted to make sure item will not overlap each other when process item extension
+	items = sorted(items)
+	sequences = [sortAdv(seq) for seq in sequences]
+
+	print(items)
+
+	for seq in sequences:
+		print(seq)
+
+	# exit(0)
+
 	(itemsPosBlocks, itemsPosOffsets) = Encoder.processEncodePrimalBlockAllSequences(items, sequences)
 	seqBlocks = Encoder.processEncodePrimalSeqAdv(items, sequences)
 
 	numberOfItems = len(items)
 	result = [] * numberOfItems
 
-	for index in xrange(0, numberOfItems):
+	for index in range(0, numberOfItems):
 		processExtension(result, items[index], 
-			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
+			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 0,
 			seqBlocks, itemsPosOffsets, itemsPosBlocks,
 			items, True
 		)
 
 		processExtension(result, items[index], 
-			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
+			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], index + 1,
 			seqBlocks, itemsPosOffsets, itemsPosBlocks,
 			items, False
 		)
 	
 	for element in result:
-		print "{0} - {1}".format(element["frequent"], element["support"])
+		print("{0} - {1}".format(element["frequent"], element["support"]))
 	
 	save(result)
 
@@ -126,7 +137,7 @@ def predict(query):
 	for element in trainedData:
 		isExist = True if element["frequent"].find(query) != -1 else False
 		if isExist:
-			print "{0} - {1}".format(element["frequent"], element["support"])
+			print("{0} - {1}".format(element["frequent"], element["support"]))
 
 	return
 

@@ -1,9 +1,10 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 class string(str):
 	
 	def sample(self):
-		print self, "hello"
+		#print self, "hello"
+		return 
 
 
 	def findAll(self, word):
@@ -21,10 +22,35 @@ class string(str):
 		_idx = idx + 1
 		lengOfSelf = len(self)
 
-		for index in xrange(_idx, lengOfSelf):
+		for index in range(_idx, lengOfSelf):
 			curChar = self[index]
 			if curChar == "." or curChar == "-":
 				break
 			realWord += curChar
 
 		return idx if realWord == word else -1
+
+
+def sortAdv(sequence):
+	# List = [ 'A', 'D.C', ...] - C must appear before D
+	numberOfItemsets = len(sequence)
+	ret = [None] * numberOfItemsets
+
+	for index in range(0, numberOfItemsets):
+		itemset 					= sequence[index]
+		componenets 			= itemset.split(".")
+		componenetsSorted = list(sorted(componenets))
+		strJoined 				= ".".join(componenetsSorted)
+		ret[index] 				= strJoined
+
+	return ret
+
+
+def test():
+	#print sortAdv(['A', 'B', 'R1.V1', 'L.E.M.C', 'F.R', 'Y.I1.I', 'J.T.Q', 'G.Z.X'])
+	return
+
+if __name__ == "__main__":
+	test()
+
+	

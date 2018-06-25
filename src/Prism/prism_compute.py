@@ -62,12 +62,12 @@ def computeRankOfPrimalValue(value):
 		return _index
 
 	except ValueError:
-		print "==> Not found Rank of this:", value
+		print("==> Not found Rank of this: {0}".format(value))
 		return 0
 
 
 def findNumberDivisible(currentNumber, target):
-  for number in xrange(currentNumber, currentNumber + target):
+  for number in range(currentNumber, currentNumber + target):
       if number % target == 0:
         return number if number >= G_LENGTH_ADVANCE else G_LENGTH_ADVANCE
   return 0
@@ -76,7 +76,7 @@ def findNumberDivisible(currentNumber, target):
 
 def inverseMultiplyBitEncodingAdv(number):
     ret = [0] * G_LENGTH_ADVANCE
-    for index in xrange(0, G_LENGTH_ADVANCE):
+    for index in range(0, G_LENGTH_ADVANCE):
     	ret[index] = 1 if number % G_ARRAY_ADVANCE[index] == 0 else 0
     return ret
 
@@ -85,11 +85,11 @@ def maxRankValue():
 	return RANK_VALUE[-1]
 
 def test():
-	# print computeBitValueOfPrimalValue(30) # Must equal 224
-	# print computePrimalValueOfBitValue(224) # Must equal 30
-	# print computeGCDOfPrimalsValue(30, 6) # Must equal 6
-	# print computeSupportOfPrimalValue(30) # Must equal 3 
-	print computeMaskValueOfPrimalValue(30) # Must equal 4849845
+	# #print computeBitValueOfPrimalValue(30) # Must equal 224
+	# #print computePrimalValueOfBitValue(224) # Must equal 30
+	# #print computeGCDOfPrimalsValue(30, 6) # Must equal 6
+	# #print computeSupportOfPrimalValue(30) # Must equal 3 
+	# #print computeMaskValueOfPrimalValue(30) # Must equal 4849845
 	return 1
 
 if __name__ == "__main__":
