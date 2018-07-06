@@ -30,7 +30,7 @@ def processExtension(result, lastFrequent,
 		posOffsetsListTarget 	= posOffsetsList[itemIndex]
 		posBlocksTarget 			= posBlocksList[itemIndex]
 
-		# if HACK == 100:
+		# if HACK == 20:
 		# 	exit(0)
 
 		# Avoid duplicate labeling if extend itemset
@@ -49,9 +49,11 @@ def processExtension(result, lastFrequent,
 		)
 
 		supp = Computer.computeSupportOfPrimalValueArray(seqBlocksExt)
-		# #print "seqBlockExt {0} has support {1}".format(seqBlocksExt, supp)
+		# print("Process {2} {3} , got seqBlocksExt{0} , support: {1}".format(seqBlocksExt, supp, lastFrequent, curItem))
 
 		if supp >= MIN_SUPP:
+			# print("key {0} targetKey {1} isSeqExt {2}".format(lastFrequent, curItem, isSeqExt))
+			# print("seqBlockExt {0} has support {1}".format(seqBlocksExt, supp))
 			if isSeqExt == True:
 				lastFrequent += "->{0}".format(curItem)
 			else:
@@ -62,8 +64,13 @@ def processExtension(result, lastFrequent,
 			_lastPosOffsets = copy.deepcopy(posOffsetsExt)
 			_lastPosBlocks 	= copy.deepcopy(posBlocksExt)
 
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 0, seqBlocksList, posOffsetsList, posBlocksList, items, True)
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, itemIndex + 1, seqBlocksList, posOffsetsList, posBlocksList, items, False)
+			# Sequence extension
+			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 0, 
+				seqBlocksList, posOffsetsList, posBlocksList, items, True)
+
+			# Itemset extension
+			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, itemIndex + 1, 
+				seqBlocksList, posOffsetsList, posBlocksList, items, False) 
 
 			result.append({
 				"frequent": lastFrequent,
@@ -92,13 +99,6 @@ def train():
 	# Sorted to make sure item will not overlap each other when process item extension
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
-
-	print(items)
-
-	for seq in sequences:
-		print(seq)
-
-	# exit(0)
 
 	(itemsPosBlocks, itemsPosOffsets) = Encoder.processEncodePrimalBlockAllSequences(items, sequences)
 	seqBlocks = Encoder.processEncodePrimalSeqAdv(items, sequences)
@@ -142,8 +142,16 @@ def predict(query):
 	return
 
 
+def usage():
+	print("./run train | predict ...")
+
+
 if __name__ == "__main__":
 	argv = sys.argv
+	if len(argv) < 2:
+		usage()
+		exit(0)
+		
 	func = argv[1]
 
 	if func == "train":
@@ -153,6 +161,8 @@ if __name__ == "__main__":
 		query = argv[2]
 		predict(query)
 
+	else:
+		usage()
 
 
 

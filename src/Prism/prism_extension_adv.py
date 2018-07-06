@@ -15,7 +15,9 @@ from prism_compute import *
 		[ { "blockInSeqIndex": ,"primalValue" }, ... ]
 	- Return: a list of pos block joining
 '''
-def computePosBlocksInSequence(posOffset, posOffsetTarget, posBlocks, posBlocksTarget, isSeqExt = False):
+def computePosBlocksInSequence(key, targetKey,
+	posOffset, posOffsetTarget, posBlocks, posBlocksTarget, isSeqExt = False):
+
 	# Get the primal pos block length
 	minNumberOfPosBlocks 		= min( posOffset["numberOfBlocksInSeq"], posOffsetTarget["numberOfBlocksInSeq"] )
 	posBlockIndex 					= posOffset["blockStartOffset"]
@@ -26,6 +28,9 @@ def computePosBlocksInSequence(posOffset, posOffsetTarget, posBlocks, posBlocksT
 	if isSeqExt == True:
 		maskValue = computeMaskValueOfPrimalValue( posBlocks[posBlockIndex - 1]["primalValue"] )
 		posBlocks[posBlockIndex - 1]["primalValue"] = maskValue
+
+		# if key == "D1" and targetKey == "G": 
+		# 	print(posBlocks[posBlockIndex - 1]["primalValue"])
 
 		for index in range(1, minNumberOfPosBlocks):
 			realIndex = index + posBlockIndex - 1
@@ -65,9 +70,11 @@ def computeSingleBlockOfSequence(key, targetKey,
 	seqBlock, seqBlockTarget, 
 	posOffsets, posOffsetsTarget, 
 	posBlocks, posBlocksTarget, 
-	lastOffset, isSeqExt = False):
+	lastOffset, isSeqExt):
 
 	seqBlockExt 	= computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
+	# print("Primal value of two seqBlock: {0} {1}".format(seqBlock, seqBlockTarget))
+	
 	if seqBlockExt == 1:
 		return 1, [], [], lastOffset
 
@@ -114,7 +121,7 @@ def computeSingleBlockOfSequence(key, targetKey,
 		# Make a copy to avoid data be reassigned in calculate... function
 		_posBlocks = copy.deepcopy(posBlocks)
 
-		posBlocksJoin 			= computePosBlocksInSequence(posOffset, posOffsetTarget, _posBlocks, posBlocksTarget, isSeqExt)
+		posBlocksJoin 			= computePosBlocksInSequence(key, targetKey, posOffset, posOffsetTarget, _posBlocks, posBlocksTarget, isSeqExt)
 		posBlocksJoinLength = len(posBlocksJoin)
 
 		# No empty block
@@ -141,8 +148,13 @@ def computeSingleBlockOfSequence(key, targetKey,
 		return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
 
 
-# Calcualate seq extension of all sequence blocks
-def extend(key, targetKey, seqBlocks, seqBlocksTarget, posOffsetsList, posOffsetsListTarget, posBlocks, posBlocksTarget, isSeqExt):
+'''
+		Calculate seq extension of all sequence blocks
+'''
+def extend(key, targetKey, seqBlocks, seqBlocksTarget,
+ posOffsetsList, posOffsetsListTarget, posBlocks, posBlocksTarget, 
+ isSeqExt):
+
 	seqBlocksExt = []
 	posOffsetsListExt = [[]] * len(seqBlocks)
 	posBlocksExt = []

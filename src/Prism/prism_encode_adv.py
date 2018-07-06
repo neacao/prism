@@ -22,7 +22,7 @@ def encodePrimalBlockInSequence(item, sequence):
 	# Loop on itemset list in a sequence
 	for idx in range(0, itemsetLength):
 		itemset = sequence[idx]
-		# primalValue *= primeArray[primeArrayIndex] if itemset.find(item) != -1 else 1
+
 		primalValue *= primeArray[primeArrayIndex] if string(itemset).findAdv(item) != -1 else 1
 		primeArrayIndex += 1
 
@@ -49,7 +49,8 @@ def encodePrimalBlockAllSequences(item, sequences):
 
 	numberOfSeq = len(sequences)
 	posBlocks = []
-	posOffsets = [[]] * (int)((numberOfSeq + primeArrayLength - 1) / primeArrayLength) # Using 2D (array of array) to cache the offset based on block of sequence
+	# Using 2D (array of array) to cache the offset based on block of sequence
+	posOffsets = [[]] * (int)((numberOfSeq + primeArrayLength - 1) / primeArrayLength) 
 	posOffsetsIndex = 0
 	lastPosOffet = 1
 
@@ -65,10 +66,13 @@ def encodePrimalBlockAllSequences(item, sequences):
 
 		if posBlockLength > 0: # Sequence content the thing
 			posBlocks += posBlock
+			# Caching the prime value for extend process purpose later
+			seqPrimeIndex = primeArray[seqIndex % primeArrayLength]
+
 			posOffsets[posOffsetsIndex].append({
 				"blockStartOffset": lastPosOffet,
 				"numberOfBlocksInSeq": posBlockLength,
-				"seqPrimeIndex": primeArray[seqIndex % primeArrayLength] # Caching the prime value for extend process purpose later
+				"seqPrimeIndex": seqPrimeIndex 
 			})
 			lastPosOffet += posBlockLength
 		
@@ -102,9 +106,10 @@ def encodePrimalSequence(item, sequences):
 
 	for index in range(0, numberOfSeq):
 		seq = sequences[index]
-		filterArray = filter(lambda itemset: string(itemset).findAdv(item) != -1, seq)
-		primeValue *= 1 if not filterArray else primeArray[primeArrayIndex] # if not empty
-		
+
+		# Is exist in this sequence
+		filterArray = list(filter(lambda itemset: string(itemset).findAdv(item) != -1, seq))
+		primeValue *= 1 if not filterArray else primeArray[primeArrayIndex]
 		primeArrayIndex += 1
 
 		# Enough for a block of sequences or last sequence
