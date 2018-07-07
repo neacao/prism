@@ -12,7 +12,8 @@ import dataHandler as Data
 from constant import *
 from helper import *
 
-TRAIN_DATA_PATH = "Resource/trained.data"
+# TRAIN_DATA_PATH = "Resource/trained.data"
+TRAIN_DATA_PATH = "Resource/trainedAdv.data"
 HACK = 0
 
 def processExtension(result, lastFrequent,
@@ -40,6 +41,8 @@ def processExtension(result, lastFrequent,
 		)
 
 		supp = Computer.computeSupportOfPrimalValueArray(seqBlocksExt)
+		print("==== seqBlockExt: {0}".format(seqBlocksExt))
+		
 		if supp >= MIN_SUPP:
 			if isSeqExt == True:
 				lastFrequent += "->{0}".format(curItem)

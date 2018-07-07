@@ -51,9 +51,10 @@ def computePosBlocksInSequence(key, targetKey,
 
 			posBlockJoin = computeGCDOfPrimalsValue( posBlockVal, posBlockValTarget )
 
-			if DEBUG:
-				print("GCD of {0} {1} is {2} in blockIndex {3} {4} at index {5} {6}".format(posBlockVal, posBlockValTarget,
-				 posBlockJoin, posBlockIndex, posBlockIndexTarget, realIndex, realIndexTarget))
+			# if DEBUG:
+			# print("GCD of {0} {1} is {2} in blockIndex {3} {4} at index {5} {6}".format(posBlockVal, posBlockValTarget,
+			#  posBlockJoin, posBlockIndex, posBlockIndexTarget, realIndex, realIndexTarget))
+			print("-- blockJoin: {0} & {1} = {2}".format(posBlockVal, posBlockValTarget, posBlockJoin))
 
 			if posBlockJoin > 1:
 				posBlocksExt.append({
@@ -75,9 +76,9 @@ def computeSingleBlockOfSequence(key, targetKey,
 	lastOffset, isSeqExt, DEBUG=False):
 
 	seqBlockExt 	= computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
-	if DEBUG:
-		print("== seqBlock: {0} & {1} = {2}".format(seqBlock, seqBlockTarget, seqBlockExt))
-		print("=== posBlocks {0}\n=== posBlocksTarget {1}".format(posBlocks, posBlocksTarget))
+	# if DEBUG:
+	print("== seqBlock: {0} & {1} = {2}".format(seqBlock, seqBlockTarget, seqBlockExt))
+	# print("=== posBlocks {0}\n=== posBlocksTarget {1}".format(posBlocks, posBlocksTarget))
 		
 	
 	if seqBlockExt == 1:
@@ -105,7 +106,7 @@ def computeSingleBlockOfSequence(key, targetKey,
 		encode 				= posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
 		encodeTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
 
-		# Move the pointer to the right
+		# Move the pointer to the right if not correct primal block
 		while seqBlockExt % encode != 0 and lazyPosOffsetIndex < posOffsetsLength - 1:
 			lazyPosOffsetIndex += 1
 			encode = posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
@@ -113,6 +114,7 @@ def computeSingleBlockOfSequence(key, targetKey,
 		if lazyPosOffsetIndex == posOffsetsLength:
 			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
 
+		# Move the pointer to the right if not correct primal block
 		while seqBlockExt % encodeTarget != 0 and lazyPosOffsetIndexTarget < posOffsetsLengthTarget - 1:
 			lazyPosOffsetIndexTarget += 1
 			encodeTarget = posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
@@ -126,10 +128,10 @@ def computeSingleBlockOfSequence(key, targetKey,
 		# Make a copy to avoid data be reassigned in calculate... function
 		_posBlocks = copy.deepcopy(posBlocks)
 
-		posBlocksJoin 			= computePosBlocksInSequence(key, targetKey,
-		 posOffset, posOffsetTarget, _posBlocks, posBlocksTarget,
-		 isSeqExt, DEBUG)
-
+		posBlocksJoin = computePosBlocksInSequence(
+			key, targetKey, 
+			posOffset, posOffsetTarget, _posBlocks, posBlocksTarget, 
+			isSeqExt, DEBUG)
 		posBlocksJoinLength = len(posBlocksJoin)
 
 		if DEBUG:
@@ -147,7 +149,7 @@ def computeSingleBlockOfSequence(key, targetKey,
 			lastOffset += posBlocksJoinLength
 
 		# Remove empty block in sequence if joined before
-		elif (encode == encodeTarget):
+		elif (encode == encodeTarget and seqBlockExt % encode == 0):
 			seqBlockExt /= encode
 
 		lazyPosOffsetIndex 				+= 1
