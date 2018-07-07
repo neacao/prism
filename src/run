@@ -14,6 +14,7 @@ from helper import *
 
 # TRAIN_DATA_PATH = "Resource/trained.data"
 TRAIN_DATA_PATH = "Resource/trainedAdv.data"
+SEQ_SORTED_DATA_PATH = "Resource/seqSorted.data"
 HACK = 0
 
 def processExtension(result, lastFrequent,
@@ -82,6 +83,10 @@ def save(result):
 	with open(TRAIN_DATA_PATH, "w") as fp:
 		json.dump(result, fp)
 
+def saveSeqSorted(seqs):
+	with open(SEQ_SORTED_DATA_PATH, "w") as fp:
+		for seq in seqs:
+			fp.write("{0}\n".format(string(seq)))
 
 def train():
 	(sequences, items) = Data.loadData()
@@ -89,6 +94,7 @@ def train():
 	# Sorted to make sure item will not overlap each other when process item extension
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
+	saveSeqSorted(sequences)
 
 	length = len(sequences)
 	for index in range(0, length):
