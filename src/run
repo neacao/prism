@@ -21,8 +21,6 @@ def processExtension(result, lastFrequent,
  items, isSeqExt):
 	
 	lengthOfItems = len(items)
-	global HACK
-	HACK += 1
 
 	for itemIndex in range(lastItemIndex, lengthOfItems):
 		curItem 							= items[itemIndex]
@@ -30,16 +28,9 @@ def processExtension(result, lastFrequent,
 		posOffsetsListTarget 	= posOffsetsList[itemIndex]
 		posBlocksTarget 			= posBlocksList[itemIndex]
 
-		# if HACK == 20:
-		# 	exit(0)
-
-		# Avoid duplicate labeling if extend itemset
-		# if isSeqExt == False and string(lastFrequent).findAdv(curItem) != -1:
-		# 	#print "Ignore {0} from {1}".format(curItem, lastFrequent)
-		# 	continue
-
-		# #print "Last frequent {0} extendSeq {1} with currentItem {2}".format(lastFrequent, isSeqExt, curItem)
-
+		# print("Extend: lastFrequent {0} curItem {1} isSeqExt {2}".format(lastFrequent, curItem, isSeqExt))
+		# print("== Checking block: {0} {1}".format(lastSeqBlocks, seqBlocksList[itemIndex]))
+		
 		(seqBlocksExt, posOffsetsExt, posBlocksExt) = Prism.extend(
 			lastFrequent, curItem,
 			lastSeqBlocks, seqBlockTarget,
@@ -49,11 +40,7 @@ def processExtension(result, lastFrequent,
 		)
 
 		supp = Computer.computeSupportOfPrimalValueArray(seqBlocksExt)
-		# print("Process {2} {3} , got seqBlocksExt{0} , support: {1}".format(seqBlocksExt, supp, lastFrequent, curItem))
-
 		if supp >= MIN_SUPP:
-			# print("key {0} targetKey {1} isSeqExt {2}".format(lastFrequent, curItem, isSeqExt))
-			# print("seqBlockExt {0} has support {1}".format(seqBlocksExt, supp))
 			if isSeqExt == True:
 				lastFrequent += "->{0}".format(curItem)
 			else:
@@ -99,6 +86,10 @@ def train():
 	# Sorted to make sure item will not overlap each other when process item extension
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
+
+	length = len(sequences)
+	for index in range(0, length):
+		print("{0} {1}".format(index, sequences[index]))
 
 	(itemsPosBlocks, itemsPosOffsets) = Encoder.processEncodePrimalBlockAllSequences(items, sequences)
 	seqBlocks = Encoder.processEncodePrimalSeqAdv(items, sequences)

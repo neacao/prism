@@ -16,7 +16,8 @@ from prism_compute import *
 	- Return: a list of pos block joining
 '''
 def computePosBlocksInSequence(key, targetKey,
-	posOffset, posOffsetTarget, posBlocks, posBlocksTarget, isSeqExt = False):
+ posOffset, posOffsetTarget, posBlocks, posBlocksTarget, 
+ isSeqExt = False, DEBUG=False):
 
 	# Get the primal pos block length
 	minNumberOfPosBlocks 		= min( posOffset["numberOfBlocksInSeq"], posOffsetTarget["numberOfBlocksInSeq"] )
@@ -28,9 +29,6 @@ def computePosBlocksInSequence(key, targetKey,
 	if isSeqExt == True:
 		maskValue = computeMaskValueOfPrimalValue( posBlocks[posBlockIndex - 1]["primalValue"] )
 		posBlocks[posBlockIndex - 1]["primalValue"] = maskValue
-
-		# if key == "D1" and targetKey == "G": 
-		# 	print(posBlocks[posBlockIndex - 1]["primalValue"])
 
 		for index in range(1, minNumberOfPosBlocks):
 			realIndex = index + posBlockIndex - 1
@@ -53,6 +51,10 @@ def computePosBlocksInSequence(key, targetKey,
 
 			posBlockJoin = computeGCDOfPrimalsValue( posBlockVal, posBlockValTarget )
 
+			if DEBUG:
+				print("GCD of {0} {1} is {2} in blockIndex {3} {4} at index {5} {6}".format(posBlockVal, posBlockValTarget,
+				 posBlockJoin, posBlockIndex, posBlockIndexTarget, realIndex, realIndexTarget))
+
 			if posBlockJoin > 1:
 				posBlocksExt.append({
 					"primalValue": posBlockJoin,
@@ -70,10 +72,13 @@ def computeSingleBlockOfSequence(key, targetKey,
 	seqBlock, seqBlockTarget, 
 	posOffsets, posOffsetsTarget, 
 	posBlocks, posBlocksTarget, 
-	lastOffset, isSeqExt):
+	lastOffset, isSeqExt, DEBUG=False):
 
 	seqBlockExt 	= computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
-	# print("Primal value of two seqBlock: {0} {1}".format(seqBlock, seqBlockTarget))
+	if DEBUG:
+		print("== seqBlock: {0} & {1} = {2}".format(seqBlock, seqBlockTarget, seqBlockExt))
+		print("=== posBlocks {0}\n=== posBlocksTarget {1}".format(posBlocks, posBlocksTarget))
+		
 	
 	if seqBlockExt == 1:
 		return 1, [], [], lastOffset
@@ -121,8 +126,14 @@ def computeSingleBlockOfSequence(key, targetKey,
 		# Make a copy to avoid data be reassigned in calculate... function
 		_posBlocks = copy.deepcopy(posBlocks)
 
-		posBlocksJoin 			= computePosBlocksInSequence(key, targetKey, posOffset, posOffsetTarget, _posBlocks, posBlocksTarget, isSeqExt)
+		posBlocksJoin 			= computePosBlocksInSequence(key, targetKey,
+		 posOffset, posOffsetTarget, _posBlocks, posBlocksTarget,
+		 isSeqExt, DEBUG)
+
 		posBlocksJoinLength = len(posBlocksJoin)
+
+		if DEBUG:
+			print("posBlocksJoin: {0}".format(posBlocksJoin))
 
 		# No empty block
 		if posBlocksJoinLength > 0:
@@ -134,8 +145,9 @@ def computeSingleBlockOfSequence(key, targetKey,
 				"seqPrimeIndex": encode
 			})
 			lastOffset += posBlocksJoinLength
-		# Remove empty block in sequence from seqBlockExt
-		else:
+
+		# Remove empty block in sequence if joined before
+		elif (encode == encodeTarget):
 			seqBlockExt /= encode
 
 		lazyPosOffsetIndex 				+= 1
@@ -153,7 +165,7 @@ def computeSingleBlockOfSequence(key, targetKey,
 '''
 def extend(key, targetKey, seqBlocks, seqBlocksTarget,
  posOffsetsList, posOffsetsListTarget, posBlocks, posBlocksTarget, 
- isSeqExt):
+ isSeqExt, DEBUG=False):
 
 	seqBlocksExt = []
 	posOffsetsListExt = [[]] * len(seqBlocks)
@@ -172,8 +184,11 @@ def extend(key, targetKey, seqBlocks, seqBlocksTarget,
 			seqBlocks[seqIndex]	, seqBlocksTarget[seqIndex],
 			posOffsetsList[seqIndex], posOffsetsListTarget[seqIndex],
 			posBlocks, posBlocksTarget, lastOffset,
-			isSeqExt
+			isSeqExt, DEBUG
 		)
+
+		if DEBUG:
+			print("== SeqExt: {0}".format(seqBlockExt))
 
 		_lastOffset = lastOffset
 		seqBlocksExt.append(seqBlockExt)

@@ -49,6 +49,7 @@ def encodePrimalBlockAllSequences(item, sequences):
 
 	numberOfSeq = len(sequences)
 	posBlocks = []
+
 	# Using 2D (array of array) to cache the offset based on block of sequence
 	posOffsets = [[]] * (int)((numberOfSeq + primeArrayLength - 1) / primeArrayLength) 
 	posOffsetsIndex = 0
@@ -58,9 +59,8 @@ def encodePrimalBlockAllSequences(item, sequences):
 
 	for seqIndex in range(0, numberOfSeq):
 		posOffsetsIndex = (int)(seqIndex / primeArrayLength)
-		# #print "Cur pos offset index: ", posOffsetsIndex
-
 		seq = sequences[seqIndex]
+		
 		posBlock = encodePrimalBlockInSequence(item, seq) # [ { blockIndex: , primalPos: }, ...]
 		posBlockLength = len(posBlock)
 
@@ -132,10 +132,15 @@ def processEncodePrimalSeqAdv(items, sequences):
 	return seqBlocks
 
 
-if __name__ == "__main__":
-	(itemsPosBlocks, itemsPosOffsets) = processEncodePrimalBlockAllSequences(ITEMS, SEQUENCES)
-	seqBlocks = processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
+def test():
+	arr = ['A.O', 'B.C.D.E.O1', 'F.G.H', 'I.J.K.M.N', 'O.P1.T', 'K1.L.P.Q.R.S.U', 'V.W.X.Y', 'B1.C1.D1.E1.G1.J1']
+	ret = encodePrimalBlockInSequence('G', arr)
+	print(ret)	
 
+
+if __name__ == "__main__":
+
+	test()
 
 	# for index in range(0, len(ITEMS)):
 	# 	#print ITEMS[index], seqBlocks[index]
