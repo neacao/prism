@@ -37,6 +37,7 @@ def cacheLabel():
 	
 	
 def loadLabel():
+	
 	if not os.path.exists(LABEL_MAPPING_PATH):
 		print("The File {0} it's not created ".format(LABEL_MAPPING_PATH))
 		with open(LABEL_MAPPING_PATH, "w+") as fp:

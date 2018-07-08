@@ -37,10 +37,9 @@ def decodeLabel(labelEncoded):
 	return _array
 
 
-
 def help():
 	print("./dataHandler")
-	print("\t... flat_record")
+	print("\t... flat_record [ IT ]")
 	print("\t... encode [ IT ]")
 	print("\t... load_data [ IT ]")
 	print("( Leave your configurations in env_[dev|prod].py)")
@@ -49,24 +48,31 @@ def help():
 
 if __name__ == "__main__":
 	args = sys.argv
-	if len(args) < 2:
+	if len(args) < 3:
 		help()
 		exit(0)
 
 	func = args[1]
+	major = args[2].lower()
 	
 	if func == "help":
 		help()
 
 	elif func == "flat_record":
-		Encoder.flatRecord(COURSE_GRADE_PATH, IT_START_ROW, IT_END_ROW, FLAT_RECORD_DICT_PATH)
+		rows = COURSE_ROWS[major]
+		startRow = rows["start"]
+		endRow = rows["end"]
+
+		Encoder.flatRecord(COURSE_GRADE_PATH, startRow, endRow, FLAT_RECORD_DICT_PATH)
 
 	elif func == "encode":
-		major = args[2] # FIXME: Need safer
-		Encoder.encode(major)
+		rows = COURSE_ROWS[major]
+		startRow = rows["start"]
+		endRow = rows["end"]
+
+		Encoder.encode(startRow, endRow)
 
 	elif func == "load_data":
-		major = args[2] # FIXME: Need safer
 		(record, label) = loadData(major)
 
 	else:

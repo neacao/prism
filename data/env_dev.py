@@ -40,3 +40,22 @@ IS_END_ROW = ""
 
 SE_START_ROW = ""
 SE_END_ROW = ""
+
+COURSE_ROWS = {
+	"it": {
+		"start": IT_START_ROW,
+		"end": IT_END_ROW
+	},
+	"cs": {
+		"start": "",
+		"end": ""
+	},
+	"is": {
+		"start": "",
+		"end": ""
+	},
+	"se": {
+		"start": "",
+		"end": ""
+	}
+}

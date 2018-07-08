@@ -9,6 +9,7 @@ import utils as Util
 from env_dev import *
 
 def flatRecord(fileName, fromCell, toCell, replaceDictPath):
+	
 	if not os.path.exists(FLAT_RECORD_DICT_PATH):
 		print("[ERROR] Leave your flat diction at {0}".format(FLAT_RECORD_DICT_PATH))
 		exit(0)
@@ -82,32 +83,9 @@ def encodeRecord(fileName, fromCell, toCell, minGrade):
 	return (sequences, studentIDs)
 
 
-def encode(major):
-	
-	startRow 	= ""
-	endRow 		= ""
+def encode(startRow, endRow):
 
-	if major == "IT":
-		startRow = IT_START_ROW
-		encodeRow = IT_END_ROW
-
-	elif major == "CS":
-		print("Not implement to encode CS yet")
-		return
-
-	elif major == "SE":
-		print("Not implement to encode SE yet")
-		return 
-
-	elif major == "IS":
-		print("Not implement to encode IS yet")
-		return
-
-	else:
-		print("ERROR: What is this: {0}".format(major))
-		return # Quick return
-
-	(sequences, studentIDs) = encodeRecord(COURSE_GRADE_PATH, startRow, encodeRow, 4)
+	(sequences, studentIDs) = encodeRecord(COURSE_GRADE_PATH, startRow, endRow, 4)
 
 	seqLength = len(sequences)
 	with open(RECORD_ENCODED_PATH, "w") as fp: # JULY 8TH TESTING
