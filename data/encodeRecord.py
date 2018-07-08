@@ -107,10 +107,9 @@ def encode(major):
 	(sequences, studentIDs) = encodeRecord("Resource/courseGrade.xlsx", startRow, encodeRow, 4)
 
 	seqLength = len(sequences)
-	with open("Resource/encodedRecord3.data", "w") as fp:
+	with open("Resource/encodedRecord3.data", "w") as fp: # JULY 8TH TESTING
 		for index in range(0, seqLength):
 			fp.write("{0}\n".format(sequences[index]))
-			# #print "{0:2} {1}".format(studentIDs[index], sequences[index])
 
 
 if __name__ == "__main__":
