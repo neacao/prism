@@ -63,14 +63,14 @@ if __name__ == "__main__":
 		startRow = rows["start"]
 		endRow = rows["end"]
 
-		Encoder.flatRecord(COURSE_GRADE_PATH, startRow, endRow, FLAT_RECORD_DICT_PATH)
+		Encoder.flatRecord(COURSE_GRADE_PATH, FLAT_RECORD_DICT_PATH, startRow, endRow)
 
 	elif func == "encode":
 		rows = COURSE_ROWS[major]
 		startRow = rows["start"]
 		endRow = rows["end"]
 
-		Encoder.encode(startRow, endRow)
+		Encoder.encode(COURSE_GRADE_PATH, RECORD_ENCODED_PATH, startRow, endRow)
 
 	elif func == "load_data":
 		(record, label) = loadData(major)

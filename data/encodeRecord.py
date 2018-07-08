@@ -6,15 +6,14 @@
 
 import sys, openpyxl, json, os
 import utils as Util
-from env_dev import *
 
-def flatRecord(fileName, fromCell, toCell, replaceDictPath):
+def flatRecord(fileName, replaceDictPath, fromCell, toCell):
 	
-	if not os.path.exists(FLAT_RECORD_DICT_PATH):
-		print("[ERROR] Leave your flat diction at {0}".format(FLAT_RECORD_DICT_PATH))
+	if not os.path.exists(replaceDictPath):
+		print("[ERROR] Leave your flat diction at {0}".format(replaceDictPath))
 		exit(0)
 
-	with open(FLAT_RECORD_DICT_PATH, "r") as fp:
+	with open(replaceDictPath, "r") as fp:
 		replaceDict = json.load(fp)
 
 	recordData = openpyxl.load_workbook(fileName)
@@ -83,12 +82,12 @@ def encodeRecord(fileName, fromCell, toCell, minGrade):
 	return (sequences, studentIDs)
 
 
-def encode(startRow, endRow):
+def encode(resourcePath, encodedPath, startRow, endRow):
 
-	(sequences, studentIDs) = encodeRecord(COURSE_GRADE_PATH, startRow, endRow, 4)
+	(sequences, studentIDs) = encodeRecord(resourcePath, startRow, endRow, 4)
 
 	seqLength = len(sequences)
-	with open(RECORD_ENCODED_PATH, "w") as fp: # JULY 8TH TESTING
+	with open(encodedPath, "w") as fp: # JULY 8TH TESTING
 		for index in range(0, seqLength):
 			fp.write("{0}\n".format(sequences[index]))
 
