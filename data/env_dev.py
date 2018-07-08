@@ -34,3 +34,5 @@ IS_END_ROW = ""
 
 SE_START_ROW = ""
 SE_END_ROW = ""
+
+DIRECTLY_DEBUG = True

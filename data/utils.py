@@ -42,7 +42,7 @@ def loadLabel():
 		print("The file {0} has been Created ...".format(LABEL_MAPPING_PATH))
 
 	result = {}
-	with open(LABEL_MAPPING_PATH, "r+") as fp:
+	with open(LABEL_MAPPING_PATH, "r") as fp:
 		result = json.load(fp)
 
 	return result

@@ -53,7 +53,7 @@ def encodeRecord(fileName, fromCell, toCell, minGrade):
 		courseName = row[5].value
 		courseGrade = row[6].value
 
-		if courseGrade == "NULL": # Special case: user has no course's grade
+		if courseGrade == "NULL" or courseGrade == None: # Special case: user has no course's grade
 			continue
 
 		if courseGrade < minGrade:
@@ -88,6 +88,10 @@ def encode(major):
 		startRow = IT_START_ROW
 		encodeRow = IT_END_ROW
 
+		if DIRECTLY_DEBUG:
+			startRow = "A1"
+			encodeRow = "G23"
+
 	elif major == "CS":
 		print("Not implement to encode CS yet")
 		return
@@ -104,10 +108,10 @@ def encode(major):
 		print("ERROR: What is this: {0}".format(major))
 		return # Quick return
 
-	(sequences, studentIDs) = encodeRecord("Resource/courseGrade.xlsx", startRow, encodeRow, 4)
+	(sequences, studentIDs) = encodeRecord(COURSE_GRADE_PATH, startRow, encodeRow, 4)
 
 	seqLength = len(sequences)
-	with open("Resource/encodedRecord3.data", "w") as fp: # JULY 8TH TESTING
+	with open(RECORD_ENCODED_PATH, "w") as fp: # JULY 8TH TESTING
 		for index in range(0, seqLength):
 			fp.write("{0}\n".format(sequences[index]))
 
