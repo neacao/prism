@@ -55,6 +55,9 @@ if __name__ == "__main__":
 	func = args[1]
 	major = args[2].lower()
 	
+	DATA_PATH = "."
+	RESOURCE_PATH = "Resource/"
+	
 	if func == "help":
 		help()
 

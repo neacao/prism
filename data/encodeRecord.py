@@ -28,7 +28,7 @@ def flatRecord(fileName, replaceDictPath, fromCell, toCell):
 	recordData.save(fileName)
 	return
 
-def encodeRecord(fileName, fromCell, toCell, minGrade):
+def encodeRecord(fileName, fromCell, toCell, minGrade, exceptedYear=None, approvedYear=None):
 	recordData 	= openpyxl.load_workbook(fileName)
 	sheet 			= recordData.active
 	cells 			= sheet[fromCell: toCell]
@@ -82,9 +82,9 @@ def encodeRecord(fileName, fromCell, toCell, minGrade):
 	return (sequences, studentIDs)
 
 
-def encode(resourcePath, encodedPath, startRow, endRow):
+def encode(resourcePath, encodedPath, startRow, endRow, exceptedYear=None, approvedYear=None):
 
-	(sequences, studentIDs) = encodeRecord(resourcePath, startRow, endRow, 4)
+	(sequences, studentIDs) = encodeRecord(resourcePath, startRow, endRow, 4, exceptedYear, approvedYear)
 
 	seqLength = len(sequences)
 	with open(encodedPath, "w") as fp: # JULY 8TH TESTING

@@ -7,13 +7,16 @@
 
 '''
 
-DIRECTLY_DEBUG = True
+DIRECTLY_DEBUG = False
 
-DATA_PATH = "."
+DATA_PATH = "../data"
 
-RESOURCE_PATH = "Resource/"
+RESOURCE_PATH = "../data/Resource/"
 
-COURSE_GRADE_PATH = RESOURCE_PATH + "courseGradeSample.xlsx"
+if DIRECTLY_DEBUG:
+	COURSE_GRADE_PATH = RESOURCE_PATH + "courseGradeSample.xlsx"
+else:
+	COURSE_GRADE_PATH = RESOURCE_PATH + "courseGrade.xlsx"
 
 RECORD_ENCODED_PATH = RESOURCE_PATH + "encodedRecordSample.data"
 
@@ -26,7 +29,7 @@ FLAT_RECORD_DICT_PATH = RESOURCE_PATH + "flatRecordDictSample.json"
 
 # Row indexs
 IT_START_ROW = "A61393" # 2014
-IT_END_ROW = "G72926" #2017 - Should be 2016 and use 2017 to test
+IT_END_ROW = "G72926" #2017
 
 if DIRECTLY_DEBUG:
 	IT_START_ROW = "A1"

@@ -56,12 +56,12 @@ def processExtension(result, lastFrequent,
 			_lastPosBlocks 	= copy.deepcopy(posBlocksExt)
 
 			# Sequence extension
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 0, 
-				seqBlocksList, posOffsetsList, posBlocksList, items, True)
+			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks,
+			 0, seqBlocksList, posOffsetsList, posBlocksList, items, True)
 
 			# Itemset extension
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, itemIndex + 1, 
-				seqBlocksList, posOffsetsList, posBlocksList, items, False) 
+			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks,
+			 itemIndex + 1, seqBlocksList, posOffsetsList, posBlocksList, items, False) 
 
 			result.append({
 				"frequent": lastFrequent,
@@ -83,14 +83,15 @@ def save(result):
 	with open(TRAIN_DATA_PATH, "w") as fp:
 		json.dump(result, fp)
 
+
 def saveSeqSorted(seqs):
 	with open(SEQ_SORTED_DATA_PATH, "w") as fp:
 		for seq in seqs:
 			fp.write("{0}\n".format(string(seq)))
 
-def train():
-	(sequences, items) = Data.loadData()
 
+def train():
+	(sequences, items) = Data.loadData("IT")
 	# Sorted to make sure item will not overlap each other when process item extension
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
