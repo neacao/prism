@@ -7,6 +7,8 @@
 
 '''
 
+DIRECTLY_DEBUG = True
+
 DATA_PATH = "."
 
 RESOURCE_PATH = "Resource/"
@@ -26,6 +28,10 @@ FLAT_RECORD_DICT_PATH = RESOURCE_PATH + "flatRecordDictSample.json"
 IT_START_ROW = "A61393" # 2014
 IT_END_ROW = "G72926" #2017 - Should be 2016 and use 2017 to test
 
+if DIRECTLY_DEBUG:
+	IT_START_ROW = "A1"
+	IT_END_ROW = "G23"
+
 CS_START_ROW = ""
 CS_END_ROW = ""
 
@@ -34,5 +40,3 @@ IS_END_ROW = ""
 
 SE_START_ROW = ""
 SE_END_ROW = ""
-
-DIRECTLY_DEBUG = True

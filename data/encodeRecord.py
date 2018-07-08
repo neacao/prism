@@ -4,13 +4,16 @@
 #http://www.pythonforbeginners.com/basics/getting-user-input-from-the-keyboard
 #http://zetcode.com/articles/openpyxl/
 
-import sys, openpyxl, json
+import sys, openpyxl, json, os
 import utils as Util
 from env_dev import *
 
 def flatRecord(fileName, fromCell, toCell, replaceDictPath):
+	if not os.path.exists(FLAT_RECORD_DICT_PATH):
+		print("[ERROR] Leave your flat diction at {0}".format(FLAT_RECORD_DICT_PATH))
+		exit(0)
 
-	with open(FLAT_RECORD_DICT_PATH) as fp:
+	with open(FLAT_RECORD_DICT_PATH, "r") as fp:
 		replaceDict = json.load(fp)
 
 	recordData = openpyxl.load_workbook(fileName)
@@ -87,10 +90,6 @@ def encode(major):
 	if major == "IT":
 		startRow = IT_START_ROW
 		encodeRow = IT_END_ROW
-
-		if DIRECTLY_DEBUG:
-			startRow = "A1"
-			encodeRow = "G23"
 
 	elif major == "CS":
 		print("Not implement to encode CS yet")

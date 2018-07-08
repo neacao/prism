@@ -9,11 +9,11 @@ from env_dev import *
 def loadData(major):
 	print("-> loadData for major {0}".format(major))
 
-	with open(RESOURCE_PATH + "encodedRecordSample.data", "r") as fp:
+	with open(RECORD_ENCODED_PATH, "r") as fp:
 		record = [value.strip() for value in fp.readlines()]
 		recordList = decodeRecord(record)
 
-	with open(RESOURCE_PATH + "encodedLabelSample.data", "r") as fp:
+	with open(LABEL_ENCODED_PATH, "r") as fp:
 		label = fp.read()
 		labelList = decodeLabel(label)
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
 		help()
 
 	elif func == "flat_record":
-		Encoder.flatRecord(COURSE_GRADE_PATH, "A1", "G23", FLAT_RECORD_DICT_PATH)
+		Encoder.flatRecord(COURSE_GRADE_PATH, IT_START_ROW, IT_END_ROW, FLAT_RECORD_DICT_PATH)
 
 	elif func == "encode":
 		major = args[2] # FIXME: Need safer

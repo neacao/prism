@@ -13,12 +13,14 @@ def getLabel(courseName):
 	# Return if exist in dictionary
 	if courseName in LABEL:
 		ret = LABEL[courseName]
+
 	# Cache new labeling, will be saved by cacheLabel()
 	else:
 		value = CHARACTER[CHARACTER_INDEX]
 		CHARACTER_INDEX += 1
 		LABEL[courseName] = value
 		ret = value
+		
 	return ret
 
 
