@@ -7,18 +7,19 @@
 
 '''
 
-DIRECTLY_DEBUG = False
+DIRECTLY_DEBUG = True
 
 DATA_PATH = "../data"
 
 RESOURCE_PATH = "../data/Resource/"
 
-if DIRECTLY_DEBUG:
-	COURSE_GRADE_PATH = RESOURCE_PATH + "courseGradeSample.xlsx"
-else:
-	COURSE_GRADE_PATH = RESOURCE_PATH + "courseGrade.xlsx"
+COURSE_GRADE_PATH = RESOURCE_PATH + "courseGrade.xlsx"
 
 RECORD_ENCODED_PATH = RESOURCE_PATH + "encodedRecordSample.data"
+
+RECORD_ENCODED_PATH_2017 = RESOURCE_PATH + "encodedRecordSample2017.data"
+
+RECORD_ENCODED_PATH_FULL = RESOURCE_PATH + "encodedRecord.data"
 
 LABEL_ENCODED_PATH = RESOURCE_PATH + "encodedLabelSample.data"
 
@@ -30,10 +31,6 @@ FLAT_RECORD_DICT_PATH = RESOURCE_PATH + "flatRecordDictSample.json"
 # Row indexs
 IT_START_ROW = "A61393" # 2014
 IT_END_ROW = "G72926" #2017
-
-if DIRECTLY_DEBUG:
-	IT_START_ROW = "A1"
-	IT_END_ROW = "G23"
 
 CS_START_ROW = ""
 CS_END_ROW = ""

@@ -5,7 +5,6 @@ import encodeRecord as Encoder
 import utils as Util
 from env_dev import *
 
-
 def loadData(major):
 	print("-> loadData for major {0}".format(major))
 
@@ -55,9 +54,10 @@ if __name__ == "__main__":
 	func = args[1]
 	major = args[2].lower()
 	
-	DATA_PATH = "."
-	RESOURCE_PATH = "Resource/"
-	
+	# DATA_PATH = "."
+	# RESOURCE_PATH = "Resource/"
+	# COURSE_GRADE_PATH = RESOURCE_PATH + "courseGradeSample.xlsx"
+
 	if func == "help":
 		help()
 
@@ -71,9 +71,19 @@ if __name__ == "__main__":
 	elif func == "encode":
 		rows = COURSE_ROWS[major]
 		startRow = rows["start"]
-		endRow = rows["end"]
+		endRow = rows["end"]	
 
-		Encoder.encode(COURSE_GRADE_PATH, RECORD_ENCODED_PATH, startRow, endRow)
+		if len(args) == 4:
+			option = args[3]
+
+			if option == "ignore_only": # Ignore 2017 to get data will train
+				Encoder.encode(COURSE_GRADE_PATH, RECORD_ENCODED_PATH, startRow, endRow, 4.0, 2017, None) # Ignore 2017
+
+			elif option == "filter_only": # Filter 2017 only to get data to test
+				Encoder.encode(COURSE_GRADE_PATH, RECORD_ENCODED_PATH_2017, startRow, endRow, 4.0, None, 2017) # Approve only 2017
+			
+			else:
+				print("Error: what is this {0}".option)
 
 	elif func == "load_data":
 		(record, label) = loadData(major)

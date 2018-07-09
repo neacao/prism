@@ -27,6 +27,7 @@ def flatRecord(fileName, replaceDictPath, fromCell, toCell):
 
 	recordData.save(fileName)
 	return
+	
 
 def encodeRecord(fileName, fromCell, toCell, minGrade, exceptedYear=None, approvedYear=None):
 	recordData 	= openpyxl.load_workbook(fileName)
@@ -34,6 +35,9 @@ def encodeRecord(fileName, fromCell, toCell, minGrade, exceptedYear=None, approv
 	cells 			= sheet[fromCell: toCell]
 	sequences 	= [[]]
 	studentIDs	= []
+
+	counter = 0
+	print("Ignore year {0}\nApproved year {1}".format(exceptedYear, approvedYear))
 
 	# Index:
 	# 1: Student ID
@@ -57,10 +61,21 @@ def encodeRecord(fileName, fromCell, toCell, minGrade, exceptedYear=None, approv
 		courseGrade = row[6].value
 
 		if courseGrade == "NULL" or courseGrade == None: # Special case: user has no course's grade
+			print("Ignore unknow course grade: {0}".format(courseGrade))
 			continue
 
 		if courseGrade < minGrade:
+			print("Ignore courseGrade: {0}".format(courseGrade))
 			continue
+
+		if exceptedYear != None and year == exceptedYear:
+			print("=> Ignore curYear {0}".format(year))
+			continue
+
+		if approvedYear != None and year != approvedYear:
+			continue
+
+		counter += 1
 
 		if curStudentID != studentID:
 			curStudentID = studentID
@@ -78,13 +93,14 @@ def encodeRecord(fileName, fromCell, toCell, minGrade, exceptedYear=None, approv
 			sequences[-1][-1] += "."
 		sequences[-1][-1] += encodedKey
 	
+	print("Counter {0}".format(counter))
 	Util.cacheLabel()
 	return (sequences, studentIDs)
 
 
-def encode(resourcePath, encodedPath, startRow, endRow, exceptedYear=None, approvedYear=None):
+def encode(resourcePath, encodedPath, startRow, endRow, minGrade, exceptedYear=None, approvedYear=None):
 
-	(sequences, studentIDs) = encodeRecord(resourcePath, startRow, endRow, 4, exceptedYear, approvedYear)
+	(sequences, studentIDs) = encodeRecord(resourcePath, startRow, endRow, minGrade, exceptedYear, approvedYear)
 
 	seqLength = len(sequences)
 	with open(encodedPath, "w") as fp: # JULY 8TH TESTING
