@@ -94,7 +94,9 @@ def encodeRecord(fileName, fromCell, toCell, minGrade, exceptedYear=None, approv
 		sequences[-1][-1] += encodedKey
 	
 	print("Counter {0}".format(counter))
+
 	Util.cacheLabel()
+	sequences = [sortAdv(seq) for seq in sequences]
 	return (sequences, studentIDs)
 
 
@@ -107,6 +109,20 @@ def encode(resourcePath, encodedPath, startRow, endRow, minGrade, exceptedYear=N
 		for index in range(0, seqLength):
 			fp.write("{0}\n".format(sequences[index]))
 
+
+def sortAdv(sequence):
+	# List = [ 'A', 'D.C', ...] - C must appear before D
+	numberOfItemsets = len(sequence)
+	ret = [None] * numberOfItemsets
+
+	for index in range(0, numberOfItemsets):
+		itemset 					= sequence[index]
+		componenets 			= itemset.split(".")
+		componenetsSorted = list(sorted(componenets))
+		strJoined 				= ".".join(componenetsSorted)
+		ret[index] 				= strJoined
+
+	return ret
 
 if __name__ == "__main__":
 	encode("IT")

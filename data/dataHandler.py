@@ -83,7 +83,11 @@ if __name__ == "__main__":
 				Encoder.encode(COURSE_GRADE_PATH, RECORD_ENCODED_PATH_2017, startRow, endRow, 4.0, None, 2017) # Approve only 2017
 			
 			else:
-				print("Error: what is this {0}".option)
+				print("Error: what is this {0}".format(option))
+
+		# Get full records:
+		else:
+			Encoder.encode(COURSE_GRADE_PATH, RECORD_ENCODED_PATH, startRow, endRow, 4.0, None, None)
 
 	elif func == "load_data":
 		(record, label) = loadData(major)

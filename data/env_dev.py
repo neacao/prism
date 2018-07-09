@@ -19,8 +19,6 @@ RECORD_ENCODED_PATH = RESOURCE_PATH + "encodedRecordSample.data"
 
 RECORD_ENCODED_PATH_2017 = RESOURCE_PATH + "encodedRecordSample2017.data"
 
-RECORD_ENCODED_PATH_FULL = RESOURCE_PATH + "encodedRecord.data"
-
 LABEL_ENCODED_PATH = RESOURCE_PATH + "encodedLabelSample.data"
 
 # Map with label and course name
