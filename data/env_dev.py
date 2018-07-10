@@ -26,6 +26,8 @@ LABEL_MAPPING_PATH = RESOURCE_PATH + "labelMappingSample.json"
 
 FLAT_RECORD_DICT_PATH = RESOURCE_PATH + "flatRecordDictSample.json"
 
+IGNORE_RECORD_DICT_PATH = RESOURCE_PATH + "ignoreRecordDictSample.json"
+
 # Row indexs
 IT_START_ROW = "A61393" # 2014
 IT_END_ROW = "G72926" #2017

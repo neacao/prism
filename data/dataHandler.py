@@ -54,9 +54,10 @@ if __name__ == "__main__":
 	func = args[1]
 	major = args[2].lower()
 	
-	# DATA_PATH = "."
-	# RESOURCE_PATH = "Resource/"
-	# COURSE_GRADE_PATH = RESOURCE_PATH + "courseGradeSample.xlsx"
+	DATA_PATH = "."
+	RESOURCE_PATH = "Resource/"
+	COURSE_GRADE_PATH = RESOURCE_PATH + "courseGradeSample.xlsx"
+	IGNORE_RECORD_DICT_PATH = RESOURCE_PATH + "ignoreRecordDictSample.json"
 
 	if func == "help":
 		help()
@@ -77,17 +78,26 @@ if __name__ == "__main__":
 			option = args[3]
 
 			if option == "ignore_only": # Ignore 2017 to get data will train
-				Encoder.encode(COURSE_GRADE_PATH, RECORD_ENCODED_PATH, startRow, endRow, 4.0, 2017, None) # Ignore 2017
+				Encoder.encode(
+					COURSE_GRADE_PATH, RECORD_ENCODED_PATH, IGNORE_RECORD_DICT_PATH,
+					startRow, endRow, 4.0, 2017, None
+				) # Ignore 2017
 
 			elif option == "filter_only": # Filter 2017 only to get data to test
-				Encoder.encode(COURSE_GRADE_PATH, RECORD_ENCODED_PATH_2017, startRow, endRow, 4.0, None, 2017) # Approve only 2017
+				Encoder.encode(
+					COURSE_GRADE_PATH, RECORD_ENCODED_PATH_2017, IGNORE_RECORD_DICT_PATH, 
+					startRow, endRow, 4.0, None, 2017
+				) # Approve only 2017
 			
 			else:
 				print("Error: what is this {0}".format(option))
 
 		# Get full records:
 		else:
-			Encoder.encode(COURSE_GRADE_PATH, RECORD_ENCODED_PATH, startRow, endRow, 4.0, None, None)
+			Encoder.encode(
+				COURSE_GRADE_PATH, RECORD_ENCODED_PATH, IGNORE_RECORD_DICT_PATH,
+				startRow, endRow, 4.0, None, None
+			)
 
 	elif func == "load_data":
 		(record, label) = loadData(major)
