@@ -15,7 +15,6 @@ from helper import *
 # TRAIN_DATA_PATH = "Resource/trained.data"
 TRAIN_DATA_PATH = "Resource/trainedAdv.data"
 SEQ_SORTED_DATA_PATH = "Resource/seqSorted.data"
-HACK = 0
 
 def processExtension(result, lastFrequent,
  lastSeqBlocks, lastOffsets, lastPosBlocks, lastItemIndex,
@@ -42,7 +41,7 @@ def processExtension(result, lastFrequent,
 		)
 
 		supp = Computer.computeSupportOfPrimalValueArray(seqBlocksExt)
-		print("==== seqBlockExt: {0}".format(seqBlocksExt))
+		# print("==== seqBlockExt: {0}".format(seqBlocksExt))
 		
 		if supp >= MIN_SUPP:
 			if isSeqExt == True:
@@ -67,6 +66,7 @@ def processExtension(result, lastFrequent,
 				"frequent": lastFrequent,
 				"support": supp
 			})
+			print("=> New frequent {0} has support {1}".format(lastFrequent, supp))
 
 			numerOfCharsRemove = len(curItem)
 			if isSeqExt == True:
@@ -90,8 +90,8 @@ def saveSeqSorted(seqs):
 			fp.write("{0}\n".format(string(seq)))
 
 
-def train():
-	(sequences, items) = Data.loadData("IT")
+def train(major):
+	(sequences, items) = Data.loadData(major)
 	# Sorted to make sure item will not overlap each other when process item extension
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
@@ -144,19 +144,22 @@ def predict(query):
 
 
 def usage():
-	print("./run train | predict ...")
+	print("./run")
+	print("... train [ IT ]")
+	print("... predict \"A.B->C\"")
 
 
 if __name__ == "__main__":
 	argv = sys.argv
-	if len(argv) < 2:
+	if len(argv) < 3:
 		usage()
 		exit(0)
 		
 	func = argv[1]
 
 	if func == "train":
-		train()
+		major = argv[2].lower()
+		train(major)
 
 	elif func == "predict":
 		query = argv[2]

@@ -54,7 +54,7 @@ def computePosBlocksInSequence(key, targetKey,
 			# if DEBUG:
 			# print("GCD of {0} {1} is {2} in blockIndex {3} {4} at index {5} {6}".format(posBlockVal, posBlockValTarget,
 			#  posBlockJoin, posBlockIndex, posBlockIndexTarget, realIndex, realIndexTarget))
-			print("-- blockJoin: {0} & {1} = {2}".format(posBlockVal, posBlockValTarget, posBlockJoin))
+			# print("-- blockJoin: {0} & {1} = {2}".format(posBlockVal, posBlockValTarget, posBlockJoin))
 
 			if posBlockJoin > 1:
 				posBlocksExt.append({
@@ -76,16 +76,9 @@ def computeSingleBlockOfSequence(key, targetKey,
 	lastOffset, isSeqExt, DEBUG=False):
 
 	seqBlockExt 	= computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
-	# if DEBUG:
-	print("== seqBlock: {0} & {1} = {2}".format(seqBlock, seqBlockTarget, seqBlockExt))
-	# print("=== posBlocks {0}\n=== posBlocksTarget {1}".format(posBlocks, posBlocksTarget))
-		
 	
 	if seqBlockExt == 1:
 		return 1, [], [], lastOffset
-
-	# #print "key {0} target {1} - checking seqJoin {2}".format(key, targetKey, seqBlockExt)
-	# #print "seqBlock: {0} - targetBlock: {1}".format(seqBlock, seqBlockTarget) 
 
 	posOffsetsExt = []
 	posBlocksExt	= []
@@ -133,9 +126,6 @@ def computeSingleBlockOfSequence(key, targetKey,
 			posOffset, posOffsetTarget, _posBlocks, posBlocksTarget, 
 			isSeqExt, DEBUG)
 		posBlocksJoinLength = len(posBlocksJoin)
-
-		if DEBUG:
-			print("posBlocksJoin: {0}".format(posBlocksJoin))
 
 		# No empty block
 		if posBlocksJoinLength > 0:
@@ -188,9 +178,6 @@ def extend(key, targetKey, seqBlocks, seqBlocksTarget,
 			posBlocks, posBlocksTarget, lastOffset,
 			isSeqExt, DEBUG
 		)
-
-		if DEBUG:
-			print("== SeqExt: {0}".format(seqBlockExt))
 
 		_lastOffset = lastOffset
 		seqBlocksExt.append(seqBlockExt)
