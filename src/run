@@ -13,9 +13,7 @@ from constant import *
 from helper import *
 
 
-SEQ_SORTED_DATA_PATH = "Resource/seqSorted.data"
-
-
+# --- TRAIN ---
 def processExtension(result, lastFrequent, lastItemIndex,
  lastSeqBlocks, lastOffsets, lastPosBlocks,
  seqBlocksList, posOffsetsList, posBlocksList, 
@@ -60,13 +58,13 @@ def processExtension(result, lastFrequent, lastItemIndex,
 			processExtension(result, lastFrequent, itemIndex + 1, 
 				_lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 
 				seqBlocksList, posOffsetsList, posBlocksList, 
-				items, False) 
+				items, False)
 
 			result.append({
 				"frequent": lastFrequent,
 				"support": supp
 			})
-			print("=> New frequent {0} has support {1}".format(lastFrequent, supp))
+			print("~~> New frequent {0} has support {1}".format(lastFrequent, supp))
 
 			numerOfCharsRemove = len(curItem)
 			if isSeqExt == True:
@@ -83,42 +81,52 @@ def saveTrainedData(result, major):
 	now = datetime.datetime.now()
 	fileName = "Resource/{0}_{1}".format(major, now.isoformat())
 	with open(fileName, "w") as fp:
-		json.dump(result, fp)
+		json.dump(result, fp, ensure_ascii=False, indent=2, sort_keys=True)
+
+	return
 
 
 def saveSortedSeq(seqs):
+	now = datetime.datetime.now()
+	SEQ_SORTED_DATA_PATH = "Resource/sortedSeq_{0}".format(now.isoformat())
 	with open(SEQ_SORTED_DATA_PATH, "w") as fp:
-		for seq in seqs:
-			fp.write("{0}\n".format(string(seq)))
+		[fp.write("{0}\n".format(string(seq))) for seq in seqs]
+
+	return
 
 
 def train(major):
+	# Sort and cache the data
+	print("Loading data encoded from data/ ...")
 	(sequences, items) = Data.loadData(major)
-	# Sorted to make sure item will not overlap each other when process item extension
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
 	saveSortedSeq(sequences)
 
-	length = len(sequences)
-	for index in range(0, length):
-		print("{0} {1}".format(index, sequences[index]))
-
-	(itemsPosBlocks, itemsPosOffsets) = Encoder.processEncodePrimalBlockAllSequences(items, sequences)
+	print("Encode all records ...")
+	(primalBlocks, posOffsetList) = Encoder.processEncodePrimalBlockAllSequences(items, sequences)
 	seqBlocks = Encoder.processEncodePrimalSeqAdv(items, sequences)
 
 	numberOfItems = len(items)
 	result = [] * numberOfItems
 
-	for index in range(0, numberOfItems):
-		processExtension(result, items[index], 0,
-			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
-			seqBlocks, itemsPosOffsets, itemsPosBlocks,
+	print("Start training ...")
+	for itemIndex in range(0, numberOfItems):
+		print("-> Label {0} is processing ...".format(items[itemIndex]))
+
+		seqBlockOfItem 			= seqBlocks[itemIndex]
+		primalOffetsOfItem 	= posOffsetList[itemIndex]
+		primalBlockOfItem 	= primalBlocks[itemIndex]
+
+		processExtension(result, items[itemIndex], 0,
+			seqBlockOfItem , primalOffetsOfItem, primalBlockOfItem, 
+			seqBlocks, posOffsetList, primalBlocks,
 			items, True
 		)
 
-		processExtension(result, items[index], index + 1,
-			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
-			seqBlocks, itemsPosOffsets, itemsPosBlocks,
+		processExtension(result, items[itemIndex], itemIndex + 1,
+			seqBlockOfItem, primalOffetsOfItem, primalBlockOfItem, 
+			seqBlocks, posOffsetList, primalBlocks,
 			items, False
 		)
 	
@@ -126,11 +134,15 @@ def train(major):
 		print("{0} - {1}".format(element["frequent"], element["support"]))
 	
 	saveTrainedData(result, major)
+	return
+# --- END TRAIN ---
 
 
+# --- PREDICT ----
 def loadTrainedData(filePath):
 	with open(filePath) as fp:
 		trainedData = json.load(fp)
+
 	return trainedData
 
 
@@ -139,22 +151,22 @@ def predict(query, trainedDataPath):
 
 	for element in trainedData:
 		isExist = True if element["frequent"].find(query) != -1 else False
+		# FIXME: Improve the way to search
 		if isExist:
 			print("{0} - {1}".format(element["frequent"], element["support"]))
 
 	return
+# --- END PREDICT ---
 
 
-def showTrained(major):
-	with open(TRAIN_DATA_PATH) as fp:
-		data = fp.readlines()
-
-	jsonObject = json.loads(data[0])
-	for item in jsonObject:
+# --- SHOW ----
+def showTrained(filePath):
+	trainedData = loadTrainedData(filePath)
+	for item in trainedData:
 		print(item)
 
 	return
-
+# --- END SHOW ---
 
 def usage():
 	print("./run")
@@ -185,8 +197,8 @@ if __name__ == "__main__":
 		predict(query, trainedDataPath)
 
 	elif func == "show":
-		major = argv[2].lower()  
-		showTrained(major)
+		filePath = argv[2]
+		showTrained(filePath)
 
 	else:
 		usage()

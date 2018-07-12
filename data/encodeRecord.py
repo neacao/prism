@@ -115,8 +115,8 @@ def encode(resourcePath, encodedPath, ignoreDictPath,
 
 	seqLength = len(sequences)
 	with open(encodedPath, "w") as fp: # JULY 8TH TESTING
-		for index in range(0, seqLength):
-			fp.write("{0}\n".format(sequences[index]))
+		[fp.write("{0}\n".format(seq)) for seq in sequences]
+			
 
 
 def sortAdv(sequence):

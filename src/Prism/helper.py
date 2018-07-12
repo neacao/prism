@@ -2,11 +2,6 @@
 
 class string(str):
 	
-	def sample(self):
-		#print self, "hello"
-		return 
-
-
 	def findAll(self, word):
 		lengOfSelf = len(self)
 		return [i for i in range(lengOfSelf) if self.startswith(word, i)]
