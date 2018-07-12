@@ -28,6 +28,7 @@ class string(str):
 				break
 			realWord += curChar
 
+		# print("realWorld {0} - word {1}".format(realWord, word))
 		return idx if realWord == word else -1
 
 

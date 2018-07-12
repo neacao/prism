@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, copy, json
+import sys, copy, json, datetime
 sys.path.insert(0, 'Resource')
 sys.path.insert(0, 'Prism')
 sys.path.insert(0, '../data')
@@ -12,12 +12,12 @@ import dataHandler as Data
 from constant import *
 from helper import *
 
-# TRAIN_DATA_PATH = "Resource/trained.data"
-TRAIN_DATA_PATH = "Resource/trainedAdv.data"
+
 SEQ_SORTED_DATA_PATH = "Resource/seqSorted.data"
 
-def processExtension(result, lastFrequent,
- lastSeqBlocks, lastOffsets, lastPosBlocks, lastItemIndex,
+
+def processExtension(result, lastFrequent, lastItemIndex,
+ lastSeqBlocks, lastOffsets, lastPosBlocks,
  seqBlocksList, posOffsetsList, posBlocksList, 
  items, isSeqExt):
 	
@@ -29,9 +29,6 @@ def processExtension(result, lastFrequent,
 		posOffsetsListTarget 	= posOffsetsList[itemIndex]
 		posBlocksTarget 			= posBlocksList[itemIndex]
 
-		# print("Extend: lastFrequent {0} curItem {1} isSeqExt {2}".format(lastFrequent, curItem, isSeqExt))
-		# print("== Checking block: {0} {1}".format(lastSeqBlocks, seqBlocksList[itemIndex]))
-		
 		(seqBlocksExt, posOffsetsExt, posBlocksExt) = Prism.extend(
 			lastFrequent, curItem,
 			lastSeqBlocks, seqBlockTarget,
@@ -41,7 +38,6 @@ def processExtension(result, lastFrequent,
 		)
 
 		supp = Computer.computeSupportOfPrimalValueArray(seqBlocksExt)
-		# print("==== seqBlockExt: {0}".format(seqBlocksExt))
 		
 		if supp >= MIN_SUPP:
 			if isSeqExt == True:
@@ -55,12 +51,16 @@ def processExtension(result, lastFrequent,
 			_lastPosBlocks 	= copy.deepcopy(posBlocksExt)
 
 			# Sequence extension
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks,
-			 0, seqBlocksList, posOffsetsList, posBlocksList, items, True)
+			processExtension(result, lastFrequent, 0,
+				_lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 
+				seqBlocksList, posOffsetsList, posBlocksList, 
+				items, True)
 
 			# Itemset extension
-			processExtension(result, lastFrequent, _lastSeqBlocks, _lastPosOffsets, _lastPosBlocks,
-			 itemIndex + 1, seqBlocksList, posOffsetsList, posBlocksList, items, False) 
+			processExtension(result, lastFrequent, itemIndex + 1, 
+				_lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 
+				seqBlocksList, posOffsetsList, posBlocksList, 
+				items, False) 
 
 			result.append({
 				"frequent": lastFrequent,
@@ -79,12 +79,14 @@ def processExtension(result, lastFrequent,
 	return
  
 
-def save(result):
-	with open(TRAIN_DATA_PATH, "w") as fp:
+def saveTrainedData(result, major):
+	now = datetime.datetime.now()
+	fileName = "Resource/{0}_{1}".format(major, now.isoformat())
+	with open(fileName, "w") as fp:
 		json.dump(result, fp)
 
 
-def saveSeqSorted(seqs):
+def saveSortedSeq(seqs):
 	with open(SEQ_SORTED_DATA_PATH, "w") as fp:
 		for seq in seqs:
 			fp.write("{0}\n".format(string(seq)))
@@ -95,7 +97,7 @@ def train(major):
 	# Sorted to make sure item will not overlap each other when process item extension
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
-	saveSeqSorted(sequences)
+	saveSortedSeq(sequences)
 
 	length = len(sequences)
 	for index in range(0, length):
@@ -108,14 +110,14 @@ def train(major):
 	result = [] * numberOfItems
 
 	for index in range(0, numberOfItems):
-		processExtension(result, items[index], 
-			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 0,
+		processExtension(result, items[index], 0,
+			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
 			seqBlocks, itemsPosOffsets, itemsPosBlocks,
 			items, True
 		)
 
-		processExtension(result, items[index], 
-			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], index + 1,
+		processExtension(result, items[index], index + 1,
+			seqBlocks[index], itemsPosOffsets[index], itemsPosBlocks[index], 
 			seqBlocks, itemsPosOffsets, itemsPosBlocks,
 			items, False
 		)
@@ -123,17 +125,17 @@ def train(major):
 	for element in result:
 		print("{0} - {1}".format(element["frequent"], element["support"]))
 	
-	save(result)
+	saveTrainedData(result, major)
 
 
-def loadDataTrained():
-	with open(TRAIN_DATA_PATH) as fp:
+def loadTrainedData(filePath):
+	with open(filePath) as fp:
 		trainedData = json.load(fp)
 	return trainedData
 
 
-def predict(query):
-	trainedData = loadDataTrained()
+def predict(query, trainedDataPath):
+	trainedData = loadTrainedData(trainedDataPath)
 
 	for element in trainedData:
 		isExist = True if element["frequent"].find(query) != -1 else False
@@ -147,7 +149,6 @@ def showTrained(major):
 	with open(TRAIN_DATA_PATH) as fp:
 		data = fp.readlines()
 
-	# Remove []
 	jsonObject = json.loads(data[0])
 	for item in jsonObject:
 		print(item)
@@ -158,13 +159,17 @@ def showTrained(major):
 def usage():
 	print("./run")
 	print("... train [ IT ]")
-	print("... predict \"A.B->C\"")
+	print("... predict \"A.B->C\" <trainedDataPath>")
+	print("... show [ IT ]")
 	return
 
 
 if __name__ == "__main__":
+	
+	numberOfFunc = 3
 	argv = sys.argv
-	if len(argv) < 3:
+
+	if len(argv) < numberOfFunc:
 		usage()
 		exit(0)
 
@@ -176,7 +181,8 @@ if __name__ == "__main__":
 
 	elif func == "predict":
 		query = argv[2]
-		predict(query)
+		trainedDataPath = argv[3]
+		predict(query, trainedDataPath)
 
 	elif func == "show":
 		major = argv[2].lower()  
