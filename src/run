@@ -143,10 +143,23 @@ def predict(query):
 	return
 
 
+def showTrained(major):
+	with open(TRAIN_DATA_PATH) as fp:
+		data = fp.readlines()
+
+	# Remove []
+	jsonObject = json.loads(data[0])
+	for item in jsonObject:
+		print(item)
+
+	return
+
+
 def usage():
 	print("./run")
 	print("... train [ IT ]")
 	print("... predict \"A.B->C\"")
+	return
 
 
 if __name__ == "__main__":
@@ -154,7 +167,7 @@ if __name__ == "__main__":
 	if len(argv) < 3:
 		usage()
 		exit(0)
-		
+
 	func = argv[1]
 
 	if func == "train":
@@ -164,6 +177,10 @@ if __name__ == "__main__":
 	elif func == "predict":
 		query = argv[2]
 		predict(query)
+
+	elif func == "show":
+		major = argv[2].lower()  
+		showTrained(major)
 
 	else:
 		usage()
