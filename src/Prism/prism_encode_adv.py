@@ -6,7 +6,7 @@ from constant import *
 from prism_compute import *
 from helper import *
 
-# Done
+# --- ENCODE PRIMAL BLOCKS ---
 def encodePrimalBlockInSequence(item, sequence):
 	result = [] # [ { blockIndex: , primalPos: }, ...]
 	
@@ -42,7 +42,6 @@ def encodePrimalBlockInSequence(item, sequence):
 	return result
 
 
-# Done
 def encodePrimalBlockAllSequences(item, sequences):
 	primeArray = G_ARRAY_ADVANCE
 	primeArrayLength = len(primeArray)
@@ -91,9 +90,10 @@ def processEncodePrimalBlockAllSequences(items, sequences):
 		itemsPosOffsets.append(posOffsets)
 
 	return itemsPosBlocks, itemsPosOffsets
+# --- END ENCODE PRIMAL BLOCKS ---
 
 
-# Done
+# --- ENCODE SEQUENCE ---
 def encodePrimalSequence(item, sequences):
 	result = []
 
@@ -122,19 +122,30 @@ def encodePrimalSequence(item, sequences):
 	return result
 
 
-# Done
 def processEncodePrimalSeqAdv(items, sequences):
-	seqBlocks = []
-
-	for item in items:
-		seqBlocks.append( encodePrimalSequence(item, sequences) )
-
+	seqBlocks = [encodePrimalSequence(item, sequences) for item in items]
 	return seqBlocks
-
+# --- END ENCODE SEQUENCE ---
 
 def test():
-	arr = ['A.O', 'B.C.D.E.O1', 'F.G.H', 'I.J.K.M.N', 'O.P1.T', 'K1.L.P.Q.R.S.U', 'V.W.X.Y', 'B1.C1.D1.E1.G1.J1']
-	ret = encodePrimalBlockInSequence('G', arr)
+	arr = [
+		['A.O', 'B.C.D.E.O1', 'F.G.H', 'I.J.K.M.N', 'O.P1.T', 'K1.L.P.Q.R.S.U', 'V.W.X.Y', 'B1.C1.D1.E1.G1.J1'],
+		['A', 'A.B.C.D', 'E.F.G', 'H.I.J.K', 'L', 'M.N.O.P', 'Q.R', 'S.T.U.V.W'],
+		['A', 'A.B.C', 'E.F', 'H.I.J', 'M.N.O.P.S', 'L.Q.R.X.Y', 'D.Z', 'A1.U.V.W'],
+		['A.L', 'A.B.C.D', 'L', 'D.H.I.J.X', 'B1.N.O.P', 'Q.R.Y', 'F.Z', 'E.V.W'],
+		['C1.L', 'B', 'E', 'D.H.I.J.X', 'F.M.N.P.Z', 'Q.R.Y', 'A.A1.O.S.U.V.W'],
+		['A.L', 'A.B.C.C1.D', 'E.F.G', 'H.I.J.K', 'L', 'B1.M.N.O.P', 'Q.R', 'A1.U.V.W'],
+		['A', 'B', 'D1', 'H.I.J', 'L', 'B1.P', 'Q.R', 'A.Z', 'E.F.N.U.V'],
+		['C1.D.E.G.L', 'J', 'B1.P', 'Q'],
+		['A.J1.L', 'B.C.K1.Z', 'D.F.J.L1.N'],
+		['A.D.J1.L', 'B.C.K1.Z', 'E.J.L1.N'],
+		['A.D.J1.L', 'B.C.K1.Z', 'E.F.J.N'],
+		['A.D.J1.L', 'B.C.K1.Z'],
+		['A.D.J1.L', 'B.C.K1.Z', 'E.F.J.L1.N.P'],
+		['A.D.J1.L', 'B.C.K1.Z', 'E.F.J.L1.N'],
+		['J1.L', 'B.C', 'J.L1.N']
+	]
+	ret = encodePrimalSequence('G', arr)
 	print(ret)	
 
 

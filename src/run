@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, copy, json, datetime
+import sys, copy, json, datetime, argparse
 sys.path.insert(0, 'Resource')
 sys.path.insert(0, 'Prism')
 sys.path.insert(0, '../data')
@@ -12,6 +12,13 @@ import dataHandler as Data
 from constant import *
 from helper import *
 
+# Common setup
+ap = argparse.ArgumentParser()
+ap.add_argument("-f", "--func", required=False, help="function want to run")
+ap.add_argument("-m", "--major", required=False, help="major want to train")
+ap.add_argument("-q", "--query", required=False, help="the query want to predict")
+ap.add_argument("-p", "--trainedPath", required=False, help="the trained data path")
+args = vars(ap.parse_args())
 
 # --- TRAIN ---
 def processExtension(result, lastFrequent, lastItemIndex,
@@ -112,11 +119,12 @@ def train(major):
 
 	print("Start training ...")
 	for itemIndex in range(0, numberOfItems):
-		print("-> Label {0} is processing ...".format(items[itemIndex]))
-
 		seqBlockOfItem 			= seqBlocks[itemIndex]
 		primalOffetsOfItem 	= posOffsetList[itemIndex]
 		primalBlockOfItem 	= primalBlocks[itemIndex]
+
+		print("-> Label {0} is processing ...".format(items[itemIndex]))
+		print("\tseqBlock: {0}\n\tprimalOffset: {1}\n\tprimalBlocks: {2}".format(seqBlockOfItem, "", ""))
 
 		processExtension(result, items[itemIndex], 0,
 			seqBlockOfItem , primalOffetsOfItem, primalBlockOfItem, 
@@ -162,43 +170,39 @@ def predict(query, trainedDataPath):
 # --- SHOW ----
 def showTrained(filePath):
 	trainedData = loadTrainedData(filePath)
-	for item in trainedData:
-		print(item)
-
+	[print(item) for item in trainedData]
+		
 	return
 # --- END SHOW ---
 
 def usage():
 	print("./run")
-	print("... train [ IT ]")
-	print("... predict \"A.B->C\" <trainedDataPath>")
-	print("... show [ IT ]")
-	return
+	print("... -f train -m <major>")
+	print("... -f predict -q \"<query>\"")
+	print("... -f show -p <trained data path>")
+	exit(0)
 
 
 if __name__ == "__main__":
 	
-	numberOfFunc = 3
-	argv = sys.argv
-
-	if len(argv) < numberOfFunc:
-		usage()
-		exit(0)
-
-	func = argv[1]
+	func = args["func"]
 
 	if func == "train":
-		major = argv[2].lower()
-		train(major)
+		if not args["major"]:
+			usage()
+		train(args["major"])
 
 	elif func == "predict":
-		query = argv[2]
-		trainedDataPath = argv[3]
-		predict(query, trainedDataPath)
+		if not args["query"] or not args["trainedPath"]:
+			usage()
+
+		predict(args["query"], args["trainedPath"])
 
 	elif func == "show":
-		filePath = argv[2]
-		showTrained(filePath)
+		if not args["trainedPath"]:
+			usage()
+
+		showTrained(args["trainedPath"])
 
 	else:
 		usage()

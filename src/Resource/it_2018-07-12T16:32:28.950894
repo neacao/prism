@@ -1,0 +1,34 @@
+[
+  {
+    "frequent": "C->F",
+    "support": 67
+  },
+  {
+    "frequent": "C->H",
+    "support": 62
+  },
+  {
+    "frequent": "C->M",
+    "support": 65
+  },
+  {
+    "frequent": "C->U",
+    "support": 35
+  },
+  {
+    "frequent": "F->M",
+    "support": 17
+  },
+  {
+    "frequent": "F->U",
+    "support": 28
+  },
+  {
+    "frequent": "H->M",
+    "support": 31
+  },
+  {
+    "frequent": "H->U",
+    "support": 30
+  }
+]
