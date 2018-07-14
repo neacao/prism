@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from lookup_table import *
-from constant import *
 
 # BITs is counting from right to left
 # computeBitValueOfPrimalValue(30) = 224 = 11100000

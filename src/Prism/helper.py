@@ -12,7 +12,7 @@ class string(str):
 		if idx == -1:
 			return idx
 
-		# Recaculate position to make sure the words is matching
+		# Recalculate position to make sure the words is matching
 		realWord = self[idx]
 		_idx = idx + 1
 		lengOfSelf = len(self)

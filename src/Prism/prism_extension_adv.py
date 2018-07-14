@@ -12,7 +12,7 @@ from prism_compute import *
 	- posOffset & posOffsetTarget: posOffset of each sequence
 		{ "blockStartOffset": ,"numberOfBlocksInSeq": , "seqPrimeIndex": encode }
 	- posBlocks & posBlocksTarget: list of position blocks encoded for all sequences
-		[ { "blockInSeqIndex": ,"primalValue" }, ... ]
+		[ { "posBlockIndexInSeq": ,"primalValue" }, ... ]
 	- Return: a list of pos block joining
 '''
 def computePosBlocksInSequence(key, targetKey,
@@ -42,8 +42,8 @@ def computePosBlocksInSequence(key, targetKey,
 		posBlock 				= posBlocks[realIndex]
 		posBlockTarget 	= posBlocksTarget[realIndexTarget]
 
-		posBlockIndex 			= posBlock["blockInSeqIndex"]
-		posBlockIndexTarget	= posBlockTarget["blockInSeqIndex"]
+		posBlockIndex 			= posBlock["posBlockIndexInSeq"]
+		posBlockIndexTarget	= posBlockTarget["posBlockIndexInSeq"]
 
 		if posBlockIndex == posBlockIndexTarget:
 			posBlockVal 			= posBlock["primalValue"]
@@ -59,7 +59,7 @@ def computePosBlocksInSequence(key, targetKey,
 			if posBlockJoin > 1:
 				posBlocksExt.append({
 					"primalValue": posBlockJoin,
-					"blockInSeqIndex": blockIndex
+					"posBlockIndexInSeq": blockIndex
 				})
 		# 	else:
 		# 		#print "===> IGNORE GCD:", posBlock, posBlockTarget

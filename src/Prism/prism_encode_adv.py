@@ -2,130 +2,126 @@
 
 import sys
 
-from constant import *
 from prism_compute import *
 from helper import *
 
 # --- ENCODE PRIMAL BLOCKS ---
-def encodePrimalBlockInSequence(item, sequence):
-	result = [] # [ { blockIndex: , primalPos: }, ...]
+def encodePrimalPosBlockInSequence(item, sequence):
+	result = [] # [ { posBlockIndexInSeq: , primalPos: }, ...]
+	
+	primeArray = G_ARRAY_ADVANCE
+	primeArrayLenght = len(primeArray)
+	primeArrayIndex = 0
 	
 	primalValue = 1
 	primalBlockIndex = 0
 
-	primeArrayIndex = 0
-	primeArray = G_ARRAY_ADVANCE
-	primeArrayLenght = len(primeArray)
+	numberOfItemset = len(sequence)
 
-	itemsetLength = len(sequence)
-
-	# Loop on itemset list in a sequence
-	for idx in range(0, itemsetLength):
+	for idx in range(0, numberOfItemset):
 		itemset = sequence[idx]
 
-		primalValue *= primeArray[primeArrayIndex] if string(itemset).findAdv(item) != -1 else 1
+		if string(itemset).findAdv(item) != -1:
+			primalValue *= primeArray[primeArrayIndex]
 		primeArrayIndex += 1
 
-		# Enough for a block of itemsets in a sequence or last itemset in sequence
-		if primeArrayIndex == primeArrayLenght or idx == itemsetLength - 1:
-			# Append if it appeard
+		if primeArrayIndex == primeArrayLenght or idx == numberOfItemset - 1:
+			# Append if not empty block
 			if primalValue > 1:
-				result.append({ "blockInSeqIndex": primalBlockIndex, "primalValue": primalValue })
+				result.append({
+					"posBlockIndexInSeq": primalBlockIndex, 
+					"primalValue": primalValue 
+				})
 
-			# Reset value
+			# Reset for next loop
 			primalValue = 1
 			primalBlockIndex += 1
 			primeArrayIndex = 0
 
-	# if NO_LOGS == False:
-		#print "[Position Primal Encoded]:", result
 	return result
 
 
-def encodePrimalBlockAllSequences(item, sequences):
+def encodePrimalItemsetsForItem(item, sequences):
 	primeArray = G_ARRAY_ADVANCE
 	primeArrayLength = len(primeArray)
 
 	numberOfSeq = len(sequences)
-	posBlocks = []
+	primalPosBlockList = [] # 1D Array
 
-	# Using 2D (array of array) to cache the offset based on block of sequence
-	posOffsets = [[]] * (int)((numberOfSeq + primeArrayLength - 1) / primeArrayLength) 
+	# Using 2D Array to cache the offset based on block of sequence
+	maxLength = (int)((numberOfSeq + primeArrayLength - 1) / primeArrayLength)
+	posOffsetsList = [[]] * maxLength
 	posOffsetsIndex = 0
-	lastPosOffet = 1
-
-	# #print "Leng init {0} for total seq {1}".format(len(posOffsets), numberOfSeq)
+	lastPosOffset = 1
 
 	for seqIndex in range(0, numberOfSeq):
 		posOffsetsIndex = (int)(seqIndex / primeArrayLength)
 		seq = sequences[seqIndex]
 		
-		posBlock = encodePrimalBlockInSequence(item, seq) # [ { blockIndex: , primalPos: }, ...]
-		posBlockLength = len(posBlock)
+		primalPosBlock = encodePrimalPosBlockInSequence(item, seq) # [ { blockIndex: , primalPos: }, ...]
+		numberOfBlocksInSeq = len(primalPosBlock)
 
-		if posBlockLength > 0: # Sequence content the thing
-			posBlocks += posBlock
-			# Caching the prime value for extend process purpose later
+		if numberOfBlocksInSeq > 0:
+			primalPosBlockList += primalPosBlock
 			seqPrimeIndex = primeArray[seqIndex % primeArrayLength]
 
-			posOffsets[posOffsetsIndex].append({
-				"blockStartOffset": lastPosOffet,
-				"numberOfBlocksInSeq": posBlockLength,
-				"seqPrimeIndex": seqPrimeIndex 
+			posOffsetsList[posOffsetsIndex].append({
+				"blockStartOffset": lastPosOffset,
+				"numberOfBlocksInSeq": numberOfBlocksInSeq,
+				"seqPrimeIndex": seqPrimeIndex
 			})
-			lastPosOffet += posBlockLength
+			lastPosOffset += numberOfBlocksInSeq
 		
-	return (posBlocks, posOffsets)
+	return (primalPosBlockList, posOffsetsList)
 
 
-# Done
-def processEncodePrimalBlockAllSequences(items, sequences):
-	itemLength = len(items)
-	itemsPosBlocks = []
-	itemsPosOffsets = []
+def encodePrimalItemsetsAdv(items, sequences):
+	primalPosBlocks = [] # 2D Array: [ [primalPosBlocksItem1], [primalPosBlockItem2] ]
+	posOffsetBlocks = [] # 3D Array: [ [], [], [] ]
 
 	for item in items:
-		(posBlocks, posOffsets) = encodePrimalBlockAllSequences(item, sequences)
-		itemsPosBlocks.append(posBlocks)
-		itemsPosOffsets.append(posOffsets)
+		(primalBlock, posOffset) = encodePrimalItemsetsForItem(item, sequences)
+		primalPosBlocks.append(primalBlock)
+		posOffsetBlocks.append(posOffset)
 
-	return itemsPosBlocks, itemsPosOffsets
+	return primalPosBlocks, posOffsetBlocks
 # --- END ENCODE PRIMAL BLOCKS ---
 
 
 # --- ENCODE SEQUENCE ---
-def encodePrimalSequence(item, sequences):
-	result = []
+def encodePrimalSeqsForItem(item, sequences):
+	result = [] # [  ]
 
-	primeValue = 1
+	curPrimeValue = 1
 	primeArray = G_ARRAY_ADVANCE
 	primeArrayLength = len(primeArray)
 	primeArrayIndex = 0
 
 	numberOfSeq = len(sequences)
 
+	# O( n * 8 * 8 ) (8 semesters * 8 course / semester)
 	for index in range(0, numberOfSeq):
 		seq = sequences[index]
 
-		# Is exist in this sequence
 		filterArray = list(filter(lambda itemset: string(itemset).findAdv(item) != -1, seq))
-		primeValue *= 1 if not filterArray else primeArray[primeArrayIndex]
+		if filterArray:
+			curPrimeValue *= primeArray[primeArrayIndex]
 		primeArrayIndex += 1
 
-		# Enough for a block of sequences or last sequence
+		# Enought for a block of sequence or in the last of sequence
 		if primeArrayIndex == primeArrayLength or index == numberOfSeq - 1:
-			result.append(primeValue)
-			# Reset value
-			primeValue = 1
+			result.append(curPrimeValue)
+			curPrimeValue = 1
 			primeArrayIndex = 0
 	
 	return result
 
 
-def processEncodePrimalSeqAdv(items, sequences):
-	seqBlocks = [encodePrimalSequence(item, sequences) for item in items]
+def encodePrimalSeqsAdv(items, sequences):
+	seqBlocks = [encodePrimalSeqsForItem(item, sequences) for item in items]
 	return seqBlocks
 # --- END ENCODE SEQUENCE ---
+
 
 def test():
 	arr = [

@@ -9,8 +9,8 @@ import prism_compute as Computer
 import prism_encode_adv as Encoder
 import prism_extension_adv as Prism
 import dataHandler as Data
-from constant import *
 from helper import *
+from lookup_table import *
 
 # Common setup
 ap = argparse.ArgumentParser()
@@ -111,8 +111,8 @@ def train(major):
 	saveSortedSeq(sequences)
 
 	print("Encode all records ...")
-	(primalBlocks, posOffsetList) = Encoder.processEncodePrimalBlockAllSequences(items, sequences)
-	seqBlocks = Encoder.processEncodePrimalSeqAdv(items, sequences)
+	(primalBlocks, posOffsetList) = Encoder.encodePrimalItemsetsAdv(items, sequences)
+	seqBlocks = Encoder.encodePrimalSeqsAdv(items, sequences)
 
 	numberOfItems = len(items)
 	result = [] * numberOfItems
