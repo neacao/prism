@@ -68,17 +68,33 @@ def computePosBlocksInSequence(key, targetKey,
 	return posBlocksExt
 
 
-# Calculate extension of each sequence block
-def computeSingleBlockOfSequence(key, targetKey, 
+'''
+	Calculate single sequence block
+	Params:
+		key 								: string - the key will be extended
+		targetKey 					: string - the key will be added below 'key'
+		seqBlock 						: int - primal value of sequence block of key
+		seqBlockTarget 			: int - prinal value of sequence block of target key
+		posOffsets 					: 1D array - all primal value index in posBlocks of key
+		posOffsetsTarget 		: 1D array - all primal value index in posBlocksTarget of targetKey
+		posBlocks 					: 1D array - all primal value of key
+		posBlocksTarget 		: 1D array - all primal value of target key
+		lastPosBlockOffset 	: int - the last index of primal position joined
+		isSeqExt 						: boolean - extend by itemset (false) or sequence (true)
+		DEBUG 							: boolean - print value purposed
+'''
+def computeSingleSeqBlock(key, targetKey, 
 	seqBlock, seqBlockTarget, 
 	posOffsets, posOffsetsTarget, 
 	posBlocks, posBlocksTarget, 
-	lastOffset, isSeqExt, DEBUG=False):
+	lastPosBlockOffset, isSeqExt, DEBUG=False):
 
-	seqBlockExt 	= computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
-	
+	seqBlockExt = computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
+	bitValue = computeBitValueOfPrimalValue(seqBlockExt)
+	print("Primal {0} \n=> Bit value {1}".format(seqBlockExt, bitValue))
+
 	if seqBlockExt == 1:
-		return 1, [], [], lastOffset
+		return 1, [], [], lastPosBlockOffset
 
 	posOffsetsExt = []
 	posBlocksExt	= []
@@ -88,14 +104,10 @@ def computeSingleBlockOfSequence(key, targetKey,
 
 	posOffsetsLength 				= len(posOffsets)
 	posOffsetsLengthTarget 	= len(posOffsetsTarget)
-	maxNumberOffsetBlocks 	= max( posOffsetsLength, posOffsetsLengthTarget )
+	# maxNumberOffsetBlocks 	= max( posOffsetsLength, posOffsetsLengthTarget )
 
 	# Loop on offsets to caculate position blocks
 	while lazyPosOffsetIndex < posOffsetsLength and lazyPosOffsetIndexTarget < posOffsetsLengthTarget:
-
-		if lazyPosOffsetIndex == len(posOffsets):
-			print("Checking:" + posOffsets + " " + posOffsetsTarget)
-
 		encode 				= posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
 		encodeTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
 
@@ -105,7 +117,8 @@ def computeSingleBlockOfSequence(key, targetKey,
 			encode = posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
 
 		if lazyPosOffsetIndex == posOffsetsLength:
-			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
+			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastPosBlockOffset)
+		# -- End move pointer of key
 
 		# Move the pointer to the right if not correct primal block
 		while seqBlockExt % encodeTarget != 0 and lazyPosOffsetIndexTarget < posOffsetsLengthTarget - 1:
@@ -113,7 +126,8 @@ def computeSingleBlockOfSequence(key, targetKey,
 			encodeTarget = posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
 
 		if lazyPosOffsetIndexTarget == posOffsetsLengthTarget:
-			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
+			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastPosBlockOffset)
+		# -- End move pointer of target key
 
 		posOffset = posOffsets[lazyPosOffsetIndex]
 		posOffsetTarget = posOffsetsTarget[lazyPosOffsetIndexTarget]
@@ -121,22 +135,23 @@ def computeSingleBlockOfSequence(key, targetKey,
 		# Make a copy to avoid data be reassigned in calculate... function
 		_posBlocks = copy.deepcopy(posBlocks)
 
-		posBlocksJoin = computePosBlocksInSequence(
+		_posBlocksExt = computePosBlocksInSequence(
 			key, targetKey, 
 			posOffset, posOffsetTarget, _posBlocks, posBlocksTarget, 
 			isSeqExt, DEBUG)
-		posBlocksJoinLength = len(posBlocksJoin)
+
+		posBlocksJoinLength = len(_posBlocksExt)
 
 		# No empty block
 		if posBlocksJoinLength > 0:
-			posBlocksExt += posBlocksJoin
+			posBlocksExt += _posBlocksExt
 			
 			posOffsetsExt.append({
-				"blockStartOffset": lastOffset,
+				"blockStartOffset": lastPosBlockOffset,
 				"numberOfBlocksInSeq": posBlocksJoinLength,
 				"seqPrimeIndex": encode
 			})
-			lastOffset += posBlocksJoinLength
+			lastPosBlockOffset += posBlocksJoinLength
 
 		# Remove empty block in sequence if joined before
 		elif (encode == encodeTarget and seqBlockExt % encode == 0):
@@ -147,41 +162,56 @@ def computeSingleBlockOfSequence(key, targetKey,
 
 	# Avoid empty join block
 	if not posBlocksExt:
-		return (1, [], [], lastOffset)
+		return (1, [], [], lastPosBlockOffset)
 	else:
-		return (seqBlockExt, posOffsetsExt, posBlocksExt, lastOffset)
+		return (seqBlockExt, posOffsetsExt, posBlocksExt, lastPosBlockOffset)
 
 
 '''
-		Calculate seq extension of all sequence blocks
+	Calculate seq extension of all sequence blocks
+	Params:
+		key 									: the key will be extended
+		targetKey 						: the key will be added below 'key'
+		seqBlocks 						: 1D array - all sequence blocks of key
+		seqBlocksTarget 			: 1D array - all sequence block of target key
+		posOffsetsList 				: 2D array - all primal value index of key
+		posOffsetsListTarget 	: 2D array - all primal value index of target key
+		posBlocks 						: 1D array - all primal value of all keys
+		posBlocksTarget 			: 1D array - all primal value of all target keys
+		isSeqExt 							: extend by itemset (false) or sequence (true)
+		DEBUG 								: print value purposed
 '''
-def extend(key, targetKey, seqBlocks, seqBlocksTarget,
- posOffsetsList, posOffsetsListTarget, posBlocks, posBlocksTarget, 
+def extend(key, targetKey,
+ seqBlocks, seqBlocksTarget,
+ posOffsetsList, posOffsetsListTarget, 
+ posBlocks, posBlocksTarget, 
  isSeqExt, DEBUG=False):
 
-	seqBlocksExt = []
+	seqBlocksExt 			= []
 	posOffsetsListExt = [[]] * len(seqBlocks)
-	posBlocksExt = []
+	posBlocksExt 			= []
 
-	numberOfSeqBlocks = len(seqBlocks)
-	lastOffset = 1
+	numberOfSeqBlocks 	= len(seqBlocks)
+	lastPosBlockOffset 	= 1
 
 	# Loop on sequence block
 	for seqIndex in range(0, numberOfSeqBlocks):
 		posOffsets 				= posOffsetsList[seqIndex]
 		posOffsetsTarget 	= posOffsetsListTarget[seqIndex]
+		seqBlock 					= seqBlocks[seqIndex]
+		seqBlockTarget 		= seqBlocksTarget[seqIndex]
 
-		(seqBlockExt, posOffsetsExt, _posBlocksExt, _lastOffset) = computeSingleBlockOfSequence(
+		(_seqBlockExt, _posOffsetsExt, _posBlocksExt, _lastPosBlockOffset) = computeSingleSeqBlock(
 			key, targetKey,
-			seqBlocks[seqIndex]	, seqBlocksTarget[seqIndex],
-			posOffsetsList[seqIndex], posOffsetsListTarget[seqIndex],
-			posBlocks, posBlocksTarget, lastOffset,
+			seqBlock, seqBlockTarget,
+			posOffsets, posOffsetsTarget,
+			posBlocks, posBlocksTarget, lastPosBlockOffset,
 			isSeqExt, DEBUG
 		)
 
-		_lastOffset = lastOffset
-		seqBlocksExt.append(seqBlockExt)
-		posOffsetsListExt[seqIndex] += posOffsetsExt
+		lastPosBlockOffset = _lastPosBlockOffset
+		seqBlocksExt.append(_seqBlockExt)
+		posOffsetsListExt[seqIndex] += _posOffsetsExt
 		posBlocksExt += _posBlocksExt
 
 	return (seqBlocksExt, posOffsetsListExt, posBlocksExt)
