@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys, copy
 sys.path.insert(0, "./")
@@ -7,17 +7,23 @@ import prism_encode_adv as Encoder
 from helper import *
 from prism_compute import *
 
+
 '''
-	- Brief: calculate posistion block each sequence
-	- posOffset & posOffsetTarget: posOffset of each sequence
-		{ "blockStartOffset": ,"numberOfBlocksInSeq": , "seqPrimeIndex": encode }
-	- posBlocks & posBlocksTarget: list of position blocks encoded for all sequences
-		[ { "posBlockIndexInSeq": ,"primalValue" }, ... ]
-	- Return: a list of pos block joining
+	Calculate primal position block s in this sequence
+	Params:
+		key 							: string - the key will be extended
+		targetKey 				: string - the key will be added below 'key'
+		posOffset 				: object ("numberOfBlocksInSeq", "blockStartOffset") of key
+		posOffsetTarget 	: object ("numberOfBlocksInSeq", "blockStartOffset") of target key
+		posBlocks 				: 1D array - all primal position value of this key
+		posBlocksTarget 	: 1D array - all primal position value of target key
+		isSeqExt 					: boolean - determine compute for itemset (false) or sequence (true) extension
+		DEBUG 						: print log purposed
 '''
 def computePosBlocksInSequence(key, targetKey,
- posOffset, posOffsetTarget, posBlocks, posBlocksTarget, 
- isSeqExt = False, DEBUG=False):
+ posOffset, posOffsetTarget, 
+ posBlocks, posBlocksTarget, 
+ isSeqExt = False, DEBUG = False):
 
 	# Get the primal pos block length
 	minNumberOfPosBlocks 		= min( posOffset["numberOfBlocksInSeq"], posOffsetTarget["numberOfBlocksInSeq"] )
@@ -27,12 +33,23 @@ def computePosBlocksInSequence(key, targetKey,
 	posBlocksExt = []
 
 	if isSeqExt == True:
-		maskValue = computeMaskValueOfPrimalValue( posBlocks[posBlockIndex - 1]["primalValue"] )
-		posBlocks[posBlockIndex - 1]["primalValue"] = maskValue
+		startIndex = posBlockIndex - 1 # Real index
+		maskValue = computeMaskValueOfPrimalValue( posBlocks[startIndex]["primalValue"] )
 
-		for index in range(1, minNumberOfPosBlocks):
-			realIndex = index + posBlockIndex - 1
-			posBlocks[realIndex]["primalValue"] = maxRankValue()
+		# Loop on position block to get first value greater than 1
+		while startIndex < minNumberOfPosBlocks and maskValue == 1:
+			startIndex += 1
+			maskValue = computeMaskValueOfPrimalValue( posBlocks[startIndex]["primalValue"] )
+
+		# Quick return if this block is all empty
+		if startIndex == minNumberOfPosBlocks and maskValue == 1:
+			return []
+
+		posBlocks[startIndex]["primalValue"] = maskValue
+		startIndex += 1
+
+		for index in range(startIndex, minNumberOfPosBlocks):
+			posBlocks[index]["primalValue"] = maxRankValue()
 
 
 	for blockIndex in range(0, minNumberOfPosBlocks):
@@ -51,20 +68,12 @@ def computePosBlocksInSequence(key, targetKey,
 
 			posBlockJoin = computeGCDOfPrimalsValue( posBlockVal, posBlockValTarget )
 
-			# if DEBUG:
-			# print("GCD of {0} {1} is {2} in blockIndex {3} {4} at index {5} {6}".format(posBlockVal, posBlockValTarget,
-			#  posBlockJoin, posBlockIndex, posBlockIndexTarget, realIndex, realIndexTarget))
-			# print("-- blockJoin: {0} & {1} = {2}".format(posBlockVal, posBlockValTarget, posBlockJoin))
-
 			if posBlockJoin > 1:
 				posBlocksExt.append({
 					"primalValue": posBlockJoin,
 					"posBlockIndexInSeq": blockIndex
 				})
-		# 	else:
-		# 		#print "===> IGNORE GCD:", posBlock, posBlockTarget
-		# else:
-		# 	#print "===> IGNORE BLOCK INDEX:", posBlock, posBlockTarget
+
 	return posBlocksExt
 
 
@@ -87,7 +96,7 @@ def computeSingleSeqBlock(key, targetKey,
 	seqBlock, seqBlockTarget, 
 	posOffsets, posOffsetsTarget, 
 	posBlocks, posBlocksTarget, 
-	lastPosBlockOffset, isSeqExt, DEBUG=False):
+	lastPosBlockOffset, isSeqExt, DEBUG = False):
 
 	seqBlockExt = computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
 	bitValue = computeBitValueOfPrimalValue(seqBlockExt)
@@ -106,7 +115,7 @@ def computeSingleSeqBlock(key, targetKey,
 	posOffsetsLengthTarget 	= len(posOffsetsTarget)
 	# maxNumberOffsetBlocks 	= max( posOffsetsLength, posOffsetsLengthTarget )
 
-	# Loop on offsets to caculate position blocks
+	# Loop on offsets to calculate position blocks
 	while lazyPosOffsetIndex < posOffsetsLength and lazyPosOffsetIndexTarget < posOffsetsLengthTarget:
 		encode 				= posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
 		encodeTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]

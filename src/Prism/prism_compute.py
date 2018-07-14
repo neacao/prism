@@ -85,12 +85,8 @@ def maxRankValue():
 	return RANK_VALUE[-1]
 
 def test():
-	# #print computeBitValueOfPrimalValue(30) # Must equal 224
-	# #print computePrimalValueOfBitValue(224) # Must equal 30
-	# #print computeGCDOfPrimalsValue(30, 6) # Must equal 6
-	# #print computeSupportOfPrimalValue(30) # Must equal 3 
-	# #print computeMaskValueOfPrimalValue(30) # Must equal 4849845
-	return 1
+	# print computeMaskValueOfPrimalValue(14)
+	return
 
 if __name__ == "__main__":
 	test()
