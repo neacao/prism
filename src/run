@@ -45,39 +45,41 @@ def processExtension(result,
 
 		supp = Computer.countSupportFromPrimalArray(seqBlocksExt)
 		
-		if supp >= MIN_SUPP:
-			if isSeqExt == True:
-				lastFrequent += "->{0}".format(curItem)
-				numerOfCharsRemove = 2
-			else:
-				lastFrequent += ".{0}".format(curItem)
-				numerOfCharsRemove = 1
+		if supp < MIN_SUPP: continue
 
-			# Ensure to make a copy instead of assign reference
-			_lastSeqBlocks 	= copy.deepcopy(seqBlocksExt)
-			_lastPosOffsets = copy.deepcopy(posOffsetsExt)
-			_lastPosBlocks 	= copy.deepcopy(posBlocksExt)
+		if isSeqExt == True:
+			lastFrequent += "->{0}".format(curItem)
+			numerOfCharsRemove = 2
+		else:
+			lastFrequent += ".{0}".format(curItem)
+			numerOfCharsRemove = 1
 
-			# Sequence extension
-			processExtension(result, lastFrequent, 0,
-				_lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 
-				seqBlocksList, posOffsetsList, posBlocksList, 
-				items, True)
+		# Ensure to make a copy instead of assign reference
+		_lastSeqBlocks 	= copy.deepcopy(seqBlocksExt)
+		_lastPosOffsets = copy.deepcopy(posOffsetsExt)
+		_lastPosBlocks 	= copy.deepcopy(posBlocksExt)
 
-			# Itemset extension
-			processExtension(result, lastFrequent, itemIndex + 1, 
-				_lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 
-				seqBlocksList, posOffsetsList, posBlocksList, 
-				items, False)
+		# Sequence extension
+		processExtension(result, lastFrequent, 0,
+			_lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 
+			seqBlocksList, posOffsetsList, posBlocksList, 
+			items, True)
 
-			result.append({
-				"frequent": lastFrequent,
-				"support": supp
-			})
-			print("[x] New frequent {0} has support {1}".format(lastFrequent, supp))
+		# Itemset extension
+		processExtension(result, lastFrequent, itemIndex + 1, 
+			_lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 
+			seqBlocksList, posOffsetsList, posBlocksList, 
+			items, False)
 
-			numerOfCharsRemove += len(curItem)
-			lastFrequent = lastFrequent[:-numerOfCharsRemove]
+		result.append({
+			"frequent": lastFrequent,
+			"support": supp
+		})
+		print("[x] New frequent {0} has support {1}".format(lastFrequent, supp))
+
+		numerOfCharsRemove += len(curItem)
+		lastFrequent = lastFrequent[:-numerOfCharsRemove]
+			
 	return
 
 
@@ -116,10 +118,9 @@ def train(major):
 	for itemIndex in range(0, numberOfItems):
 		seqBlockOfItem 			= seqBlocks[itemIndex]
 		primalOffetsOfItem 	= posOffsetList[itemIndex]
-		primalBlockOfItem 	= primalBlocks[itemIndex]=
+		primalBlockOfItem 	= primalBlocks[itemIndex]
 
 		print("-> Label {0} is processing ...".format(items[itemIndex]))
-		print("\tseqBlock: {0}\n\tprimalOffset: {1}\n\tprimalBlocks: {2}".format(seqBlockOfItem, "", ""))
 
 		processExtension(result, items[itemIndex], 0,
 			seqBlockOfItem , primalOffetsOfItem, primalBlockOfItem, 
@@ -132,9 +133,9 @@ def train(major):
 			seqBlocks, posOffsetList, primalBlocks,
 			items, False
 		)
-	
-	for element in result:
-		print("{0} - {1}".format(element["frequent"], element["support"]))
+	print("> Training done")
+	# for element in result:
+	# 	print("{0} - {1}".format(element["frequent"], element["support"]))
 	
 	saveTrainedData(result, major)
 	return
