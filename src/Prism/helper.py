@@ -40,10 +40,11 @@ def sortAdv(sequence):
 		ret[index] 				= strJoined
 
 	return ret
+	
+
 
 
 def test():
-	#print sortAdv(['A', 'B', 'R1.V1', 'L.E.M.C', 'F.R', 'Y.I1.I', 'J.T.Q', 'G.Z.X'])
 	return
 
 if __name__ == "__main__":

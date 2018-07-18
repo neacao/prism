@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys
+import sys, json
 
 from prism_compute import *
 from helper import *
@@ -120,6 +120,29 @@ def encodePrimalSeqsAdv(items, sequences):
 	return seqBlocks
 # --- END ENCODE SEQUENCE ---
 
+
+# Encode query input to predict
+def encodeQuery(query):
+	labelMappingPath = "../data/Resource/labelMappingSample.json"
+	with open(labelMappingPath) as fp:
+		labelMappingObj = json.load(fp)
+
+	queryComponents = query.split("->")
+	ret = ""
+
+	for itemset in queryComponents:
+		itemsetComponenets = itemset.split(".")
+
+		for item in itemsetComponenets:
+			if not item in labelMappingObj:
+				print("[ERROR] Could not find <{0}> in trained data".format(item))
+				return ""
+			ret += "{0}.".format(labelMappingObj[item])
+
+		ret = ret[:-1]
+		ret += "->"
+
+	return ret[:-2]
 
 def test():
 	arr = [

@@ -148,6 +148,9 @@ def loadTrainedData(filePath):
 
 
 def predict(query, trainedDataPath):
+	print(Encoder.encodeQuery(query))
+
+	exit(0)
 	trainedDataList = loadTrainedData(trainedDataPath)
 
 	# Split based on sequence
