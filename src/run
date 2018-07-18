@@ -148,12 +148,26 @@ def loadTrainedData(filePath):
 
 
 def predict(query, trainedDataPath):
-	trainedData = loadTrainedData(trainedDataPath)
+	trainedDataList = loadTrainedData(trainedDataPath)
 
-	for element in trainedData:
-		isExist = True if element["frequent"].find(query) != -1 else False
-		if isExist:
-			print("{0} - {1}".format(element["frequent"], element["support"]))
+	# Split based on sequence
+	queryComponents = query.split("->")
+	queryComponentsLength = len(queryComponents)
+
+	for trainedData in trainedDataList:
+		trainedDataComponenets = trainedData["frequent"].split("->")
+		trainedDataComponenetsLength = len(trainedDataComponenets)
+		idxQuery = 0
+
+		for item in trainedDataComponenets:
+			isExist = True if item.find(queryComponents[idxQuery]) != -1 else False
+			if isExist:
+				idxQuery += 1
+			else:
+				break
+
+			if idxQuery == queryComponentsLength:
+				print("{0} - {1}".format(trainedData["frequent"], trainedData["support"]))
 	return
 # --- END PREDICT ---
 
