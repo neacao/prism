@@ -122,8 +122,7 @@ def encodePrimalSeqsAdv(items, sequences):
 
 
 # Encode query input to predict
-def encodeQuery(query):
-	labelMappingPath = "../data/Resource/labelMappingSample.json"
+def encodeQuery(query, labelMappingPath):
 	with open(labelMappingPath) as fp:
 		labelMappingObj = json.load(fp)
 

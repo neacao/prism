@@ -148,18 +148,17 @@ def loadTrainedData(filePath):
 
 
 def predict(query, trainedDataPath):
-	print(Encoder.encodeQuery(query))
-
-	exit(0)
-	trainedDataList = loadTrainedData(trainedDataPath)
+	labelMappingPath 	= "../data/Resource/labelMappingSample.json"
+	queryEncoded 			= Encoder.encodeQuery(query, labelMappingPath)
+	trainedDataList 	= loadTrainedData(trainedDataPath)
 
 	# Split based on sequence
-	queryComponents = query.split("->")
+	queryComponents 			= queryEncoded.split("->")
 	queryComponentsLength = len(queryComponents)
 
 	for trainedData in trainedDataList:
-		trainedDataComponenets = trainedData["frequent"].split("->")
-		trainedDataComponenetsLength = len(trainedDataComponenets)
+		trainedDataComponenets 				= trainedData["frequent"].split("->")
+		trainedDataComponenetsLength 	= len(trainedDataComponenets)
 		idxQuery = 0
 
 		for item in trainedDataComponenets:
@@ -167,6 +166,8 @@ def predict(query, trainedDataPath):
 
 			if idxQuery == queryComponentsLength:
 				print("{0} - {1}".format(trainedData["frequent"], trainedData["support"]))
+				break
+
 	return
 # --- END PREDICT ---
 
