@@ -112,7 +112,7 @@ def train(major):
 	result = []
 
 	print("> Start training ...")
-	for itemIndex in range(0, 1):
+	for itemIndex in range(0, numberOfItems):
 		seqBlockOfItem 			= seqBlocks[itemIndex]
 		primalOffetsOfItem 	= posOffsetList[itemIndex]
 		primalBlockOfItem 	= primalBlocks[itemIndex]
