@@ -42,8 +42,6 @@ def sortAdv(sequence):
 	return ret
 	
 
-
-
 def test():
 	return
 

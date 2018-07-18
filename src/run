@@ -48,8 +48,10 @@ def processExtension(result,
 		if supp >= MIN_SUPP:
 			if isSeqExt == True:
 				lastFrequent += "->{0}".format(curItem)
+				numerOfCharsRemove = 2
 			else:
 				lastFrequent += ".{0}".format(curItem)
+				numerOfCharsRemove = 1
 
 			# Ensure to make a copy instead of assign reference
 			_lastSeqBlocks 	= copy.deepcopy(seqBlocksExt)
@@ -74,8 +76,7 @@ def processExtension(result,
 			})
 			print("[x] New frequent {0} has support {1}".format(lastFrequent, supp))
 
-			numerOfCharsRemove = len(curItem)
-			numerOfCharsRemove += 2 if isSeqExt else 1 # len("->") = 2 - le len(".") = 1
+			numerOfCharsRemove += len(curItem)
 			lastFrequent = lastFrequent[:-numerOfCharsRemove]
 	return
 
@@ -115,7 +116,7 @@ def train(major):
 	for itemIndex in range(0, numberOfItems):
 		seqBlockOfItem 			= seqBlocks[itemIndex]
 		primalOffetsOfItem 	= posOffsetList[itemIndex]
-		primalBlockOfItem 	= primalBlocks[itemIndex]
+		primalBlockOfItem 	= primalBlocks[itemIndex]=
 
 		print("-> Label {0} is processing ...".format(items[itemIndex]))
 		print("\tseqBlock: {0}\n\tprimalOffset: {1}\n\tprimalBlocks: {2}".format(seqBlockOfItem, "", ""))
