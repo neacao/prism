@@ -160,11 +160,7 @@ def predict(query, trainedDataPath):
 		idxQuery = 0
 
 		for item in trainedDataComponenets:
-			isExist = True if item.find(queryComponents[idxQuery]) != -1 else False
-			if isExist:
-				idxQuery += 1
-			else:
-				break
+			idxQuery += 1 if string(item).findAdv(queryComponents[idxQuery]) != -1 else -idxQuery
 
 			if idxQuery == queryComponentsLength:
 				print("{0} - {1}".format(trainedData["frequent"], trainedData["support"]))
