@@ -26,14 +26,12 @@ def encodePrimalPosBlockInSequence(item, sequence):
 		primeArrayIndex += 1
 
 		if primeArrayIndex == primeArrayLenght or idx == numberOfItemset - 1:
-			# Append if not empty block
 			if primalValue > 1:
 				result.append({
 					"posBlockIndexInSeq": primalBlockIndex, 
 					"primalValue": primalValue 
 				})
 
-			# Reset for next loop
 			primalValue = 1
 			primalBlockIndex += 1
 			primeArrayIndex = 0

@@ -72,7 +72,10 @@ if __name__ == "__main__":
 	elif func == "encode":
 		rows = COURSE_ROWS[major]
 		startRow = rows["start"]
-		endRow = rows["end"]	
+		endRow = rows["end"]
+
+		# startRow = "A1"
+		# endRow = "G11534"
 
 		Encoder.encode(
 			COURSE_GRADE_PATH, RECORD_ENCODED_PATH, IGNORE_RECORD_DICT_PATH,

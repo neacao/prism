@@ -3,10 +3,9 @@
 import sys, copy
 sys.path.insert(0, "./")
 
+import prism_compute as Computer
 import prism_encode_adv as Encoder
-from helper import *
-from prism_compute import *
-
+from helper import * 
 
 '''
 	Calculate primal position block s in this sequence
@@ -34,12 +33,12 @@ def computePosBlocksInSequence(key, targetKey,
 
 	if isSeqExt == True:
 		startIndex = posBlockIndex - 1 # Real index
-		maskValue = computeMaskValueOfPrimalValue( posBlocks[startIndex]["primalValue"] )
+		maskValue = Computer.computeMaskValueOfPrimalValue( posBlocks[startIndex]["primalValue"] )
 
 		# Loop on position block to get first value greater than 1
 		while startIndex < minNumberOfPosBlocks and maskValue == 1:
 			startIndex += 1
-			maskValue = computeMaskValueOfPrimalValue( posBlocks[startIndex]["primalValue"] )
+			maskValue = Computer.computeMaskValueOfPrimalValue( posBlocks[startIndex]["primalValue"] )
 
 		# Quick return if this block is all empty
 		if startIndex == minNumberOfPosBlocks and maskValue == 1:
@@ -66,7 +65,7 @@ def computePosBlocksInSequence(key, targetKey,
 			posBlockVal 			= posBlock["primalValue"]
 			posBlockValTarget = posBlockTarget["primalValue"]
 
-			posBlockJoin = computeGCDOfPrimalsValue( posBlockVal, posBlockValTarget )
+			posBlockJoin = Computer.computeGCDOfPrimalsValue( posBlockVal, posBlockValTarget )
 
 			if posBlockJoin > 1:
 				posBlocksExt.append({
@@ -98,9 +97,7 @@ def computeSingleSeqBlock(key, targetKey,
 	posBlocks, posBlocksTarget, 
 	lastPosBlockOffset, isSeqExt, DEBUG = False):
 
-	seqBlockExt = computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
-	bitValue = computeBitValueOfPrimalValue(seqBlockExt)
-	print("Primal {0} \n=> Bit value {1}".format(seqBlockExt, bitValue))
+	seqBlockExt = Computer.computeGCDOfPrimalsValue( seqBlock, seqBlockTarget )
 
 	if seqBlockExt == 1:
 		return 1, [], [], lastPosBlockOffset
@@ -113,9 +110,7 @@ def computeSingleSeqBlock(key, targetKey,
 
 	posOffsetsLength 				= len(posOffsets)
 	posOffsetsLengthTarget 	= len(posOffsetsTarget)
-	# maxNumberOffsetBlocks 	= max( posOffsetsLength, posOffsetsLengthTarget )
 
-	# Loop on offsets to calculate position blocks
 	while lazyPosOffsetIndex < posOffsetsLength and lazyPosOffsetIndexTarget < posOffsetsLengthTarget:
 		encode 				= posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
 		encodeTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
@@ -125,18 +120,10 @@ def computeSingleSeqBlock(key, targetKey,
 			lazyPosOffsetIndex += 1
 			encode = posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
 
-		if lazyPosOffsetIndex == posOffsetsLength:
-			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastPosBlockOffset)
-		# -- End move pointer of key
-
-		# Move the pointer to the right if not correct primal block
 		while seqBlockExt % encodeTarget != 0 and lazyPosOffsetIndexTarget < posOffsetsLengthTarget - 1:
 			lazyPosOffsetIndexTarget += 1
 			encodeTarget = posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
-
-		if lazyPosOffsetIndexTarget == posOffsetsLengthTarget:
-			return (seqBlockExt, posOffsetsExt, posBlocksExt, lastPosBlockOffset)
-		# -- End move pointer of target key
+		# --- End move pointer to right
 
 		posOffset = posOffsets[lazyPosOffsetIndex]
 		posOffsetTarget = posOffsetsTarget[lazyPosOffsetIndexTarget]
@@ -164,7 +151,7 @@ def computeSingleSeqBlock(key, targetKey,
 
 		# Remove empty block in sequence if joined before
 		elif (encode == encodeTarget and seqBlockExt % encode == 0):
-			seqBlockExt /= encode
+			seqBlockExt = (int)(seqBlockExt / encode)
 
 		lazyPosOffsetIndex 				+= 1
 		lazyPosOffsetIndexTarget 	+= 1
@@ -222,26 +209,11 @@ def extend(key, targetKey,
 		seqBlocksExt.append(_seqBlockExt)
 		posOffsetsListExt[seqIndex] += _posOffsetsExt
 		posBlocksExt += _posBlocksExt
-
 	return (seqBlocksExt, posOffsetsListExt, posBlocksExt)
 
 
 
 def test():
-	(posBlocksList, posOffsetsList) = Encoder.processEncodePrimalBlockAllSequences(ITEMS, SEQUENCES)
-	seqBlocksList = Encoder.processEncodePrimalSeqAdv(ITEMS, SEQUENCES)
-
-	(seqBlockExt, posOffsetsExt, posBlocksExt) = extend(
-		"G", "D1",
-		seqBlocksList[1], seqBlocksList[0],
-		posOffsetsList[1], posOffsetsList[0],
-		posBlocksList[1], posBlocksList[0],
-		False
-	)
-
-	#print "Result:", seqBlockExt
-	#print posBlocksExt
-	#print posOffsetsExt
 	return
 	
 

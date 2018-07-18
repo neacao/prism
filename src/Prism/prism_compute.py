@@ -30,7 +30,7 @@ def computeSupportOfPrimalValue(value):
 	return result
 
 
-def computeSupportOfPrimalValueArray(array):
+def countSupportFromPrimalArray(array):
 	result = 0
 	for element in array:
 			if element > 1:
@@ -66,11 +66,11 @@ def computeRankOfPrimalValue(value):
 		return 0
 
 
-def findNumberDivisible(currentNumber, target):
-  for number in range(currentNumber, currentNumber + target):
-      if number % target == 0:
-        return number if number >= G_LENGTH_ADVANCE else G_LENGTH_ADVANCE
-  return 0
+# def findNumberDivisible(currentNumber, target):
+#   for number in range(currentNumber, currentNumber + target):
+#       if number % target == 0:
+#         return number if number >= G_LENGTH_ADVANCE else G_LENGTH_ADVANCE
+#   return 0
 # findNumberDivisible(7, 5) -> 10
 
 

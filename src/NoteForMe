@@ -10,8 +10,12 @@ July 14th
 1. Refactor source code
 2. Fixed bug at computeMaskValue()
 
+July 16th
+1. Create a sample data to train and test
+
 Things to be done:
-1. Init small sample data to run test case
-2. Package that data into Achivement
-3. Design a simple application to run demo & app
-4. Research to write document (TheoryBased and Practice)
+[] 1. Improve predict function 
+[] 2. Init small sample data to run test case
+[] 3. Package that data into Achivement
+[] 4. Design a simple application to run demo & app
+[] 5. Research to write document (TheoryBased and Practice)
