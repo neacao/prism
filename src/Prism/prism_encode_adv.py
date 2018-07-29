@@ -169,10 +169,6 @@ def test():
 
 
 if __name__ == "__main__":
-
 	test()
-
-	# for index in range(0, len(ITEMS)):
-	# 	#print ITEMS[index], seqBlocks[index]
 
 

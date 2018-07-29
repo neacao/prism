@@ -1,24 +1,9 @@
 #!/usr/bin/env python3
 
-import sys, json, argparse
+import sys, json
 import recordHandler as Encoder
 
-
-# ap = argparse.ArgumentParser()
-# ap.add_argument("-f", "--func", required=True, help="function want to run")
-# ap.add_argument("-m", "--major", required=False, help="major will process")
-# ap.add_argument("-p", "--configurePath", required=False, help=".env file path")
-# args = vars(ap.parse_args())
-
-
-def loadData(major, configurePath):
-
-	conf = loadConfiguration(configurePath)
-	recordEncodedPath = conf["RECORD_ENCODED_PATH"]
-	labelEncodedPath = conf["LABEL_ENCODED_PATH"]
-
-	print("-> loadData for major {0}".format(major))
-
+def loadData(recordEncodedPath, labelEncodedPath):
 	with open(recordEncodedPath, "r") as fp:
 		record = [value.strip() for value in fp.readlines()]
 		recordList = decodeRecord(record)
@@ -103,7 +88,11 @@ def process(func, major, configurePath):
 		processFlatRecord(major, conf)
 
 	elif func == "load_data":
-		(record, label) = loadData(major, conf)
+		conf = loadConfiguration(configurePath)
+		recordEncodedPath = conf["RECORD_ENCODED_PATH"]
+		labelEncodedPath = conf["LABEL_ENCODED_PATH"]
+		(record, label) = loadData(recordEncodedPath, labelEncodedPath)
+		
 		return (record, label)
 
 	return

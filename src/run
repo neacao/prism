@@ -5,6 +5,7 @@ sys.path.insert(0, 'Resource')
 sys.path.insert(0, 'Prism')
 sys.path.insert(0, 'Util')
 
+
 import prism_compute as Computer
 import prism_encode_adv as Encoder
 import prism_extension_adv as Prism
@@ -16,10 +17,11 @@ from lookup_table import *
 # Common setup
 ap = argparse.ArgumentParser()
 ap.add_argument("-f", "--func", required = True, help = "function want to run")
-ap.add_argument("-c", "--configurePath", required = True, help = "configure data files path")
 ap.add_argument("-m", "--major", required = False, help = "major want to train")
-ap.add_argument("-q", "--query", required = False, help = "the query want to predict")
+ap.add_argument("-q", "--query", required = False, help = "the raw query want to predict")
+ap.add_argument("-q2", "--queryEncoded", required = False, help = "the query encoded want to predict")
 ap.add_argument("-p", "--trainedPath", required = False, help = "the trained data path")
+ap.add_argument("-c", "--configurePath", required = False, help = "configure data files path")
 args = vars(ap.parse_args())
 
 
@@ -48,7 +50,8 @@ def processExtension(result,
 
 		supp = Computer.countSupportFromPrimalArray(seqBlocksExt)
 		
-		if supp < MIN_SUPP: continue
+		if supp < MIN_SUPP: 
+			continue
 
 		if isSeqExt == True:
 			lastFrequent += "->{0}".format(curItem)
@@ -103,10 +106,14 @@ def saveSortedSeq(major, seqs):
 
 
 def train(major, configurePath):
-	# Sort and cache the data
 	print("> Loading data encoded from data/ ...")
 
-	(sequences, items) = Data.loadData(major, configurePath)
+	with open(configurePath) as fp:
+		conf = json.load(fp)
+	recordEncodedPath = conf["RECORD_ENCODED_PATH"]
+	labelEncodedPath 	= conf["LABEL_ENCODED_PATH"]
+
+	(sequences, items) = Data.loadData(recordEncodedPath, labelEncodedPath)
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
 	saveSortedSeq(major, sequences)
@@ -137,6 +144,7 @@ def train(major, configurePath):
 			seqBlocks, posOffsetList, primalBlocks,
 			items, False
 		)
+
 	print("> Training done")
 	# for element in result:
 	# 	print("{0} - {1}".format(element["frequent"], element["support"]))
@@ -153,13 +161,19 @@ def loadTrainedData(filePath):
 	return trainedData
 
 
-def predict(query, trainedDataPath):
-	labelMappingPath 	= "../data/Resource/labelMappingSample.json"
-	queryEncoded 			= Encoder.encodeQuery(query, labelMappingPath)
+def predict(query, queryEncoded, trainedDataPath, configurePath):
+	if queryEncoded:
+		_queryEncoded = queryEncoded
+	else:
+		with open(configurePath) as fp:
+			conf = json.load(fp)
+		labelMappingPath 	= conf["LABEL_MAPPING_PATH"]
+		_queryEncoded 			= Encoder.encodeQuery(query, labelMappingPath)
+	
 	trainedDataList 	= loadTrainedData(trainedDataPath)
 
 	# Split based on sequence
-	queryComponents 			= queryEncoded.split("->")
+	queryComponents 			= _queryEncoded.split("->")
 	queryComponentsLength = len(queryComponents)
 
 	for trainedData in trainedDataList:
@@ -189,7 +203,7 @@ def showTrained(filePath):
 def usage():
 	print("./run")
 	print("... -f train -m <major> -c <configure file path>" )
-	print("... -f predict -q \"<query>\" -p <trained data path>")
+	print("... -f predict -q \"<query>\" -c <configure file path> -p <trained data path>")
 	print("... -f show -p <trained data path>")
 	exit(0)
 
@@ -204,10 +218,15 @@ def parseParam(args):
 		train(args["major"], args["configurePath"])
 
 	elif func == "predict":
-		if not args["query"] or not args["trainedPath"]:
+		query 				= args["query"] if "query" in args else None
+		queryEncoded	= args["queryEncoded"] if "queryEncoded" in args else None
+		trainedPath 	= args["trainedPath"] if "trainedPath" in args else None
+		configurePath = args["configurePath"] if "configurePath" in args else None
+
+		if (query == None and queryEncoded == None) or (trainedPath == None or configurePath == None):
 			usage()
 
-		predict(args["query"], args["trainedPath"])
+		predict(query, queryEncoded, trainedPath,  configurePath)
 
 	elif func == "show":
 		if not args["trainedPath"]:
