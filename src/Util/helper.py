@@ -58,3 +58,7 @@ def saveSortedSeq(major, seqs, trainedFolderPath):
 	with open(fileName, "w") as fp:
 		[fp.write("{0}\n".format(string(seq))) for seq in seqs]
 	return
+
+
+
+	

@@ -32,21 +32,14 @@ def decodeLabel(labelEncoded):
 	return _array
 
 
-def usage():
-	print("./dataHandler")
-	print("\t... -f flat_record -m [ IT ] -p [.env path]")
-	print("\t... -f encode -m [ IT ] -p [.env path]")
-	print("\t... -f load_data -m [ IT ] -p [.env path]")
-	return
-
-
 def loadConfiguration(path):
 	with open(path) as fp:
 		conf = json.load(fp)
 	return conf
 
 
-def processFlatRecord(major, conf):
+def processFlatRecord(major, configurePath):
+	conf = loadConfiguration(configurePath)
 	rows 			= conf["COURSE_ROWS"][major]
 	startRow 	= rows["start"]
 	endRow 		= rows["end"]
@@ -57,7 +50,9 @@ def processFlatRecord(major, conf):
 	return
 
 
-def processEncode(major, conf):
+def processEncode(major, configurePath):
+	conf = loadConfiguration(configurePath)
+
 	rows 			= conf["COURSE_ROWS"][major]
 	startRow 	= rows["start"]
 	endRow 		= rows["end"]
@@ -69,41 +64,8 @@ def processEncode(major, conf):
 	print("> Start encoding ...")
 	Encoder.encode(
 		courseGradePath, recordEncodedPath, ignoreRecordPath,
-		startRow, endRow, 4.0, None, None
-	)
+		startRow, endRow, 4.0)
 	print(">> Encode done !")
 	return
-
-
-def process(func, major, configurePath):
-	if func == "help":
-		usage()
-
-	elif func == "encode":
-		conf = loadConfiguration(configurePath)
-		processEncode(major, conf)
-
-	elif func == "flat_record":
-		conf = loadConfiguration(configurePath)
-		processFlatRecord(major, conf)
-
-	elif func == "load_data":
-		conf = loadConfiguration(configurePath)
-		recordEncodedPath = conf["RECORD_ENCODED_PATH"]
-		labelEncodedPath = conf["LABEL_ENCODED_PATH"]
-		(record, label) = loadData(recordEncodedPath, labelEncodedPath)
-		
-		return (record, label)
-
-	return
-
-
-# if __name__ == "__main__":
-# 	func = args["func"]
-# 	major = args["major"]
-# 	configurePath = args["configurePath"]
-	
-# 	process(func, major, configurePath)
-
 
 

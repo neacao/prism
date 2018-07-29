@@ -51,7 +51,7 @@ def processExtension(result,
 		if not Computer.isValidSupport(supp): 
 			continue
 
-		if isSeqExt == True:
+		if isSeqExt:
 			lastFrequent += "->{0}".format(curItem)
 			numerOfCharsRemove = 2
 		else:
@@ -170,7 +170,7 @@ def predict(query, queryEncoded, trainedDataPath, configurePath):
 	itemsetQueryComponentsLength 	= len(itemsetQueryComponents)
 
 	for trainedData in trainedDataList:
-		trainedItemsetComponents 				= trainedData["frequent"].split("->")
+		trainedItemsetComponents = trainedData["frequent"].split("->")
 		idxQuery = 0
 
 		for itemset in trainedItemsetComponents:
@@ -198,35 +198,48 @@ def usage():
 	print("... -f train -m <major> -c <configure file path>" )
 	print("... -f predict -q \"<query>\" -c <configure file path> -p <trained data path>")
 	print("... -f show -p <trained data path>")
+	print("... -f encode -m <major> -c <configure file path>")
+	print("... -f flat_record -m <major> -c <configure file path>")
 	exit(0)
 
 
 def parseParam(args):
-	func = args["func"]
+	func 					= args["func"]
+	major 				= args["major"] 				if "major" in args 					else None
+	query 				= args["query"] 				if "query" in args 					else None
+	queryEncoded	= args["queryEncoded"] 	if "queryEncoded" in args 	else None
+	trainedPath 	= args["trainedPath"]		if "trainedPath" in args 		else None
+	configurePath = args["configurePath"] if "configurePath" in args 	else None
 
-	if func == "train":
-		major 				= args["major"] if "major" in args else None
-		configurePath	= args["configurePath"] if "configurePath" in args else None
-		
-		if major == None or configurePath == None:
+	if major:
+		major = major.upper()
+
+	if func == "encode":
+		if not major or not configurePath:
+			usage()
+
+		Data.processEncode(major, configurePath)
+
+	elif func == "flat_record":
+		if not major or not configurePath:
+			usage()
+
+		Data.processFlatRecord(major, configurePath) 
+
+	elif func == "train":	
+		if not major or not configurePath:
 			usage()
 			
 		train(major, configurePath)
 
 	elif func == "predict":
-		query 				= args["query"] 				if "query" in args 					else None
-		queryEncoded	= args["queryEncoded"] 	if "queryEncoded" in args 	else None
-		trainedPath 	= args["trainedPath"]		if "trainedPath" in args 		else None
-		configurePath = args["configurePath"] if "configurePath" in args 	else None
-
-		if (query == None and queryEncoded == None) or (trainedPath == None or configurePath == None):
+		if (not query and not queryEncoded) or (not trainedPath or not configurePath):
 			usage()
 
 		predict(query, queryEncoded, trainedPath,  configurePath)
 
 	elif func == "show":
-		trainedPath = args["trainedPath"] if "trainedPath" in args else None
-		if trainedPath == None:
+		if not trainedPath:
 			usage()
 
 		showTrained(trainedPath)
