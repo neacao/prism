@@ -16,6 +16,7 @@ import helper as Helper
 ap = argparse.ArgumentParser()
 ap.add_argument("-f", "--func", required = True, help = "function want to run")
 ap.add_argument("-m", "--major", required = False, help = "major want to train")
+ap.add_argument("-minSup", "--minSupport", required = False, help = "minimun support value that approved")
 ap.add_argument("-q", "--query", required = False, help = "the raw query want to predict")
 ap.add_argument("-q2", "--queryEncoded", required = False, help = "the query encoded want to predict")
 ap.add_argument("-p", "--trainedPath", required = False, help = "the trained data path")
@@ -28,7 +29,7 @@ def processExtension(result,
  lastFrequent, lastItemIndex,
  lastSeqBlocks, lastOffsets, lastPosBlocks,
  seqBlocksList, posOffsetsList, posBlocksList, 
- items, isSeqExt):
+ items, isSeqExt, minSup):
 	
 	lengthOfItems = len(items)
 
@@ -47,8 +48,7 @@ def processExtension(result,
 		)
 
 		supp = Computer.countSupportFromPrimalArray(seqBlocksExt)
-		
-		if not Computer.isValidSupport(supp): 
+		if supp < minSup:
 			continue
 
 		if isSeqExt:
@@ -67,13 +67,13 @@ def processExtension(result,
 		processExtension(result, lastFrequent, 0,
 			_lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 
 			seqBlocksList, posOffsetsList, posBlocksList, 
-			items, True)
+			items, True, minSup)
 
 		# Itemset extension
 		processExtension(result, lastFrequent, itemIndex + 1, 
 			_lastSeqBlocks, _lastPosOffsets, _lastPosBlocks, 
 			seqBlocksList, posOffsetsList, posBlocksList, 
-			items, False)
+			items, False, minSup)
 
 		result.append({
 			"frequent": lastFrequent,
@@ -87,7 +87,7 @@ def processExtension(result,
 	return
 
 
-def train(major, configurePath):
+def train(major, minSup, configurePath):
 	with open(configurePath) as fp:
 		conf = json.load(fp)
 
@@ -116,13 +116,13 @@ def train(major, configurePath):
 		processExtension(result, items[itemIndex], 0,
 			seqBlockOfItem , primalOffetsOfItem, primalBlockOfItem, 
 			seqBlocks, posOffsetList, primalBlocks,
-			items, True
+			items, True, minSup
 		)
 
 		processExtension(result, items[itemIndex], itemIndex + 1,
 			seqBlockOfItem, primalOffetsOfItem, primalBlockOfItem, 
 			seqBlocks, posOffsetList, primalBlocks,
-			items, False
+			items, False, minSup
 		)
 
 	print("> Training done")
@@ -139,13 +139,13 @@ def searchItemset(itemset, itemsetTarget):
 	itemsetComponents = itemset.split(".")
 
 	for item in itemsetComponents:
-		if string(itemsetTarget).findAdv(item) == -1:
+		if Helper.string(itemsetTarget).findAdv(item) == -1:
 			return False
 
 	return True
 
 
-def predict(query, queryEncoded, trainedDataPath, configurePath):
+def predict(query, queryEncoded, minSup, trainedDataPath, configurePath):
 	if queryEncoded:
 		_queryEncoded = queryEncoded
 	else:
@@ -166,9 +166,12 @@ def predict(query, queryEncoded, trainedDataPath, configurePath):
 
 		for itemset in trainedItemsetComponents:
 			itemsetQuery = itemsetQueryComponents[idxQuery]
-			idxQuery += 1 if searchItemset(itemsetQuery, itemset) else -idxQuery
+			idxQuery += 1 if searchItemset(itemsetQuery, itemset) else 0
 
 			if idxQuery == itemsetQueryComponentsLength:
+				if minSup and int(trainedData["support"]) < minSup:
+					continue
+
 				print("{0} - {1}".format(trainedData["frequent"], trainedData["support"]))
 				break
 
@@ -186,7 +189,7 @@ def showTrained(filePath):
 
 def usage():
 	print("./run")
-	print("... -f train -m <major> -c <configure file path>" )
+	print("... -f train -m <major> -c <configure file path> -minSup <minimun support value>" )
 	print("... -f predict -q \"<raw query>\" -c <configure file path> -p <trained data path>")
 	print("... -f predict -q2 \"<query encoded>\" -c <configure file path> -p <trained data path>")
 	print("... -f show -p <trained data path>")
@@ -198,6 +201,7 @@ def usage():
 def parseParam(args):
 	func 					= args["func"]
 	major 				= args["major"] 				if "major" in args 					else None
+	minSup 				= args["minSupport"] 		if "minSupport" in args 		else None
 	query 				= args["query"] 				if "query" in args 					else None
 	queryEncoded	= args["queryEncoded"] 	if "queryEncoded" in args 	else None
 	trainedPath 	= args["trainedPath"]		if "trainedPath" in args 		else None
@@ -205,6 +209,9 @@ def parseParam(args):
 
 	if major:
 		major = major.upper()
+
+	if minSup:
+		minSup = int(minSup)
 
 	if func == "encode":
 		if not major or not configurePath:
@@ -219,16 +226,16 @@ def parseParam(args):
 		Data.processFlatRecord(major, configurePath) 
 
 	elif func == "train":	
-		if not major or not configurePath:
+		if not major or not configurePath or not minSup:
 			usage()
 			
-		train(major, configurePath)
+		train(major, minSup, configurePath)
 
 	elif func == "predict":
 		if (not query and not queryEncoded) or (not trainedPath or not configurePath):
 			usage()
 
-		predict(query, queryEncoded, trainedPath,  configurePath)
+		predict(query, queryEncoded, minSup, trainedPath,  configurePath)
 
 	elif func == "show":
 		if not trainedPath:

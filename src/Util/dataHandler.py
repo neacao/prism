@@ -67,7 +67,9 @@ def processEncode(major, configurePath):
 	Encoder.encode(
 		courseGradePath, recordEncodedPath, ignoreRecordPath,
 		startRow, endRow, 4.0)
-	print(">> Encode done !")
+	print("=> Encode done !")
 	return
+
+
 
 

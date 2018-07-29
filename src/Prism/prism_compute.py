@@ -77,8 +77,5 @@ def maxRankValue():
 	return RANK_VALUE[-1]
 
 
-def isValidSupport(counter):
-	return counter >= MIN_SUPP
 
-if __name__ == "__main__":
-	test()
+
