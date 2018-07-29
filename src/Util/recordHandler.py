@@ -30,16 +30,12 @@ def flatRecord(fileName, replaceDictPath, fromCell, toCell):
 	return
 	
 
-def encodeRecord(fileName, ignoreDict, fromCell, toCell,
- minGrade, exceptedYear = None, approvedYear = None):
+def encodeRecord(fileName, ignoreDict, fromCell, toCell, minGrade):
 	recordData 	= openpyxl.load_workbook(fileName)
 	sheet 			= recordData.active
 	cells 			= sheet[fromCell: toCell]
 	sequences 	= [[]]
 	studentIDs	= []
-
-	counter = 0
-	print("Ignore year {0}\nApproved year {1}".format(exceptedYear, approvedYear))
 
 	# Index:
 	# 1: Student ID
@@ -74,15 +70,6 @@ def encodeRecord(fileName, ignoreDict, fromCell, toCell,
 			print("Ignore courseGrade: {0}".format(courseGrade))
 			continue
 
-		if exceptedYear != None and year == exceptedYear:
-			print("=> Ignore curYear {0}".format(year))
-			continue
-
-		if approvedYear != None and year != approvedYear:
-			continue
-
-		counter += 1
-
 		if curStudentID != studentID:
 			curStudentID = studentID
 			sequences.append([])
@@ -99,8 +86,6 @@ def encodeRecord(fileName, ignoreDict, fromCell, toCell,
 			sequences[-1][-1] += "."
 		sequences[-1][-1] += encodedKey
 	
-	print("Counter {0}".format(counter))
-
 	Util.cacheLabel()
 	sequences = [Helper.sortAdv(seq) for seq in sequences]
 	return (sequences, studentIDs)
@@ -108,13 +93,12 @@ def encodeRecord(fileName, ignoreDict, fromCell, toCell,
 
 def encode(resourcePath, encodedPath, ignoreDictPath,
  startRow, endRow,
- minGrade, exceptedYear = None, approvedYear = None):
+ minGrade):
 	
 	with open(ignoreDictPath, "r") as fp:
 		ignoreDict = json.load(fp)
 
-	(sequences, studentIDs) = encodeRecord(resourcePath, ignoreDict, startRow, endRow,
-	 minGrade, exceptedYear, approvedYear)
+	(sequences, studentIDs) = encodeRecord(resourcePath, ignoreDict, startRow, endRow, minGrade)
 
 	seqLength = len(sequences)
 	with open(encodedPath, "w") as fp: # JULY 8TH TESTING

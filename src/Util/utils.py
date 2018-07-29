@@ -18,7 +18,7 @@ with open("./env.dev") as fp:
 	configInfo = json.load(fp)
 
 
-############################## Funtions ##############################
+############################## Public Funtions ##############################
 def getLabel(courseName):
 	ret = ""
 	global CHARACTER
@@ -68,6 +68,10 @@ def loadLabel():
 		result = json.load(fp)
 
 	return result
+
+
+def numberOfLabels():
+	return len(LABEL)
 
 
 LABEL = loadLabel()

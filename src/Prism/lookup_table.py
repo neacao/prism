@@ -349,13 +349,9 @@ RANK_GCD = [
 	CONSTANT VALUE
 '''
 
-NO_LOGS = True
-
 G_ARRAY_ADVANCE = [2, 3, 5, 7, 11, 13, 17, 19]
 
 G_LENGTH_ADVANCE = len(G_ARRAY_ADVANCE)
-
-
 
 
 

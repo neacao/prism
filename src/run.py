@@ -14,7 +14,7 @@ import helper as Helper
 
 # Common setup
 ap = argparse.ArgumentParser()
-ap.add_argument("-f", "--func", required = True, help = "function want to run")
+ap.add_argument("-f", "--func", required = False, help = "function want to run")
 ap.add_argument("-m", "--major", required = False, help = "major want to train")
 ap.add_argument("-minSup", "--minSupport", required = False, help = "minimun support value that approved")
 ap.add_argument("-q", "--query", required = False, help = "the raw query want to predict")

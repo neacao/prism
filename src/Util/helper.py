@@ -45,16 +45,16 @@ def sortAdv(sequence):
 	
 
 def saveTrainedData(result, major, trainedFolderPath):
-	now = datetime.datetime.now()
-	fileName = "{0}/{1}_trained_{2}".format(trainedFolderPath, major, now.isoformat())
+	ts = datetime.datetime.now().timestamp()
+	fileName = "{0}/{1}_trained_{2}".format(trainedFolderPath, major, ts)
 	with open(fileName, "w") as fp:
 		json.dump(result, fp, ensure_ascii=False, indent=2, sort_keys=True)
 	return
 
 
 def saveSortedSeq(major, seqs, trainedFolderPath):
-	now = datetime.datetime.now()
-	fileName = "{0}/{1}_encodeSorted_{2}".format(trainedFolderPath, major, now.isoformat())
+	ts = datetime.datetime.now().timestamp()
+	fileName = "{0}/{1}_encodeSorted_{2}".format(trainedFolderPath, major, ts)
 	with open(fileName, "w") as fp:
 		[fp.write("{0}\n".format(string(seq))) for seq in seqs]
 	return
