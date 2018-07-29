@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys, copy, json, datetime, argparse
-sys.path.insert(0, 'Resource')
 sys.path.insert(0, 'Prism')
 sys.path.insert(0, 'Util')
 
@@ -11,7 +10,6 @@ import prism_encode_adv as Encoder
 import prism_extension_adv as Prism
 import dataHandler as Data
 from helper import *
-from lookup_table import *
 
 
 # Common setup
@@ -50,7 +48,7 @@ def processExtension(result,
 
 		supp = Computer.countSupportFromPrimalArray(seqBlocksExt)
 		
-		if supp < MIN_SUPP: 
+		if not Computer.isValidSupport(supp): 
 			continue
 
 		if isSeqExt == True:
@@ -183,7 +181,7 @@ def predict(query, queryEncoded, trainedDataPath, configurePath):
 		labelMappingPath 	= conf["LABEL_MAPPING_PATH"]
 		_queryEncoded 		= Encoder.encodeQuery(query, labelMappingPath)
 	
-	trainedDataList 	= loadTrainedData(trainedDataPath)
+	trainedDataList = loadTrainedData(trainedDataPath)
 
 	# Split based on sequence
 	itemsetQueryComponents 				= _queryEncoded.split("->")

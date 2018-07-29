@@ -84,9 +84,9 @@ def inverseMultiplyBitEncodingAdv(number):
 def maxRankValue():
 	return RANK_VALUE[-1]
 
-def test():
-	# print computeMaskValueOfPrimalValue(14)
-	return
+
+def isValidSupport(counter):
+	return counter >= MIN_SUPP
 
 if __name__ == "__main__":
 	test()
