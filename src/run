@@ -87,17 +87,18 @@ def processExtension(result,
 	return
 
 
-def saveTrainedData(result, major):
+def saveTrainedData(result, major, trainedFolderPath):
 	now = datetime.datetime.now()
-	fileName = "Resource/{0}_trained_{1}".format(major, now.isoformat())
+	fileName = "{0}/{1}_trained_{2}".format(trainedFolderPath, major, now.isoformat())
+	
 	with open(fileName, "w") as fp:
 		json.dump(result, fp, ensure_ascii=False, indent=2, sort_keys=True)
 	return
 
 
-def saveSortedSeq(major, seqs):
+def saveSortedSeq(major, seqs, trainedFolderPath):
 	now = datetime.datetime.now()
-	SEQ_SORTED_DATA_PATH = "Resource/{0}_encodeSorted_{1}".format(major, now.isoformat())
+	SEQ_SORTED_DATA_PATH = "{0}/{1}_encodeSorted_{2}".format(trainedFolderPath, major, now.isoformat())
 	with open(SEQ_SORTED_DATA_PATH, "w") as fp:
 		[fp.write("{0}\n".format(string(seq))) for seq in seqs]
 	return
@@ -108,13 +109,15 @@ def train(major, configurePath):
 
 	with open(configurePath) as fp:
 		conf = json.load(fp)
+
+	trainedFolderPath = conf["TRAINED_FOLDER_PATH"]
 	recordEncodedPath = conf["RECORD_ENCODED_PATH"]
 	labelEncodedPath 	= conf["LABEL_ENCODED_PATH"]
 
 	(sequences, items) = Data.loadData(recordEncodedPath, labelEncodedPath)
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
-	saveSortedSeq(major, sequences)
+	saveSortedSeq(major, sequences, trainedFolderPath)
 
 	print("> Encode all records ...")
 	(primalBlocks, posOffsetList) = Encoder.encodePrimalItemsetsAdv(items, sequences)
@@ -147,7 +150,7 @@ def train(major, configurePath):
 	# for element in result:
 	# 	print("{0} - {1}".format(element["frequent"], element["support"]))
 	
-	saveTrainedData(result, major)
+	saveTrainedData(result, major, trainedFolderPath)
 	return
 # --- END TRAIN ---
 
