@@ -21,6 +21,9 @@ with open("./env.dev") as fp:
 ############################## Funtions ##############################
 def getLabel(courseName):
 	ret = ""
+	global CHARACTER
+	global CHARACTER_INDEX
+	global LABEL
 	
 	# Return if exist in dictionary
 	if courseName in LABEL:

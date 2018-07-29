@@ -196,7 +196,8 @@ def showTrained(filePath):
 def usage():
 	print("./run")
 	print("... -f train -m <major> -c <configure file path>" )
-	print("... -f predict -q \"<query>\" -c <configure file path> -p <trained data path>")
+	print("... -f predict -q \"<raw query>\" -c <configure file path> -p <trained data path>")
+	print("... -f predict -q2 \"<query encoded>\" -c <configure file path> -p <trained data path>")
 	print("... -f show -p <trained data path>")
 	print("... -f encode -m <major> -c <configure file path>")
 	print("... -f flat_record -m <major> -c <configure file path>")
