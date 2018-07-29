@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import datetime, json
+
 class string(str):
 	
 	def findAll(self, word):
@@ -42,10 +44,17 @@ def sortAdv(sequence):
 	return ret
 	
 
-def test():
+def saveTrainedData(result, major, trainedFolderPath):
+	now = datetime.datetime.now()
+	fileName = "{0}/{1}_trained_{2}".format(trainedFolderPath, major, now.isoformat())
+	with open(fileName, "w") as fp:
+		json.dump(result, fp, ensure_ascii=False, indent=2, sort_keys=True)
 	return
 
-if __name__ == "__main__":
-	test()
 
-	
+def saveSortedSeq(major, seqs, trainedFolderPath):
+	now = datetime.datetime.now()
+	fileName = "{0}/{1}_encodeSorted_{2}".format(trainedFolderPath, major, now.isoformat())
+	with open(fileName, "w") as fp:
+		[fp.write("{0}\n".format(string(seq))) for seq in seqs]
+	return
