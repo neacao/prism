@@ -29,7 +29,8 @@ def flatRecord(fileName, replaceDictPath, fromCell, toCell):
 	return
 	
 
-def encodeRecord(fileName, ignoreDict, fromCell, toCell, minGrade, exceptedYear=None, approvedYear=None):
+def encodeRecord(fileName, ignoreDict, fromCell, toCell,
+ minGrade, exceptedYear = None, approvedYear = None):
 	recordData 	= openpyxl.load_workbook(fileName)
 	sheet 			= recordData.active
 	cells 			= sheet[fromCell: toCell]
@@ -106,12 +107,13 @@ def encodeRecord(fileName, ignoreDict, fromCell, toCell, minGrade, exceptedYear=
 
 def encode(resourcePath, encodedPath, ignoreDictPath,
  startRow, endRow,
- minGrade, exceptedYear=None, approvedYear=None):
+ minGrade, exceptedYear = None, approvedYear = None):
 	
 	with open(ignoreDictPath, "r") as fp:
 		ignoreDict = json.load(fp)
 
-	(sequences, studentIDs) = encodeRecord(resourcePath, ignoreDict, startRow, endRow, minGrade, exceptedYear, approvedYear)
+	(sequences, studentIDs) = encodeRecord(resourcePath, ignoreDict, startRow, endRow,
+	 minGrade, exceptedYear, approvedYear)
 
 	seqLength = len(sequences)
 	with open(encodedPath, "w") as fp: # JULY 8TH TESTING

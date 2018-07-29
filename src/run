@@ -3,7 +3,7 @@
 import sys, copy, json, datetime, argparse
 sys.path.insert(0, 'Resource')
 sys.path.insert(0, 'Prism')
-sys.path.insert(0, '../data')
+sys.path.insert(0, 'Util')
 
 import prism_compute as Computer
 import prism_encode_adv as Encoder
@@ -12,13 +12,16 @@ import dataHandler as Data
 from helper import *
 from lookup_table import *
 
+
 # Common setup
 ap = argparse.ArgumentParser()
-ap.add_argument("-f", "--func", required=False, help="function want to run")
-ap.add_argument("-m", "--major", required=False, help="major want to train")
-ap.add_argument("-q", "--query", required=False, help="the query want to predict")
-ap.add_argument("-p", "--trainedPath", required=False, help="the trained data path")
+ap.add_argument("-f", "--func", required = True, help = "function want to run")
+ap.add_argument("-c", "--configurePath", required = True, help = "configure data files path")
+ap.add_argument("-m", "--major", required = False, help = "major want to train")
+ap.add_argument("-q", "--query", required = False, help = "the query want to predict")
+ap.add_argument("-p", "--trainedPath", required = False, help = "the trained data path")
 args = vars(ap.parse_args())
+
 
 # --- TRAIN ---
 def processExtension(result,
@@ -99,10 +102,11 @@ def saveSortedSeq(major, seqs):
 	return
 
 
-def train(major):
+def train(major, configurePath):
 	# Sort and cache the data
 	print("> Loading data encoded from data/ ...")
-	(sequences, items) = Data.loadData(major)
+
+	(sequences, items) = Data.loadData(major, configurePath)
 	items = sorted(items)
 	sequences = [sortAdv(seq) for seq in sequences]
 	saveSortedSeq(major, sequences)
@@ -181,10 +185,11 @@ def showTrained(filePath):
 	return
 # --- END SHOW ---
 
+
 def usage():
 	print("./run")
-	print("... -f train -m <major>")
-	print("... -f predict -q \"<query> -p <trained data path>\"")
+	print("... -f train -m <major> -c <configure file path>" )
+	print("... -f predict -q \"<query>\" -p <trained data path>")
 	print("... -f show -p <trained data path>")
 	exit(0)
 
@@ -196,7 +201,7 @@ def parseParam(args):
 		if not args["major"]:
 			usage()
 			
-		train(args["major"])
+		train(args["major"], args["configurePath"])
 
 	elif func == "predict":
 		if not args["query"] or not args["trainedPath"]:

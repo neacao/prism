@@ -351,7 +351,7 @@ RANK_GCD = [
 
 NO_LOGS = True
 
-MIN_SUPP 	= 2
+MIN_SUPP 	= 5
 
 G_ARRAY_ADVANCE = [2, 3, 5, 7, 11, 13, 17, 19]
 

@@ -143,6 +143,9 @@ def encodeQuery(query, labelMappingPath):
 
 	return ret[:-2]
 
+
+
+# TESING PURPOSE
 def test():
 	arr = [
 		['A.O', 'B.C.D.E.O1', 'F.G.H', 'I.J.K.M.N', 'O.P1.T', 'K1.L.P.Q.R.S.U', 'V.W.X.Y', 'B1.C1.D1.E1.G1.J1'],

@@ -181,7 +181,7 @@ def extend(key, targetKey,
  seqBlocks, seqBlocksTarget,
  posOffsetsList, posOffsetsListTarget, 
  posBlocks, posBlocksTarget, 
- isSeqExt, DEBUG=False):
+ isSeqExt, DEBUG = False):
 
 	seqBlocksExt 			= []
 	posOffsetsListExt = [[]] * len(seqBlocks)
@@ -213,6 +213,7 @@ def extend(key, targetKey,
 
 
 
+# TESTING PURPOSE
 def test():
 	return
 	
