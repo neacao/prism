@@ -36,7 +36,7 @@ def computePosBlocksInSequence(key, targetKey,
 		maskValue = Computer.computeMaskValueOfPrimalValue( posBlocks[startIndex]["primalValue"] )
 
 		# Loop on position block to get first value greater than 1
-		while startIndex < minNumberOfPosBlocks and maskValue == 1:
+		while startIndex < minNumberOfPosBlocks - 1 and maskValue == 1:
 			startIndex += 1
 			maskValue = Computer.computeMaskValueOfPrimalValue( posBlocks[startIndex]["primalValue"] )
 

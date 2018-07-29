@@ -6,6 +6,7 @@
 
 import sys, openpyxl, json, os
 import utils as Util
+import helper as Helper
 
 def flatRecord(fileName, replaceDictPath, fromCell, toCell):
 	
@@ -101,7 +102,7 @@ def encodeRecord(fileName, ignoreDict, fromCell, toCell,
 	print("Counter {0}".format(counter))
 
 	Util.cacheLabel()
-	sequences = [sortAdv(seq) for seq in sequences]
+	sequences = [Helper.sortAdv(seq) for seq in sequences]
 	return (sequences, studentIDs)
 
 
@@ -119,25 +120,5 @@ def encode(resourcePath, encodedPath, ignoreDictPath,
 	with open(encodedPath, "w") as fp: # JULY 8TH TESTING
 		[fp.write("{0}\n".format(seq)) for seq in sequences]
 			
-
-
-def sortAdv(sequence):
-	# List = [ 'A', 'D.C', ...] - C must appear before D
-	numberOfItemsets = len(sequence)
-	ret = [None] * numberOfItemsets
-
-	for index in range(0, numberOfItemsets):
-		itemset 					= sequence[index]
-		componenets 			= itemset.split(".")
-		componenetsSorted = list(sorted(componenets))
-		strJoined 				= ".".join(componenetsSorted)
-		ret[index] 				= strJoined
-
-	return ret
-
-if __name__ == "__main__":
-	encode("IT")
-
-
 
 

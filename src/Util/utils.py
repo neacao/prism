@@ -43,6 +43,7 @@ def cacheLabel():
 	labelEncodedPath = configInfo["LABEL_ENCODED_PATH"]
 	labelMappingPath = configInfo["LABEL_MAPPING_PATH"]
 	encodedLabel = [str(LABEL[key]) for key in LABEL]
+	encodedLabel = sorted(encodedLabel)
 
 	with open(labelEncodedPath, "w") as fp:
 		fp.write("{0}".format(encodedLabel))

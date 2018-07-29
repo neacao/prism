@@ -60,5 +60,12 @@ def saveSortedSeq(major, seqs, trainedFolderPath):
 	return
 
 
+def loadTrainedData(filePath):
+	with open(filePath) as fp:
+		trainedData = json.load(fp)
+	return trainedData
+
+
+	
 
 	

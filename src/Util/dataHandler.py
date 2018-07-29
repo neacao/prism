@@ -39,14 +39,16 @@ def loadConfiguration(path):
 
 
 def processFlatRecord(major, configurePath):
-	conf = loadConfiguration(configurePath)
-	rows 			= conf["COURSE_ROWS"][major]
-	startRow 	= rows["start"]
-	endRow 		= rows["end"]
+	conf 						= loadConfiguration(configurePath)
+	coursePath 			= conf["COURSE_GRADE_PATH"]
+	flatRecordPath 	= conf["FLAT_RECORD_DICT_PATH"]
+	rows 						= conf["COURSE_ROWS"][major]
+	startRow 				= rows["start"]
+	endRow 					= rows["end"]
 
 	print("> Start flat record ...")
-	Encoder.flatRecord(COURSE_GRADE_PATH, FLAT_RECORD_DICT_PATH, startRow, endRow)
-	print(">> Flat record done !")
+	Encoder.flatRecord(coursePath, flatRecordPath, startRow, endRow)
+	print("=> Flat record done !")
 	return
 
 

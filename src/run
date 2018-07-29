@@ -97,9 +97,6 @@ def train(major, configurePath):
 
 	print("> Loading data encoded from data/ ...")
 	(sequences, items) = Data.loadData(recordEncodedPath, labelEncodedPath)
-	items = sorted(items)
-	sequences = [Helper.sortAdv(seq) for seq in sequences]
-	Helper.saveSortedSeq(major, sequences, trainedFolderPath)
 
 	print("> Encode all records ...")
 	(primalBlocks, posOffsetList) = Encoder.encodePrimalItemsetsAdv(items, sequences)
@@ -138,12 +135,6 @@ def train(major, configurePath):
 
 
 # --- PREDICT ----
-def loadTrainedData(filePath):
-	with open(filePath) as fp:
-		trainedData = json.load(fp)
-	return trainedData
-
-
 def searchItemset(itemset, itemsetTarget):
 	itemsetComponents = itemset.split(".")
 
@@ -163,7 +154,7 @@ def predict(query, queryEncoded, trainedDataPath, configurePath):
 		labelMappingPath 	= conf["LABEL_MAPPING_PATH"]
 		_queryEncoded 		= Encoder.encodeQuery(query, labelMappingPath)
 	
-	trainedDataList = loadTrainedData(trainedDataPath)
+	trainedDataList = Helper.loadTrainedData(trainedDataPath)
 
 	# Split based on sequence
 	itemsetQueryComponents 				= _queryEncoded.split("->")
@@ -187,7 +178,7 @@ def predict(query, queryEncoded, trainedDataPath, configurePath):
 
 # --- SHOW ----
 def showTrained(filePath):
-	trainedData = loadTrainedData(filePath)
+	trainedData = Helper.loadTrainedData(filePath)
 	[print(item) for item in trainedData]
 	return
 # --- END SHOW ---
