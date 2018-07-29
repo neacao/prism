@@ -161,6 +161,19 @@ def loadTrainedData(filePath):
 	return trainedData
 
 
+def searchItemset(itemset, itemsetTarget):
+	idx = 0
+	itemsetComponents = itemset.split(".")
+	length = len(itemsetComponents)
+
+	for idx in range(0, length):
+		curItem = itemsetComponents[idx]
+		if string(itemsetTarget).findAdv(curItem) == -1:
+			return False
+
+	return True
+
+
 def predict(query, queryEncoded, trainedDataPath, configurePath):
 	if queryEncoded:
 		_queryEncoded = queryEncoded
@@ -168,23 +181,23 @@ def predict(query, queryEncoded, trainedDataPath, configurePath):
 		with open(configurePath) as fp:
 			conf = json.load(fp)
 		labelMappingPath 	= conf["LABEL_MAPPING_PATH"]
-		_queryEncoded 			= Encoder.encodeQuery(query, labelMappingPath)
+		_queryEncoded 		= Encoder.encodeQuery(query, labelMappingPath)
 	
 	trainedDataList 	= loadTrainedData(trainedDataPath)
 
 	# Split based on sequence
-	queryComponents 			= _queryEncoded.split("->")
-	queryComponentsLength = len(queryComponents)
+	itemsetQueryComponents 				= _queryEncoded.split("->")
+	itemsetQueryComponentsLength 	= len(itemsetQueryComponents)
 
 	for trainedData in trainedDataList:
-		trainedDataComponenets 				= trainedData["frequent"].split("->")
-		trainedDataComponenetsLength 	= len(trainedDataComponenets)
+		trainedItemsetComponents 				= trainedData["frequent"].split("->")
 		idxQuery = 0
 
-		for item in trainedDataComponenets:
-			idxQuery += 1 if string(item).findAdv(queryComponents[idxQuery]) != -1 else -idxQuery
+		for itemset in trainedItemsetComponents:
+			itemsetQuery = itemsetQueryComponents[idxQuery]
+			idxQuery += 1 if searchItemset(itemsetQuery, itemset) else -idxQuery
 
-			if idxQuery == queryComponentsLength:
+			if idxQuery == itemsetQueryComponentsLength:
 				print("{0} - {1}".format(trainedData["frequent"], trainedData["support"]))
 				break
 
@@ -212,16 +225,19 @@ def parseParam(args):
 	func = args["func"]
 
 	if func == "train":
-		if not args["major"]:
+		major 				= args["major"] if "major" in args else None
+		configurePath	= args["configurePath"] if "configurePath" in args else None
+		
+		if major == None or configurePath == None:
 			usage()
 			
-		train(args["major"], args["configurePath"])
+		train(major, configurePath)
 
 	elif func == "predict":
-		query 				= args["query"] if "query" in args else None
-		queryEncoded	= args["queryEncoded"] if "queryEncoded" in args else None
-		trainedPath 	= args["trainedPath"] if "trainedPath" in args else None
-		configurePath = args["configurePath"] if "configurePath" in args else None
+		query 				= args["query"] 				if "query" in args 					else None
+		queryEncoded	= args["queryEncoded"] 	if "queryEncoded" in args 	else None
+		trainedPath 	= args["trainedPath"]		if "trainedPath" in args 		else None
+		configurePath = args["configurePath"] if "configurePath" in args 	else None
 
 		if (query == None and queryEncoded == None) or (trainedPath == None or configurePath == None):
 			usage()
@@ -229,10 +245,11 @@ def parseParam(args):
 		predict(query, queryEncoded, trainedPath,  configurePath)
 
 	elif func == "show":
-		if not args["trainedPath"]:
+		trainedPath = args["trainedPath"] if "trainedPath" in args else None
+		if trainedPath == None:
 			usage()
 
-		showTrained(args["trainedPath"])
+		showTrained(trainedPath)
 
 	else:
 		usage()
