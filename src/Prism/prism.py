@@ -71,14 +71,7 @@ def processExtension(result,
 	return
 
 
-def train(major, minSup, configurePath):
-	with open(configurePath) as fp:
-		conf = json.load(fp)
-
-	trainedFolderPath = conf["TRAINED_FOLDER_PATH"]
-	recordEncodedPath = conf["RECORD_ENCODED_PATH"]
-	labelEncodedPath 	= conf["LABEL_ENCODED_PATH"]
-
+def train(prefixName, minSup, recordEncodedPath, labelEncodedPath, trainedOutputPath):
 	print("> Loading data encoded from data/ ...")
 	(sequences, items) = Data.loadData(recordEncodedPath, labelEncodedPath)
 
@@ -113,7 +106,7 @@ def train(major, minSup, configurePath):
 	# for element in result:
 	# 	print("{0} - {1}".format(element["frequent"], element["support"]))
 	
-	Helper.saveTrainedData(result, major, trainedFolderPath)
+	Helper.saveTrainedData(result, prefixName, trainedOutputPath)
 	return
 # --- END TRAIN ---
 
@@ -129,19 +122,11 @@ def searchItemset(itemset, itemsetTarget):
 	return True
 
 
-def predict(query, queryEncoded, minSup, trainedDataPath, configurePath):
-	if queryEncoded:
-		_queryEncoded = queryEncoded
-	else:
-		with open(configurePath) as fp:
-			conf = json.load(fp)
-		labelMappingPath 	= conf["LABEL_MAPPING_PATH"]
-		_queryEncoded 		= Encoder.encodeQuery(query, labelMappingPath)
-	
+def predict(queryEncoded, minSup, trainedDataPath):
 	trainedDataList = Helper.loadTrainedData(trainedDataPath)
 
 	# Split based on sequence
-	itemsetQueryComponents 				= _queryEncoded.split("->")
+	itemsetQueryComponents 				= queryEncoded.split("->")
 	itemsetQueryComponentsLength 	= len(itemsetQueryComponents)
 
 	for trainedData in trainedDataList:

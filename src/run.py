@@ -18,7 +18,9 @@ ap.add_argument("-p",				"--trainedPath",		required = False, help = "the trained
 ap.add_argument("-c",				"--configurePath",	required = False, help = "configure data files path")
 args = vars(ap.parse_args())
 
+
 ##################### MAIN #####################
+
 def loadConfiguration(path):
 	with open(path) as fp:
 		conf = json.load(fp)
@@ -49,6 +51,27 @@ def flatRecord(major, configurePath):
 		resourcePath = coursePath, replaceDictPath = flatRecordPath, 
 		startRow = startRow, endRow = endRow)
 
+
+def train(major, minSup, configurePath):
+	conf 							= loadConfiguration(configurePath)
+	trainedOutputPath = conf["TRAINED_FOLDER_PATH"]
+	recordEncodedPath = conf["RECORD_ENCODED_PATH"]
+	labelEncodedPath 	= conf["LABEL_ENCODED_PATH"]
+	Prism.train(
+		prefixName = major, minSup = minSup,
+		recordEncodedPath = recordEncodedPath, labelEncodedPath = labelEncodedPath, 
+		trainedOutputPath = trainedOutputPath)
+
+
+def predict(query, queryEncoded, minSup, trainedPath, configurePath):
+	if query:
+		conf							= loadConfiguration
+		labelMappingPath 	= conf["LABEL_MAPPING_PATH"]
+		queryEncoded 		= Data.encodeQuery(query, labelMappingPath)
+
+	Prism.predict(queryEncoded = queryEncoded, minSup = minSup, trainedDataPath = trainedPath)
+
+
 ##################### END MAIN #####################
 
 
@@ -57,7 +80,6 @@ def usage():
 	print("... -f train -m <major> -c <configure file path> -minSup <minimun support value>" )
 	print("... -f predict -q \"<raw query>\" -c <configure file path> -p <trained data path>")
 	print("... -f predict -q2 \"<query encoded>\" -c <configure file path> -p <trained data path>")
-	print("... -f show -p <trained data path>")
 	print("... -f encode -m <major> -c <configure file path>")
 	print("... -f flat_record -m <major> -c <configure file path>")
 	exit(0)
@@ -95,19 +117,13 @@ def parseParam(args):
 		if not major or not configurePath or not minSup:
 			usage()
 			
-		Prism.train(major, minSup, configurePath)
+		train(major, minSup, configurePath)
 
 	elif func == "predict":
 		if (not query and not queryEncoded) or (not trainedPath or not configurePath):
 			usage()
 
-		Prism.predict(query, queryEncoded, minSup, trainedPath,  configurePath)
-
-	elif func == "show":
-		if not trainedPath:
-			usage()
-
-		showTrained(trainedPath)
+		predict(query, queryEncoded, minSup, trainedPath, configurePath)
 
 	else:
 		usage()
