@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import glob, os, json
-import numpy as np
 from run import *
 
 def newest(path):
