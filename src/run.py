@@ -1,27 +1,55 @@
 #!/usr/bin/env python3
 
-import sys, argparse
+import sys, argparse, json
 sys.path.insert(0, 'Prism')
 sys.path.insert(0, 'Util')
 
-
-# import prism_compute as Computer
-# import prism_encode_adv as Encoder
-# import prism_extension_adv as Prism
 import prism as Prism
-import dataHandler as Data
-import helper as Helper
+import recordHandler as Data
 
 # Common setup
 ap = argparse.ArgumentParser()
-ap.add_argument("-f", "--func", required = False, help = "function want to run")
-ap.add_argument("-m", "--major", required = False, help = "major want to train")
-ap.add_argument("-minSup", "--minSupport", required = False, help = "minimun support value that approved")
-ap.add_argument("-q", "--query", required = False, help = "the raw query want to predict")
-ap.add_argument("-q2", "--queryEncoded", required = False, help = "the query encoded want to predict")
-ap.add_argument("-p", "--trainedPath", required = False, help = "the trained data path")
-ap.add_argument("-c", "--configurePath", required = False, help = "configure data files path")
+ap.add_argument("-f",				"--func",						required = False, help = "function want to run")
+ap.add_argument("-m",				"--major",					required = False, help = "major want to train")
+ap.add_argument("-minSup",	"--minSupport",			required = False, help = "minimun support value that approved")
+ap.add_argument("-q",				"--query",					required = False, help = "the raw query want to predict")
+ap.add_argument("-q2",			"--queryEncoded",		required = False, help = "the query encoded want to predict")
+ap.add_argument("-p",				"--trainedPath",		required = False, help = "the trained data path")
+ap.add_argument("-c",				"--configurePath",	required = False, help = "configure data files path")
 args = vars(ap.parse_args())
+
+##################### MAIN #####################
+def loadConfiguration(path):
+	with open(path) as fp:
+		conf = json.load(fp)
+	return conf
+
+
+def encode(major, configurePath):
+	conf = loadConfiguration(configurePath)
+	rows 								= conf["COURSE_ROWS"][major]
+	startRow						= rows["start"]
+	endRow  						= rows["end"]
+	courseGradePath 		= conf["COURSE_GRADE_PATH"]
+	recordEncodedPath 	= conf["RECORD_ENCODED_PATH"]
+	ignoreRecordPath 		= conf["IGNORE_RECORD_DICT_PATH"]
+	Data.encode(
+		resourcePath = courseGradePath, encodedPath = recordEncodedPath, ignoreDictPath = ignoreRecordPath, 
+		startRow = startRow, endRow = endRow, minGrade = 4)
+
+
+def flatRecord(major, configurePath):
+	conf 						= loadConfiguration(configurePath)
+	rows 						= conf["COURSE_ROWS"][major]
+	startRow 				= rows["start"]
+	endRow 					= rows["end"]
+	coursePath 			= conf["COURSE_GRADE_PATH"]
+	flatRecordPath 	= conf["FLAT_RECORD_DICT_PATH"]
+	Data.flatRecord(
+		resourcePath = coursePath, replaceDictPath = flatRecordPath, 
+		startRow = startRow, endRow = endRow)
+
+##################### END MAIN #####################
 
 
 def usage():
@@ -50,17 +78,18 @@ def parseParam(args):
 	if minSup:
 		minSup = int(minSup)
 
+
 	if func == "encode":
 		if not major or not configurePath:
 			usage()
 
-		Data.processEncode(major, configurePath)
+		encode(major, configurePath)
 
 	elif func == "flat_record":
 		if not major or not configurePath:
 			usage()
 
-		Data.processFlatRecord(major, configurePath) 
+		flatRecord(major, configurePath) 
 
 	elif func == "train":	
 		if not major or not configurePath or not minSup:
