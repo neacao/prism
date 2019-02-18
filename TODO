@@ -1,0 +1,17 @@
+== DATA
+1. Labeling course to LabelingMapping.json
+2. Flat course name from RecordFlattingDict.json
+3. Re-labeling course to FinalLabelingMapping.json
+4. List of label onto EncodedLabel.data
+5. List of grade course onto EncodedRecord.data
+
+== PRISM
+1. Refactor source code for more readable
+
+== Application
+1. Refactor sourec code for more readable
+2. Design & make UI for the application
+
+== Document
+1. Restructure document
+2. Design & implement standee for project
