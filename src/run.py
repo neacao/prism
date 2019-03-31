@@ -6,6 +6,7 @@ sys.path.insert(0, 'Util')
 
 import prism as Prism
 import recordHandler as Data
+import helper as Helper
 
 # Common setup
 ap = argparse.ArgumentParser()
@@ -64,16 +65,24 @@ def train(major, minSup, configurePath):
 
 
 def predict(query, queryEncoded, minSup, trainedPath, configurePath):
-	if query:
-		conf							= loadConfiguration
-		labelMappingPath 	= conf["LABEL_MAPPING_PATH"]
-		queryEncoded 		= Data.encodeQuery(query, labelMappingPath)
+	conf = loadConfiguration(configurePath)
+	labelMappingPath = conf["LABEL_MAPPING_PATH"]
 
-	Prism.predict(queryEncoded = queryEncoded, minSup = minSup, trainedDataPath = trainedPath)
+	if query: # encode the raw query to predict it
+		queryEncoded = Data.encodeQuery(query, labelMappingPath)
 
+	with open(labelMappingPath) as fp:
+		mappingDict = json.load(fp)
+
+	ret = Prism.predict(queryEncoded = queryEncoded, minSup = minSup, trainedDataPath = trainedPath)
+	sequenceListOnly = map(lambda e: e["frequent"], ret) 
+
+	readableRetList = Helper.parseReadableFromPrismEncodeResult(sequenceListOnly, mappingDict)
+	for readableRet in readableRetList:
+		print(readableRet)
+# -----
 
 ##################### END MAIN #####################
-
 
 def usage():
 	print("./run")
