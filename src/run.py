@@ -10,13 +10,13 @@ import helper as Helper
 
 # Common setup
 ap = argparse.ArgumentParser()
-ap.add_argument("-f",				"--func",						required = False, help = "function want to run")
-ap.add_argument("-m",				"--major",					required = False, help = "major want to train")
-ap.add_argument("-minSup",	"--minSupport",			required = False, help = "minimun support value that approved")
-ap.add_argument("-q",				"--query",					required = False, help = "the raw query want to predict")
-ap.add_argument("-q2",			"--queryEncoded",		required = False, help = "the query encoded want to predict")
-ap.add_argument("-p",				"--trainedPath",		required = False, help = "the trained data path")
-ap.add_argument("-c",				"--configurePath",	required = False, help = "configure data files path")
+ap.add_argument("-f", "--func", required = False, help = "function want to run")
+ap.add_argument("-m", "--major", required = False, help = "major want to train")
+ap.add_argument("-minSup", "--minSupport", required = False, help = "minimun support value that approved")
+ap.add_argument("-q", "--query", required = False, help = "the raw query want to predict")
+ap.add_argument("-q2", "--queryEncoded", required = False, help = "the query encoded want to predict")
+ap.add_argument("-p", "--trainedPath", required = False, help = "the trained data path")
+ap.add_argument("-c", "--configurePath", required = False, help = "configure data files path")
 args = vars(ap.parse_args())
 
 
@@ -30,34 +30,34 @@ def loadConfiguration(path):
 
 def encode(major, configurePath):
 	conf = loadConfiguration(configurePath)
-	rows 								= conf["COURSE_ROWS"][major]
-	startRow						= rows["start"]
-	endRow  						= rows["end"]
-	courseGradePath 		= conf["COURSE_GRADE_PATH"]
-	recordEncodedPath 	= conf["RECORD_ENCODED_PATH"]
-	ignoreRecordPath 		= conf["IGNORE_RECORD_DICT_PATH"]
+	rows = conf["COURSE_ROWS"][major]
+	startRow = rows["start"]
+	endRow = rows["end"]
+	courseGradePath = conf["COURSE_GRADE_PATH"]
+	recordEncodedPath = conf["RECORD_ENCODED_PATH"]
+	ignoreRecordPath  = conf["IGNORE_RECORD_DICT_PATH"]
 	Data.encode(
 		resourcePath = courseGradePath, encodedPath = recordEncodedPath, ignoreDictPath = ignoreRecordPath, 
 		startRow = startRow, endRow = endRow, minGrade = 4)
 
 
 def flatRecord(major, configurePath):
-	conf 						= loadConfiguration(configurePath)
-	rows 						= conf["COURSE_ROWS"][major]
-	startRow 				= rows["start"]
-	endRow 					= rows["end"]
-	coursePath 			= conf["COURSE_GRADE_PATH"]
-	flatRecordPath 	= conf["FLAT_RECORD_DICT_PATH"]
+	conf = loadConfiguration(configurePath)
+	rows = conf["COURSE_ROWS"][major]
+	startRow = rows["start"]
+	endRow = rows["end"]
+	coursePath = conf["COURSE_GRADE_PATH"]
+	flatRecordPath = conf["FLAT_RECORD_DICT_PATH"]
 	Data.flatRecord(
 		resourcePath = coursePath, replaceDictPath = flatRecordPath, 
 		startRow = startRow, endRow = endRow)
 
 
 def train(major, minSup, configurePath):
-	conf 							= loadConfiguration(configurePath)
+	conf = loadConfiguration(configurePath)
 	trainedOutputPath = conf["TRAINED_FOLDER_PATH"]
 	recordEncodedPath = conf["RECORD_ENCODED_PATH"]
-	labelEncodedPath 	= conf["LABEL_ENCODED_PATH"]
+	labelEncodedPath = conf["LABEL_ENCODED_PATH"]
 	Prism.train(
 		prefixName = major, minSup = minSup,
 		recordEncodedPath = recordEncodedPath, labelEncodedPath = labelEncodedPath, 
@@ -78,8 +78,13 @@ def predict(query, queryEncoded, minSup, trainedPath, configurePath):
 	sequenceListOnly = map(lambda e: e["frequent"], ret) 
 
 	readableRetList = Helper.parseReadableFromPrismEncodeResult(sequenceListOnly, mappingDict)
-	for readableRet in readableRetList:
-		print(readableRet)
+	readableRetListLength = len(readableRetList)
+
+	for index in range(0, readableRetListLength):
+		print("{0} - {1}".format(readableRetList[index], ret[index]["support"]))
+
+	# for readableRet in readableRetList:
+	# 	print(readableRet)
 # -----
 
 ##################### END MAIN #####################
@@ -95,13 +100,13 @@ def usage():
 
 
 def parseParam(args):
-	func 					= args["func"]
-	major 				= args["major"] 				if "major" in args 					else None
-	minSup 				= args["minSupport"] 		if "minSupport" in args 		else None
-	query 				= args["query"] 				if "query" in args 					else None
-	queryEncoded	= args["queryEncoded"] 	if "queryEncoded" in args 	else None
-	trainedPath 	= args["trainedPath"]		if "trainedPath" in args 		else None
-	configurePath = args["configurePath"] if "configurePath" in args 	else None
+	func = args["func"]
+	major = args["major"] if "major" in args else None
+	minSup = args["minSupport"] if "minSupport" in args else None
+	query  = args["query"] if "query" in args else None
+	queryEncoded = args["queryEncoded"] if "queryEncoded" in args else None
+	trainedPath = args["trainedPath"] if "trainedPath" in args else None
+	configurePath = args["configurePath"] if "configurePath" in args else None
 
 	if major:
 		major = major.upper()
