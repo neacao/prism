@@ -35,9 +35,9 @@ def encode(major, configurePath):
 	endRow = rows["end"]
 	courseGradePath = conf["COURSE_GRADE_PATH"]
 	recordEncodedPath = conf["RECORD_ENCODED_PATH"]
-	ignoreRecordPath  = conf["IGNORE_RECORD_DICT_PATH"]
+	# ignoreRecordPath  = conf["IGNORE_RECORD_DICT_PATH"]
 	Data.encode(
-		resourcePath = courseGradePath, encodedPath = recordEncodedPath, ignoreDictPath = ignoreRecordPath, 
+		resourcePath = courseGradePath, encodedPath = recordEncodedPath, ignoreDictPath = None, 
 		startRow = startRow, endRow = endRow, minGrade = 4)
 
 

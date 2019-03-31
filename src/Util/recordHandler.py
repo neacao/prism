@@ -17,7 +17,7 @@ def decodeRecord(recordEncoded):
 		_array = [x[1:-1] for x in _array]
 		ret.append(_array)
 	return ret
-##########
+# -----
 
 
 def decodeLabel(labelEncoded):
@@ -25,15 +25,15 @@ def decodeLabel(labelEncoded):
 	_array = labelEncoded.split(', ')
 	_array = [x[1:-1] for x in _array]
 	return _array
-##########
+# -----
 
 
 def encodeRecord(fileName, ignoreDict, fromCell, toCell, minGrade):
 	recordData 	= openpyxl.load_workbook(fileName)
-	sheet 			= recordData.active
-	cells 			= sheet[fromCell: toCell]
-	sequences 	= [[]]
-	studentIDs	= []
+	sheet = recordData.active
+	cells  = sheet[fromCell: toCell]
+	sequences = [[]]
+	studentIDs = []
 
 	# Index:
 	# [Student ID, Year, Semester, N/A, Course's name, Course's grade]
@@ -46,21 +46,21 @@ def encodeRecord(fileName, ignoreDict, fromCell, toCell, minGrade):
 
 	for row in cells:
 		studentID = row[1].value
-		year = row[2].value
+		# year = row[2].value
 		semester = row[3].value
 		courseName = row[5].value
 		courseGrade = row[6].value
-
-		if courseName in ignoreDict:
-			print("Ignore courseName {0}".format(courseName))
-			continue
+		
+		# if courseName in ignoreDict:
+		# 	print("Ignore courseName {0}".format(courseName))
+		# 	continue
 
 		if courseGrade == "NULL" or courseGrade == None: # Special case: user has no course's grade
-			print("Ignore unknow course grade: {0}".format(courseGrade))
+			print("Ignore unknow course {0} with grade: {1} of student {2}".format(courseName, courseGrade, studentID))
 			continue
 
 		if courseGrade < minGrade:
-			print("Ignore courseGrade: {0}".format(courseGrade))
+			print("Ignore course \"{0}\" with grade: {1} of student {2}".format(courseName, courseGrade, studentID))
 			continue
 
 		if curStudentID != studentID:
@@ -82,21 +82,22 @@ def encodeRecord(fileName, ignoreDict, fromCell, toCell, minGrade):
 	Util.cacheLabel()
 	sequences = [Helper.sortAdv(seq) for seq in sequences]
 	return (sequences, studentIDs)
-##########
+# -----
 
 
 def encode(resourcePath, encodedPath, ignoreDictPath,
  startRow, endRow, minGrade):
-	
-	with open(ignoreDictPath, "r") as fp:
-		ignoreDict = json.load(fp)
+	ignoreDict = None
+	if ignoreDictPath:
+		with open(ignoreDictPath, "r") as fp:
+			ignoreDict = json.load(fp)
 
 	(sequences, studentIDs) = encodeRecord(resourcePath, ignoreDict, startRow, endRow, minGrade)
 
 	seqLength = len(sequences)
 	with open(encodedPath, "w") as fp: 
 		[fp.write("{0}\n".format(seq)) for seq in sequences]
-##########
+# -----
 
 def loadData(recordEncodedPath, labelEncodedPath):
 	with open(recordEncodedPath, "r") as fp:
@@ -108,7 +109,7 @@ def loadData(recordEncodedPath, labelEncodedPath):
 		labelList = decodeLabel(label)
 
 	return recordList, labelList
-##########
+# -----
 
 
 def flatRecord(resourcePath, replaceDictPath, startRow, endRow):
@@ -130,7 +131,7 @@ def flatRecord(resourcePath, replaceDictPath, startRow, endRow):
 			row[5].value = replaceDict[courseName]
 
 	recordData.save(resourcePath)
-##########
+# -----
 
 
 
