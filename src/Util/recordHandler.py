@@ -5,9 +5,8 @@
 #http://zetcode.com/articles/openpyxl/
 
 import sys, openpyxl, json, os
-import utils as Util
-import helper as Helper	
-
+# import utils as Util
+# import helper as Helper	
 
 def decodeRecord(recordEncoded):
 	ret = []
@@ -84,6 +83,35 @@ def encodeRecord(fileName, ignoreDict, fromCell, toCell, minGrade):
 	return (sequences, studentIDs)
 # -----
 
+# Encode the course grade based on A (10 - 8.0) B (7.9 - 6.0) C (5.9 - 4.0) D (3.9 - 0.0)
+# resourcePath: path to .xlsx file
+def encodeCourseGrade(resourcePath, fromCell, toCell):
+	recordData 	= openpyxl.load_workbook(resourcePath)
+	sheet = recordData.active
+	cells  = sheet[fromCell: toCell]
+	courseGradeIndedx = 6
+	courseGradeTypeIndex = 7
+
+	for row in cells:
+		courseGrade = row[courseGradeIndedx].value
+		key = "<unknown>"
+
+		if courseGrade == "NULL" or courseGrade == None or courseGrade < 4.0: # Special case: user has no course's grade
+			key = "D"
+		elif courseGrade >= 4.0 and courseGrade < 6.0:
+			key = "C"
+		elif courseGrade >= 6.0 and courseGrade < 8.0:
+			key = "B"
+		elif courseGrade >= 8.0:
+			key = "A"
+
+		row[courseGradeTypeIndex].value = key
+	
+	recordData.save(resourcePath)
+	print("Completed =====")
+
+# - encodeCourseGrade
+
 
 def encode(resourcePath, encodedPath, ignoreDictPath,
  startRow, endRow, minGrade):
@@ -133,5 +161,8 @@ def flatRecord(resourcePath, replaceDictPath, startRow, endRow):
 	recordData.save(resourcePath)
 # -----
 
+
+if __name__ == "__main__":
+	encodeCourseGrade("../../data/raw/KHMT_lite.xlsx", "A1", "H248")
 
 
