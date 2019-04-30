@@ -7,7 +7,7 @@ CHARACTER_INDEX = 0
 CHARACTER = []
 
 # Generate character to encoded the course's name
-for c in ['', '1', '2', '3', '4']:
+for c in ['0', '1', '2', '3', '4']:
 	for index in range(65, 91):
 		char = chr(index) + c
 		CHARACTER.append(char)

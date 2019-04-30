@@ -5,8 +5,8 @@
 #http://zetcode.com/articles/openpyxl/
 
 import sys, openpyxl, json, os
-# import utils as Util
-# import helper as Helper	
+import utils as Util
+import helper as Helper	
 
 def decodeRecord(recordEncoded):
 	ret = []
@@ -55,11 +55,11 @@ def encodeRecord(fileName, ignoreDict, fromCell, toCell, minGrade):
 		# 	continue
 
 		if courseGrade == "NULL" or courseGrade == None: # Special case: user has no course's grade
-			print("Ignore unknow course {0} with grade: {1} of student {2}".format(courseName, courseGrade, studentID))
+			#print("Ignore unknow course {0} with grade: {1} of student {2}".format(courseName, courseGrade, studentID))
 			continue
 
 		if courseGrade < minGrade:
-			print("Ignore course \"{0}\" with grade: {1} of student {2}".format(courseName, courseGrade, studentID))
+			#print("Ignore course \"{0}\" with grade: {1} of student {2}".format(courseName, courseGrade, studentID))
 			continue
 
 		if curStudentID != studentID:
