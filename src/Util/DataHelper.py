@@ -72,9 +72,11 @@ class DataHelper:
 			# -
 		# -
 
-		fileOutputPath = "{}/CourseMap2.json".format(outputPath)
+		fileOutputPath = "{}/IDAndNameMap.json".format(outputPath)
 		with open(fileOutputPath, 'w') as f:
 			json.dump(retJson, f, ensure_ascii=False, indent=2, sort_keys=True)
+
+		return fileOutputPath
 	# ---
 
 	def encodeCourseGrade(self, symbolizedCourseMapPath, outputPath):
@@ -86,23 +88,24 @@ class DataHelper:
 
 		# Write alpha range (A)
 		alphaRangeLength = len(self.alphaRange)
-		firstCharVal = 66 # 'B'
+		firstCharVal = 67 # 'C'
 
 		for idx in range(0, alphaRangeLength):
 			ws['{}1'.format(chr(firstCharVal+idx))] = self.alphaRange[idx]
 		# - (A)
 
-		# Write course id (B)
+		# Write course id & name (B)
 		dictLength = len(symbolizedDict)
-		tempIdx = 2
+		startIdx = 2
 		for key in symbolizedDict:
-			ws['A{}'.format(tempIdx)] = key
-			tempIdx += 1
+			ws['A{}'.format(startIdx)] = symbolizedDict[key]
+			ws['B{}'.format(startIdx)] = key
+			startIdx += 1
 		# - (B)
 
 		# Write course encode by id & alpha (C)
 		counter = 1
-		firstCharVal = 66 # 'B'
+		firstCharVal = 67 # 'C'
 		for row in range(0, dictLength):
 			for column in range(0, alphaRangeLength):
 				wsAlpha = chr(firstCharVal+column)
@@ -110,22 +113,24 @@ class DataHelper:
 				ws['{}{}'.format(wsAlpha, wsNumber)] = counter
 				counter += 1
 		# - (C)
-
-
-		# Save workbook
-		wb.save('{}/CourseIDAndSymbolMapping.xlsx'.format(outputPath))
-
+ 
+		fileOutputPath = '{}/IDAndSymbolizeGradeMap.xlsx'.format(outputPath)
+		wb.save(fileOutputPath)
+		return fileOutputPath
 	# ---
 
-# ---
+# --- Data Helper
 
 
 if __name__ == "__main__":
 	dataPath = "../../data"
 	litePath = "../../data/lite"
 	data = DataHelper(dataPath, "resource/KHMT_lite2.xlsx")
-	data.encodeCourseGrade("{}/CourseIDAndNameMapping.json".format(litePath), litePath)
+	jsonPath = data.collectCouseID(litePath)
+	xlsxMappingPath = data.encodeCourseGrade(jsonPath, litePath)
 
+	# Test
+	os.system('open {}'.format(xlsxMappingPath))
 
 
 
