@@ -63,27 +63,22 @@ class PrismHelper:
 	# sequence: a string contain course grade encoded
 	# item: numberic value
 	def createPrimalEncodedPos(self, item, sequence):
-		semesterList = sequence.split("->")
-		semesterLenght = len(semesterList)
+		itemsetList = sequence.split("->")
+		itemsetListLength = len(itemsetList)
 
-		counter = 0
 		ret = []
+		counter = 0
 
-		while counter < semesterLenght:
+		while counter < itemsetListLength:
 			primalVal = 1
 			primseIdx = 0
 
-			for idx in range(0, self.primeLength): # Loop on blocks
-				realIdx = idx + counter
-				if realIdx == semesterLenght:
-					break
+			endIdx = min(itemsetListLength - counter, self.primeLength)
+			subItemsetList = itemsetList[counter: counter+endIdx]
 
-				courseList = semesterList[realIdx].split(".")
-
-				for course in courseList:
-					if course == item:
-						primalVal *= self.primeArray[primseIdx]
-						break
+			for itemset in subItemsetList:
+				if self.doesItemInItemset(item, itemset):
+					primalVal *= self.primeArray[primseIdx]
 				# -
 				primseIdx += 1
 			# -
@@ -96,9 +91,9 @@ class PrismHelper:
 	# --
 
 	def createPrimalEncodedSiq(self, item, seqList):
-		counter = 0
 		seqListLength = len(seqList)
 		ret = []
+		counter = 0
 
 		while counter < seqListLength:
 			primalVal = 1
@@ -156,9 +151,9 @@ if __name__ == "__main__":
 		"a.b->a.b->a.b->a->b.c"
 	]
 
-	# for sub in string:
-	# 	helper.createPrimalEncodedPos('a', sub)
-	helper.createPrimalEncodedSiq('b', string)
+	for sub in string:
+		print(helper.createPrimalEncodedPos('c', sub))
+	# helper.createPrimalEncodedSiq('b', string)
 
 # ---
 
