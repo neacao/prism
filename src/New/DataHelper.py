@@ -8,7 +8,8 @@ class DataHelper:
 		self.courseGradePath = courseGradePath
 		self.targetPath = "{}/{}".format(resourceRootPath, courseGradePath)
 		self.alphaRange = ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F']
-	# ---
+	# --
+
 
 	# Encoded grade rage [0...10] to [A...F] in *.xlsx files
 	def symbolizeCourseGrade(self):
@@ -46,7 +47,33 @@ class DataHelper:
 			row[gradeTypeIdx].value = key
 		
 		wb.save(fullPath)
-	# ---
+	# --
+
+
+	def encodeCourseGrade(self, courseGradeMapPath, outputPath):
+		wb = openpyxl.load_workbook(self.targetPath)
+		ws = wb.active
+		wsRange = ws['A{}:I{}'.format(ws.min_row, ws.max_row)]
+
+		courseIDIdx = 4
+		courseAlphaIdx = 7
+		courseEncodeIdx = 8
+
+		with open(courseGradeMapPath, 'r') as fp:
+			courseGradeMap = json.load(fp)
+
+		for row in wsRange:
+			courseID = str(row[courseIDIdx].value)
+			courseAlpha = row[courseAlphaIdx].value
+
+			encodeVal = courseGradeMap[courseID]['range'][courseAlpha]
+			row[courseEncodeIdx].value = encodeVal
+		# -
+		fileOutputPath = '{}/CourseGradeEncoded.xlsx'.format(outputPath)
+		wb.save(fileOutputPath)
+		return fileOutputPath
+	# --
+
 
 	# Mapping course ID & name to the output path as json
 	def collectCourseID(self, outputPath):
@@ -77,7 +104,8 @@ class DataHelper:
 			json.dump(retJson, f, ensure_ascii=False, indent=2, sort_keys=True)
 
 		return fileOutputPath
-	# ---
+	# --
+
 
 	def getAlphaRangeInfoDict(self, fromValue):
 		retDict = {}
@@ -88,11 +116,12 @@ class DataHelper:
 		return retDict, counter
 	# --
 
-	def createCourseGradeMap(self, jsonResourcePath, outputPath):
+
+	def createCourseGradeMap(self, courseIDCollectionPath, outputPath):
 		retDict = {}
 		counter = 1
 
-		with open(jsonResourcePath, 'r') as fp:
+		with open(courseIDCollectionPath, 'r') as fp:
 			infoDict = json.load(fp)
 
 		for key in infoDict:
@@ -111,6 +140,7 @@ class DataHelper:
 
 		return fileOutputPath
 	# --
+
 
 	def createCourseGradeWorkbookForPreview(self, symbolizedCourseMapPath, outputPath):
 		with open(symbolizedCourseMapPath, 'r') as fp:
@@ -150,8 +180,7 @@ class DataHelper:
 		fileOutputPath = '{}/IDAndSymbolizeGradeMap.xlsx'.format(outputPath)
 		wb.save(fileOutputPath)
 		return fileOutputPath
-	# ---
-
+	# --
 # --- Data Helper
 
 
@@ -159,13 +188,12 @@ if __name__ == "__main__":
 	dataPath = "../../data"
 	litePath = "../../data/lite"
 	data = DataHelper(dataPath, "resource/KHMT_lite2.xlsx")
-	# jsonPath = data.collectCouseID(litePath)
-	# xlsxMappingPath = data.createCourseGradeWorkbookForPreview(jsonPath, litePath)
+	courseIDCollectionPath = data.collectCourseID(litePath)
+	courseGradeMapPath = data.createCourseGradeMap(courseIDCollectionPath, litePath)
 
 	# Test
-	# os.system('open {}'.format(xlsxMappingPath))
-	data.createCourseGradeMap('{}/IDAndNameMap.json'.format(litePath), litePath)
-
+	retPath = data.encodeCourseGrade(courseGradeMapPath, litePath)
+	os.system('open {}'.format(retPath))
 
 
 
