@@ -10,7 +10,7 @@ class DataHelper:
 		self.alphaRange = ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F']
 	# ---
 
-	# Encoded grade rage [0...10] to [A...F]
+	# Encoded grade rage [0...10] to [A...F] in *.xlsx files
 	def symbolizeCourseGrade(self):
 		fullPath = "{0}/{1}".format(self.resourceRootPath, courseGradePath)
 		wb 	= openpyxl.load_workbook(fullPath)
@@ -49,10 +49,10 @@ class DataHelper:
 	# ---
 
 	# Mapping course ID & name to the output path as json
-	def collectCouseID(self, outputPath):
+	def collectCourseID(self, outputPath):
 		wb = openpyxl.load_workbook(self.targetPath)
 		ws = wb.active
-		wsRange = ws['A{}:H{}'.format(ws.min_row, ws.max_row)]
+		wsRange = ws['A{}:F{}'.format(ws.min_row, ws.max_row)]
 
 		courseIDIdx = 4 # E
 		courseNameIdx = 5 # F
@@ -79,7 +79,40 @@ class DataHelper:
 		return fileOutputPath
 	# ---
 
-	def encodeCourseGrade(self, symbolizedCourseMapPath, outputPath):
+	def getAlphaRangeInfoDict(self, fromValue):
+		retDict = {}
+		counter = fromValue
+		for key in self.alphaRange:
+			retDict[key] = counter
+			counter += 1
+		return retDict, counter
+	# --
+
+	def createCourseGradeMap(self, jsonResourcePath, outputPath):
+		retDict = {}
+		counter = 1
+
+		with open(jsonResourcePath, 'r') as fp:
+			infoDict = json.load(fp)
+
+		for key in infoDict:
+			name = infoDict[key]
+			alphaDict, newCounter = self.getAlphaRangeInfoDict(counter)
+			counter = newCounter
+			retDict[key] = {
+				'range': alphaDict,
+				'name': name
+			}
+		# -
+
+		fileOutputPath = '{}/CourseGradeMap.json'.format(outputPath)
+		with open(fileOutputPath, 'w') as fp:
+			json.dump(retDict, fp, ensure_ascii=False, indent=2, sort_keys=True)
+
+		return fileOutputPath
+	# --
+
+	def createCourseGradeWorkbookForPreview(self, symbolizedCourseMapPath, outputPath):
 		with open(symbolizedCourseMapPath, 'r') as fp:
 			symbolizedDict = json.load(fp)
 
@@ -126,12 +159,12 @@ if __name__ == "__main__":
 	dataPath = "../../data"
 	litePath = "../../data/lite"
 	data = DataHelper(dataPath, "resource/KHMT_lite2.xlsx")
-	jsonPath = data.collectCouseID(litePath)
-	xlsxMappingPath = data.encodeCourseGrade(jsonPath, litePath)
+	# jsonPath = data.collectCouseID(litePath)
+	# xlsxMappingPath = data.createCourseGradeWorkbookForPreview(jsonPath, litePath)
 
 	# Test
-	os.system('open {}'.format(xlsxMappingPath))
-
+	# os.system('open {}'.format(xlsxMappingPath))
+	data.createCourseGradeMap('{}/IDAndNameMap.json'.format(litePath), litePath)
 
 
 
