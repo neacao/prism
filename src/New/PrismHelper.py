@@ -6,6 +6,8 @@ class PrismHelper:
 	def __init__(self):
 		self.primeArray = [2, 3, 5, 7]
 		self.primeLength = len(self.primeArray)
+		# self.items = list(range(1, 442)) # Based on data/lite/CourseGradeMap.json last value
+		self.items = ['a', 'b', 'c'] # Testing purposed
 	# --
 
 	def convertHorizontalRecord(self, resourcePath, outputPath):
@@ -55,14 +57,31 @@ class PrismHelper:
 	# --
 
 
-	def createPrimalBlockEncode(self, horizontalRecordPath):
+	''' ret = [
+		[{seqPrimal:, offsets: []}, 
+		{}, 
+		...]
+	] '''
+	def createFullPrimalEncoded(self, horizontalRecordPath):
+		with open(horizontalRecordPath, 'r') as fp:
+			seqList = json.load(fp)
+
+		ret = []
+
+		for item in self.items:
+			primalBlocksList = map(lambda x: self.createPosPrimalEncoded(item, x), seqList)
+			offsets, posBlocks = self.createPosPrimalEncodedInfo(primalBlocksList)
+			print('offsets: {}'.format(offsets))
+			print('posBlocks: {}'.format(posBlocks))
+			print('===')
+		# -
+
+
 		return 1
 	# --
 
-	# Encode primal blocks for single sequence
-	# sequence: a string contain course grade encoded
-	# item: numberic value
-	def createPrimalEncodedPos(self, item, sequence):
+
+	def createPosPrimalEncoded(self, item, sequence):
 		itemsetList = sequence.split("->")
 		itemsetListLength = len(itemsetList)
 
@@ -82,7 +101,8 @@ class PrismHelper:
 				# -
 				primseIdx += 1
 			# -
-			ret.append(primalVal)
+			if primalVal > 1:
+				ret.append(primalVal)
 			primseIdx = 0
 			primalVal = 1
 			counter += self.primeLength
@@ -90,7 +110,31 @@ class PrismHelper:
 		return ret
 	# --
 
-	def createPrimalEncodedSiq(self, item, seqList):
+	# (offsets, posBlocks) = ([], [{primal: , blockIdx: }])
+	# primalBlocksList is an 3D array
+	def createPosPrimalEncodedInfo(self, primalBlocksList):
+		offsets = []
+		posBlocks = []
+		curOffsetIdx = 0
+
+		for primalBlocks in primalBlocksList:
+			if len(primalBlocks) == 0:
+				continue
+
+			offsets.append(curOffsetIdx)
+
+			posBlocks += map(lambda idx: 
+				{ 'primal': primalBlocks[idx], 'blockIdx': idx }, 
+				range(0, len(primalBlocks))
+			)
+
+			curOffsetIdx += len(primalBlocks)
+		# -
+		return offsets, posBlocks
+	# --
+
+
+	def createSeqPrimalEncoded(self, item, seqList):
 		seqListLength = len(seqList)
 		ret = []
 		counter = 0
@@ -118,29 +162,23 @@ class PrismHelper:
 
 	def doesItemInSequence(self, targetItem, sequence):
 		itemsetList = sequence.split('->')
-		for itemset in itemsetList:
-			if self.doesItemInItemset(targetItem, itemset):
-				return True
-		# -
-		return False
+		isExist = len([itemset for itemset in itemsetList if self.doesItemInItemset(targetItem, itemset)]) > 0
+		return isExist
 	# --
+
 
 	def doesItemInItemset(self, targetItem, itemset):
 		itemList = itemset.split(".")
-		for item in itemList:
-			if targetItem == item:
-				return True
-		# -
-		return False
+		isExist = len([item for item in itemList if item == targetItem]) > 0
+		return isExist
 	# --
-
 # --- PrismHelper
 
 
 if __name__ == "__main__":
 	litePath = "../../data/lite"
 	helper = PrismHelper()
-	helper.convertHorizontalRecord('{}/CourseGradeEncoded.xlsx'.format(litePath), litePath)
+	# helper.convertHorizontalRecord('{}/CourseGradeEncoded.xlsx'.format(litePath), litePath)
 
 	# Using block w/ length 4 to test -> [2, 3, 5, 7]
 	string = [
@@ -151,9 +189,8 @@ if __name__ == "__main__":
 		"a.b->a.b->a.b->a->b.c"
 	]
 
-	for sub in string:
-		print(helper.createPrimalEncodedPos('c', sub))
-	# helper.createPrimalEncodedSiq('b', string)
+	helper.createFullPrimalEncoded("./CourseGradeEncodedHorizontalTest.json")
+
 
 # ---
 
