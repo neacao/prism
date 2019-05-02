@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-import openpyxl, json
+import openpyxl, json, sys
+sys.path.insert(0, './Item')
+
+from PrismEncodedItem import PrismEncodedItem
+from PositionEncodedItem import PositionEncodedItem
 
 class PrismHelper:
 	def __init__(self):
@@ -56,28 +60,20 @@ class PrismHelper:
 		return fileOutputPath
 	# --
 
-
-	''' ret = [
-		[{seqPrimal:, offsets: []}, 
-		{}, 
-		...]
-	] '''
 	def createFullPrimalEncoded(self, horizontalRecordPath):
 		with open(horizontalRecordPath, 'r') as fp:
 			seqList = json.load(fp)
 
-		ret = []
+		ret = map(lambda item: self.createPrimalItem(item, seqList), self.items)
+		return ret
+	# --
 
-		for item in self.items:
-			primalBlocksList = map(lambda x: self.createPosPrimalEncoded(item, x), seqList)
-			offsets, posBlocks = self.createPosPrimalEncodedInfo(primalBlocksList)
-			print('offsets: {}'.format(offsets))
-			print('posBlocks: {}'.format(posBlocks))
-			print('===')
-		# -
-
-
-		return 1
+	def createPrimalItem(self, item, seqList):
+		fullSeqPrimalBlocks = self.createSeqPrimalEncoded(item, seqList)
+		fullPosPrimalBlocks = map(lambda x: self.createPosPrimalEncoded(item, x), seqList)
+		offsets, posItems = self.createPosPrimalEncodedInfo(fullPosPrimalBlocks)
+		prismItem = PrismEncodedItem(fullSeqPrimalBlocks, offsets, posItems)
+		return prismItem
 	# --
 
 
@@ -110,11 +106,9 @@ class PrismHelper:
 		return ret
 	# --
 
-	# (offsets, posBlocks) = ([], [{primal: , blockIdx: }])
-	# primalBlocksList is an 3D array
 	def createPosPrimalEncodedInfo(self, primalBlocksList):
 		offsets = []
-		posBlocks = []
+		posItems = []
 		curOffsetIdx = 0
 
 		for primalBlocks in primalBlocksList:
@@ -123,14 +117,14 @@ class PrismHelper:
 
 			offsets.append(curOffsetIdx)
 
-			posBlocks += map(lambda idx: 
-				{ 'primal': primalBlocks[idx], 'blockIdx': idx }, 
+			posItems += map(lambda idx: 
+				PositionEncodedItem(primalBlocks[idx], idx),
 				range(0, len(primalBlocks))
 			)
 
 			curOffsetIdx += len(primalBlocks)
 		# -
-		return offsets, posBlocks
+		return offsets, posItems
 	# --
 
 
@@ -175,12 +169,8 @@ class PrismHelper:
 # --- PrismHelper
 
 
-if __name__ == "__main__":
-	litePath = "../../data/lite"
+def testFunction():
 	helper = PrismHelper()
-	# helper.convertHorizontalRecord('{}/CourseGradeEncoded.xlsx'.format(litePath), litePath)
-
-	# Using block w/ length 4 to test -> [2, 3, 5, 7]
 	string = [
 		"a.b->b->b->a.b->b->a",
 		"a.b->b->b",
@@ -189,8 +179,15 @@ if __name__ == "__main__":
 		"a.b->a.b->a.b->a->b.c"
 	]
 
-	helper.createFullPrimalEncoded("./CourseGradeEncodedHorizontalTest.json")
+	prismItems = helper.createFullPrimalEncoded("./CourseGradeEncodedHorizontalTest.json")
+	for item in prismItems:
+		item.description()
+# -- 
 
+
+if __name__ == "__main__":
+	litePath = "../../data/lite"
+	testFunction()
 
 # ---
 
