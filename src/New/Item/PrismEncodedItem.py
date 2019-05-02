@@ -9,7 +9,7 @@ class PrismEncodedItem:
 
 	def description(self):
 		print('seqPrimals: {}\noffsets: {}'.format(self.seqPrimals, self.offsets))
-		posItemStr = ",".join(map(lambda posItem: posItem.getDescription(), self.posItems))
+		posItemStr = ", ".join(map(lambda posItem: posItem.getDescription(), self.posItems))
 		print('posItems: {}\n---'.format(posItemStr))
 	# --
 # ---

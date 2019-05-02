@@ -11,7 +11,7 @@ class PositionEncodedItem:
 	# --
 
 	def getDescription(self):
-		ret = 'value: {}, index: {}'.format(self.value, self.blockIndex)
+		ret = '{{ value: {}, index: {} }}'.format(self.value, self.blockIndex)
 		return ret
 	# --
 # ---
