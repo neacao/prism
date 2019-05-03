@@ -201,7 +201,7 @@ def testFunction():
 
 	prismItems = helper.createFullPrimalEncoded("./CourseGradeEncodedHorizontalTest.json")
 	for item in prismItems:
-		print('*')
+		item.description()
 # -- 
 
 
