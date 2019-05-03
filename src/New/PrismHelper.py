@@ -60,6 +60,7 @@ class PrismHelper:
 		return fileOutputPath
 	# --
 
+
 	def createFullPrimalEncoded(self, horizontalRecordPath):
 		with open(horizontalRecordPath, 'r') as fp:
 			seqList = json.load(fp)
@@ -70,7 +71,7 @@ class PrismHelper:
 
 	def createPrimalItem(self, item, seqList):
 		fullSeqPrimalBlocks = self.createSeqPrimalEncoded(item, seqList)
-		fullPosPrimalBlocks = map(lambda x: self.createPosPrimalEncoded(item, x), seqList)
+		fullPosPrimalBlocks = list(map(lambda x: self.createPosPrimalEncoded(item, x), seqList))
 		offsets, posItems = self.createPosPrimalEncodedInfo(fullPosPrimalBlocks)
 		prismItem = PrismEncodedItem(fullSeqPrimalBlocks, offsets, posItems)
 		return prismItem
@@ -107,22 +108,41 @@ class PrismHelper:
 	# --
 
 	def createPosPrimalEncodedInfo(self, primalBlocksList):
-		offsets = []
+		offsets = [] # For all seq blocks
+		offset = [] # For each seq block
 		posItems = []
 		curOffsetIdx = 0
+		offset.append(curOffsetIdx)
 
-		for primalBlocks in primalBlocksList:
-			if len(primalBlocks) == 0:
+		primeArrayCounter = 0 # Start index
+		primalBlocksListLength = len(primalBlocksList)		
+
+		for idx in range(0, primalBlocksListLength):
+			primalBlocks = primalBlocksList[idx] # Single sequence
+			primeArrayCounter += 1
+
+			length = len(primalBlocks)
+			curOffsetIdx += length
+
+			if primeArrayCounter == self.primeLength or idx == primalBlocksListLength - 1:
+				# If last one is empty remove it
+				if length == 0:
+					offsets.append(offset[:-1])
+					offset = offset[-1:len(offset)]
+				else:
+					offsets.append(offset)
+					offset = []
+				# -
+				primeArrayCounter = 0
+
+			if length == 0:
 				continue
 
-			offsets.append(curOffsetIdx)
-
-			posItems += map(lambda idx: 
-				PositionEncodedItem(primalBlocks[idx], idx),
+			posItems += map(lambda _idx: 
+				PositionEncodedItem(primalBlocks[_idx], _idx),
 				range(0, len(primalBlocks))
 			)
-
-			curOffsetIdx += len(primalBlocks)
+			offset.append(curOffsetIdx)
 		# -
 		return offsets, posItems
 	# --
@@ -181,7 +201,7 @@ def testFunction():
 
 	prismItems = helper.createFullPrimalEncoded("./CourseGradeEncodedHorizontalTest.json")
 	for item in prismItems:
-		item.description()
+		print('*')
 # -- 
 
 
