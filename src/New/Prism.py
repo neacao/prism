@@ -116,7 +116,7 @@ class Prism:
 		_printLog()
 
 	# --
-
+ 
 # ---
 
 if __name__ == "__main__":

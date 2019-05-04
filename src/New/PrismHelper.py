@@ -120,10 +120,17 @@ class PrismHelper:
 		primalBlocksListLength = len(primalBlocksList)
 
 		def appendItemAndOffset(_posItems, _offset, primalBlocks, length):
-			_posItems += map(lambda _idx: 
-				PositionEncodedItem(primalBlocks[_idx], _idx),
-				range(0, len(primalBlocks))
-			)
+			previous = None
+			length = len(primalBlocks)
+
+			for idx in range(0, length):
+				item = PositionEncodedItem(primalBlocks[idx], idx, None)
+				posItems.append(item)
+				if previous != None:
+					previous.nextPos = item
+				# -
+				previous = item
+			# -
 			_offset.append(OffsetItem(curOffsetIdx, length))
 		# -
 
