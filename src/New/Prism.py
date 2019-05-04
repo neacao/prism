@@ -11,6 +11,8 @@ class Prism:
 		self.rankSupportList = SUPPORT
 		self.rankMaskList = MASK
 		self.rankGCDList = GCD
+		self.primeArray = PRIME_ARRAY
+		self.primeLength = PRIME_LENGTH
 	# --
 
 	def getRank(self, val):
@@ -29,8 +31,7 @@ class Prism:
 		return ret
 	# --
 
-
-	def getGCDOfValues(self, val1, val2):
+	def getGCD(self, val1, val2):
 		rankVal1 = self.getRank(val1)
 		rankVal2 = self.getRank(val2)
 		rankGCD = self.rankGCDList[rankVal1][rankVal2]
@@ -38,13 +39,58 @@ class Prism:
 		return ret
 	# --
 
+
+	def extendItemset(self, item, prismItems, targetItem, targetPrismItems):
+		return 1
+	# --
+
+
+	# Refer data/resource/ItemsetExtension.png
+	# Can exec under parallel process
+	# seqPrimal: array of seq primal value
+	# offsets: array of indexing of each pos primal in posItems
+	# posItems: all pos primal blocks belong to that item
+	def extendItemsetSingleBlock(self, 
+		seqPrimal, offsets, posItems,
+		targetSeqPrimal, targetOffsets, targetPosItems):
+
+		print(posItems)
+		print(targetPosItems)
+
+		gcd = self.getGCD(seqPrimal, targetSeqPrimal)
+		primeIdx = 0
+		offsetIdx = 0
+		itemOffsetLength = len(offsets)
+		targetOffsetLength = len(targetOffsets)
+
+		while gcd > 1:
+			primeVal = self.primeArray[primeIdx]
+
+			if gcd % primeVal: # Valid block to count pos blocks
+				# Get pos blocks to calculate
+
+			# -
+
+			gcd /= self.primeArray[primeIdx]
+		# -
+
+		return 1
+	# --
+
+
+	def extendItemset(self, item, seq):
+		return 1
+	# --
+
+
 # ---
 
 if __name__ == "__main__":
-	prism = Prism(PrismHelper())
-	ret = prism.getGCDOfValues(35, 6)
-	print(ret)
+	helper = PrismHelper()
+	prism = Prism(helper)
+	prismItems = list(helper.mockup())
+
+	prism.extendItemsetSingleBlock('a', prismItems, 'b', prismItems)
 
 
 
-	

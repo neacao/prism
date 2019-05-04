@@ -3,15 +3,18 @@
 import openpyxl, json, sys
 sys.path.insert(0, './Item')
 
-from PrismEncodedItem import PrismEncodedItem
-from PositionEncodedItem import PositionEncodedItem
+from functools import reduce
+from PrismEncodedItem import *
+from PositionEncodedItem import *
+from OffsetItem import *
+from PrismLookupTable import *
 
 class PrismHelper:
-	def __init__(self):
-		self.primeArray = [2, 3, 5, 7]
-		self.primeLength = len(self.primeArray)
+	def __init__(self, items):
+		self.primeArray = PRIME_ARRAY
+		self.primeLength = PRIME_LENGTH
 		# self.items = list(range(1, 442)) # Based on data/lite/CourseGradeMap.json last value
-		self.items = ['a', 'b', 'c'] # Testing purposed
+		self.items = items
 	# --
 
 	def convertHorizontalRecord(self, resourcePath, outputPath):
@@ -112,38 +115,36 @@ class PrismHelper:
 		offset = [] # For each seq block
 		posItems = []
 		curOffsetIdx = 0
-		offset.append(curOffsetIdx)
 
 		primeArrayCounter = 0 # Start index
-		primalBlocksListLength = len(primalBlocksList)		
+		primalBlocksListLength = len(primalBlocksList)
+
+		def appendItemAndOffset(_posItems, _offset, primalBlocks, length):
+			_posItems += map(lambda _idx: 
+				PositionEncodedItem(primalBlocks[_idx], _idx),
+				range(0, len(primalBlocks))
+			)
+			_offset.append(OffsetItem(curOffsetIdx, length))
+		# -
 
 		for idx in range(0, primalBlocksListLength):
 			primalBlocks = primalBlocksList[idx] # Single sequence
 			primeArrayCounter += 1
-
 			length = len(primalBlocks)
-			curOffsetIdx += length
+			
+			if length > 0: # Ignore length is empty
+				appendItemAndOffset(posItems, offset, primalBlocks, length)
 
 			if primeArrayCounter == self.primeLength or idx == primalBlocksListLength - 1:
-				# If last one is empty remove it
-				if length == 0:
-					offsets.append(offset[:-1])
-					offset = offset[-1:len(offset)]
-				else:
-					offsets.append(offset)
-					offset = []
-				# -
+				offsets.append(offset)
+				offset = []
 				primeArrayCounter = 0
+			# -
 
-			if length == 0:
-				continue
-
-			posItems += map(lambda _idx: 
-				PositionEncodedItem(primalBlocks[_idx], _idx),
-				range(0, len(primalBlocks))
-			)
-			offset.append(curOffsetIdx)
+			if length > 0:
+				curOffsetIdx += length
 		# -
+
 		return offsets, posItems
 	# --
 
@@ -186,28 +187,31 @@ class PrismHelper:
 		isExist = len([item for item in itemList if item == targetItem]) > 0
 		return isExist
 	# --
+
+
+	def mockup(self, display=False):
+		string = [
+			"a.b->b->b->a.b->b->a",
+			"a.b->b->b",
+			"b->a.b",
+			"b->b->b",
+			"a.b->a.b->a.b->a->b.c"
+		]
+
+		prismItems = self.createFullPrimalEncoded("./ResourceSample.json")
+		if display == True:
+			for item in prismItems:
+				item.description()
+		# -
+		return prismItems
+	# --
 # --- PrismHelper
-
-
-def testFunction():
-	helper = PrismHelper()
-	string = [
-		"a.b->b->b->a.b->b->a",
-		"a.b->b->b",
-		"b->a.b",
-		"b->b->b",
-		"a.b->a.b->a.b->a->b.c"
-	]
-
-	prismItems = helper.createFullPrimalEncoded("./CourseGradeEncodedHorizontalTest.json")
-	for item in prismItems:
-		item.description()
-# -- 
 
 
 if __name__ == "__main__":
 	litePath = "../../data/lite"
-	testFunction()
+	helper = PrismHelper(['a', 'b', 'c'])
+	helper.mockup(True)
 
 # ---
 

@@ -1,4 +1,4 @@
-#!/usr/env/bin python3
+
 
 class PrismEncodedItem:
 	def __init__(self, seqPrimals, offsets, posItems):
@@ -8,7 +8,18 @@ class PrismEncodedItem:
 	# --
 
 	def description(self):
-		print('seqPrimals: {}\noffsets: {}'.format(self.seqPrimals, self.offsets))
+		print('seqPrimals: {}'.format(self.seqPrimals))
+		offsetItemStr =  ""
+		for offset in self.offsets:
+			tempStr = ", ".join(map(lambda element: element.getDescription(), offset))
+			if tempStr != None and tempStr != "":
+				offsetItemStr += "[ {} ], ".format(tempStr)
+			else:
+				offsetItemStr += "[ ], "
+			# -
+		# -
+		
+		print('offsets: {}'.format(offsetItemStr))
 		posItemStr = ", ".join(map(lambda posItem: posItem.getDescription(), self.posItems))
 		print('posItems: {}\n---'.format(posItemStr))
 	# --

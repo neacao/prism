@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 
 class PositionEncodedItem:
 	def __init__(self, primal, index):

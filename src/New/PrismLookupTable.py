@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+PRIME_ARRAY = [2, 3, 5, 7]
+PRIME_LENGTH = len(PRIME_ARRAY)
+
 # Rank value = RANK.index(realValue) aka rank index
 # Real value = RANGE[rank index]
 RANK = [
