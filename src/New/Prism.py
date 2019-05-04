@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from termcolor import colored
 from PrismHelper import PrismHelper
 from PrismLookupTable import *
 from functools import reduce
@@ -56,23 +57,21 @@ class Prism:
 
 		gcd = self.getGCD(seqPrimal, targetSeqPrimal)
 
-		print('seqPrimal {} - targetSeqPrimal {} - gcd {}'.format(seqPrimal, targetSeqPrimal, gcd))
+		print('> seqPrimal {} - targetSeqPrimal {} - gcd {}'.format(seqPrimal, targetSeqPrimal, gcd))
 
 		primeIdx = 0
 		offsetIdx = 0
-		itemOffsetLength = len(offsets)
-		targetOffsetLength = len(targetOffsets)
 
 		while gcd > 1:
 			primeVal = self.primeArray[primeIdx]
-			print('> gcd: {}'.format(gcd))
+			print(' > gcd: {}'.format(gcd))
 			if gcd % primeVal == 0: # Valid block to count pos blocks
 				# Get pos blocks to calculate
-				print('> Process at {}'.format(primeIdx))
+				print(' > Process at {}'.format(primeIdx))
 				startIndex = offsets[primeIdx].value
 				length = min(offsets[primeIdx].length, targetOffsets[primeIdx].length)
 				endIndex = startIndex + length
-				print('> startIndex {} - endIndex {}'.format(startIndex, endIndex))
+				print(' > startIndex {} - endIndex {}'.format(startIndex, endIndex))
 
 				for idx in range(startIndex, endIndex):
 					blockIdx = posItems[idx].blockIndex
@@ -85,6 +84,9 @@ class Prism:
 
 						_gcd = self.getGCD(posPrimal, targetPrimal)
 						print('  > pos blocks joining: posPrimal {} targetPrimal {} gcd {}'.format(posPrimal, targetPrimal, _gcd))
+					else:
+						print(colored('  > pos blocks joining:', 'white'),
+							colored('IGNORE different block idx {} {}'.format(blockIdx, targetIdx), 'red'))
 					# -
 				# -
 				print('  < pos blocks joined')
@@ -93,7 +95,7 @@ class Prism:
 			gcd /= self.primeArray[primeIdx]
 			primeIdx += 1
 		# -
-
+		print('--- extendItemsetSingleBlock')
 		return 1
 	# --
 
@@ -110,9 +112,13 @@ if __name__ == "__main__":
 	prism = Prism(helper)
 	prismItems = list(helper.mockup())
 
-	prism.extendItemsetSingleBlock(
-		prismItems[0].seqPrimals[0], prismItems[0].offsets[0], prismItems[0].posItems,
-		prismItems[1].seqPrimals[0], prismItems[1].offsets[0], prismItems[1].posItems)
+	for idx in range(0, 2):
+		prism.extendItemsetSingleBlock(
+			prismItems[0].seqPrimals[idx], prismItems[0].offsets[idx], prismItems[0].posItems,
+			prismItems[1].seqPrimals[idx], prismItems[1].offsets[idx], prismItems[1].posItems)
+	# -
+
+	
 
 
 
