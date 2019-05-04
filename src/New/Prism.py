@@ -16,7 +16,7 @@ class Prism:
 		self.primeLength = PRIME_LENGTH
 	# --
 
-	def getRank(self, val):
+	def _getRank(self, val):
 		try:
 			_index = self.rankList.index(val)
 			return _index
@@ -25,24 +25,26 @@ class Prism:
 			exit(1)
 	# --
 
-	def getSupportOfList(self, primalList):
-		tempRankList = map(lambda primal: self.getRank(primal), primalList)
+	def _getSupportOfList(self, primalList):
+		tempRankList = map(lambda primal: self._getRank(primal), primalList)
 		tempRankSupportList = map(lambda rank: self.rankSupportList[rank], tempRankList)
 		ret = reduce(lambda val, support: val + support, tempRankSupportList)
 		return ret
 	# --
 
-	def getGCD(self, val1, val2):
-		rankVal1 = self.getRank(val1)
-		rankVal2 = self.getRank(val2)
+	def _getGCD(self, val1, val2):
+		rankVal1 = self._getRank(val1)
+		rankVal2 = self._getRank(val2)
 		rankGCD = self.rankGCDList[rankVal1][rankVal2]
 		ret = self.rankList[rankGCD]
 		return ret
 	# --
 
-
-	def extendItemset(self, item, prismItems, targetItem, targetPrismItems):
-		return 1
+	def _getMask(self, val1):
+		rank = self._getRank(val1)
+		rankMark = self.rankMaskList[rank]
+		val = self.rankList[rankMark]
+		return val
 	# --
 
 
@@ -51,11 +53,12 @@ class Prism:
 	# seqPrimal: array of seq primal value
 	# offsets: array of indexing of each pos primal in posItems
 	# posItems: all pos primal blocks belong to that item
-	def extendItemsetSingleBlock(self, 
+	def _extendSingleBlock(self, 
 		seqPrimal, offsets, posItems,
-		targetSeqPrimal, targetOffsets, targetPosItems):
+		targetSeqPrimal, targetOffsets, targetPosItems,
+		extendItemsetMode = True):
 
-		gcd = self.getGCD(seqPrimal, targetSeqPrimal)
+		gcd = self._getGCD(seqPrimal, targetSeqPrimal)
 		print('> seqPrimal {} - targetSeqPrimal {} - gcd {}'.format(seqPrimal, targetSeqPrimal, gcd))
 
 		primeIdx = 0
@@ -82,7 +85,7 @@ class Prism:
 						posPrimal = posItems[startIndex1].value
 						targetPrimal = targetPosItems[startIndex2].value
 
-						_gcd = self.getGCD(posPrimal, targetPrimal)
+						_gcd = self._getGCD(posPrimal, targetPrimal)
 						print('  > pos blocks joining: posPrimal {} targetPrimal {} gcd {}'.format(posPrimal, targetPrimal, _gcd))
 					else:
 						print(colored('  > pos blocks joining:', 'white'),
@@ -102,11 +105,17 @@ class Prism:
 		return 1
 	# --
 
+	def _maskPosItems(self, posItems):
+		def _printLog():
+			posItemsStr = ""
+			for item in posItems:
+				posItemsStr += "{}, ".format(item.getDescription())
+			print(colored('_maskPosItems {}'.format(posItemsStr[:-2]), 'magenta'))
+		# -
 
-	def extendItemset(self, item, seq):
-		return 1
+		_printLog()
+
 	# --
-
 
 # ---
 
@@ -116,15 +125,20 @@ if __name__ == "__main__":
 	prismItems = list(helper.mockup())
 
 	_idx = 0
-	_targetIdx = 1
+	# _targetIdx = 1
 
-	for idx in range(0, 2):
-		prism.extendItemsetSingleBlock(
-			prismItems[_idx].seqPrimals[idx], prismItems[_idx].offsets[idx], prismItems[_idx].posItems,
-			prismItems[_targetIdx].seqPrimals[idx], prismItems[_targetIdx].offsets[idx], prismItems[_targetIdx].posItems)
+	# for idx in range(0, 2):
+	# 	prism._extendSingleBlock(
+	# 		prismItems[_idx].seqPrimals[idx], prismItems[_idx].offsets[idx], prismItems[_idx].posItems,
+	# 		prismItems[_targetIdx].seqPrimals[idx], prismItems[_targetIdx].offsets[idx], prismItems[_targetIdx].posItems)
 	# -
 
-	
+	# prism._maskPosItems(prismItems[_idx].posItems)
+
+	print(prism._getMask(14))
+
+
+
 
 
 
