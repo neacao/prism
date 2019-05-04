@@ -56,7 +56,6 @@ class Prism:
 		targetSeqPrimal, targetOffsets, targetPosItems):
 
 		gcd = self.getGCD(seqPrimal, targetSeqPrimal)
-
 		print('> seqPrimal {} - targetSeqPrimal {} - gcd {}'.format(seqPrimal, targetSeqPrimal, gcd))
 
 		primeIdx = 0
@@ -68,19 +67,20 @@ class Prism:
 			if gcd % primeVal == 0: # Valid block to count pos blocks
 				# Get pos blocks to calculate
 				print(' > Process at {}'.format(primeIdx))
-				startIndex = offsets[primeIdx].value
-				length = min(offsets[primeIdx].length, targetOffsets[primeIdx].length)
-				endIndex = startIndex + length
-				print(' > startIndex {} - endIndex {}'.format(startIndex, endIndex))
 
-				for idx in range(startIndex, endIndex):
-					blockIdx = posItems[idx].blockIndex
-					targetIdx = targetPosItems[idx].blockIndex
+				length = min(offsets[primeIdx].length, targetOffsets[primeIdx].length)
+
+				startIndex1 = offsets[primeIdx].value
+				startIndex2 = targetOffsets[primeIdx].value
+
+				for tempIdx in range(0, length): # No need to process tempIdx
+					blockIdx = posItems[startIndex1].blockIndex
+					targetIdx = targetPosItems[startIndex2].blockIndex
 
 					# Make sure they same block index
 					if blockIdx == targetIdx:
-						posPrimal = posItems[idx].value
-						targetPrimal = targetPosItems[idx].value
+						posPrimal = posItems[startIndex1].value
+						targetPrimal = targetPosItems[startIndex2].value
 
 						_gcd = self.getGCD(posPrimal, targetPrimal)
 						print('  > pos blocks joining: posPrimal {} targetPrimal {} gcd {}'.format(posPrimal, targetPrimal, _gcd))
@@ -88,6 +88,9 @@ class Prism:
 						print(colored('  > pos blocks joining:', 'white'),
 							colored('IGNORE different block idx {} {}'.format(blockIdx, targetIdx), 'red'))
 					# -
+
+					startIndex1 += 1
+					startIndex2 += 1
 				# -
 				print('  < pos blocks joined')
 			# -
@@ -95,7 +98,7 @@ class Prism:
 			gcd /= self.primeArray[primeIdx]
 			primeIdx += 1
 		# -
-		print('--- extendItemsetSingleBlock')
+		print(colored('--- extendItemsetSingleBlock', 'magenta'))
 		return 1
 	# --
 
@@ -112,10 +115,13 @@ if __name__ == "__main__":
 	prism = Prism(helper)
 	prismItems = list(helper.mockup())
 
+	_idx = 0
+	_targetIdx = 1
+
 	for idx in range(0, 2):
 		prism.extendItemsetSingleBlock(
-			prismItems[0].seqPrimals[idx], prismItems[0].offsets[idx], prismItems[0].posItems,
-			prismItems[1].seqPrimals[idx], prismItems[1].offsets[idx], prismItems[1].posItems)
+			prismItems[_idx].seqPrimals[idx], prismItems[_idx].offsets[idx], prismItems[_idx].posItems,
+			prismItems[_targetIdx].seqPrimals[idx], prismItems[_targetIdx].offsets[idx], prismItems[_targetIdx].posItems)
 	# -
 
 	
