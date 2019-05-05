@@ -8,7 +8,7 @@ class PositionEncodedItem:
 	# --
 
 	def description(self):
-		print(self.getDescription)
+		print(self.getDescription())
 	# --
 
 	def getDescription(self):

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import copy
 from termcolor import colored
 from PrismHelper import PrismHelper
 from PrismLookupTable import *
@@ -40,11 +41,15 @@ class Prism:
 		return ret
 	# --
 
-	def _getMask(self, val1):
-		rank = self._getRank(val1)
-		rankMark = self.rankMaskList[rank]
-		val = self.rankList[rankMark]
-		return val
+	def _getMask(self, val):
+		ret = 1
+		if val == None:
+			ret = self.rankList[-1]
+		else:
+			rank = self._getRank(val)
+			rankMark = self.rankMaskList[rank]
+			ret = self.rankList[rankMark]
+		return ret
 	# --
 
 
@@ -113,8 +118,20 @@ class Prism:
 			print(colored('_maskPosItems {}'.format(posItemsStr[:-2]), 'magenta'))
 		# -
 
-		_printLog()
+		idx = 0
+		length = len(posItems)
+		ret = copy.deepcopy(posItems)
 
+		while idx < length: # nextPos is blocks in same sequence
+			ret[idx].value = self._getMask(ret[idx].value)
+
+			while ret[idx].nextPos != None:
+				idx += 1
+				ret[idx].value = self._getMask(None)
+			# -
+			idx += 1
+		# -
+		return ret
 	# --
  
 # ---
@@ -125,17 +142,16 @@ if __name__ == "__main__":
 	prismItems = list(helper.mockup())
 
 	_idx = 0
-	# _targetIdx = 1
+	_targetIdx = 1
 
-	# for idx in range(0, 2):
-	# 	prism._extendSingleBlock(
-	# 		prismItems[_idx].seqPrimals[idx], prismItems[_idx].offsets[idx], prismItems[_idx].posItems,
-	# 		prismItems[_targetIdx].seqPrimals[idx], prismItems[_targetIdx].offsets[idx], prismItems[_targetIdx].posItems)
-	# -
+	maskPosItems = prism._maskPosItems(prismItems[_idx].posItems)
+	for idx in range(0, 2):
+		prism._extendSingleBlock(
+			prismItems[_idx].seqPrimals[idx], prismItems[_idx].offsets[idx], prismItems[_idx].posItems,
+			prismItems[_targetIdx].seqPrimals[idx], prismItems[_targetIdx].offsets[idx], prismItems[_targetIdx].posItems)
 
-	# prism._maskPosItems(prismItems[_idx].posItems)
 
-	print(prism._getMask(14))
+
 
 
 
