@@ -195,6 +195,11 @@ class PrismHelper:
 		return isExist
 	# --
 
+	def getPosItemsStr(self, posItems):
+		info = reduce(lambda ret, posItemStr: '{}\n'.format(ret) + posItemStr , list(map(lambda x: x.getDescription(), posItems)))
+		return info
+	# --
+
 
 	def mockup(self, display=False):
 		string = [
@@ -207,8 +212,8 @@ class PrismHelper:
 
 		prismItems = self.createFullPrimalEncoded("./ResourceSample.json")
 		if display == True:
-			for item in prismItems:
-				item.description()
+			# for item in prismItems:
+			list(prismItems)[0].description()
 		# -
 		return prismItems
 	# --

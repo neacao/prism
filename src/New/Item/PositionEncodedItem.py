@@ -12,7 +12,7 @@ class PositionEncodedItem:
 	# --
 
 	def getDescription(self):
-		ret = '{{ value: {}, index: {} nextPos: {} }}'.format(self.value, self.blockIndex, self.nextPos)
+		ret = '{{ value: {}, index: {}, nextPos: {} }}'.format(self.value, self.blockIndex, self.nextPos)
 		return ret
 	# --
 # ---

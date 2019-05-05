@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
-import copy
+import copy, sys
+sys.path.insert(0, './Item')
+
 from termcolor import colored
-from PrismHelper import PrismHelper
+from PrismHelper import *
 from PrismLookupTable import *
+from PositionEncodedItem import *
 from functools import reduce
 
 class Prism:
@@ -52,6 +55,49 @@ class Prism:
 		return ret
 	# --
 
+	def _joinBlocksInSingleSequence(self, startIndex1, startIndex2, length, posItems, targetPosItems, isMask = False):
+		_posItemsJoined = []
+
+		print(colored('-- extendBlocks', 'cyan'))
+
+		for idx in range(0, length):
+			blockIdx = posItems[startIndex1].blockIndex
+			targetIdx = targetPosItems[startIndex2].blockIndex
+
+			# Make sure they same block index
+			if blockIdx == targetIdx:
+				posPrimal = posItems[startIndex1].value
+				targetPrimal = targetPosItems[startIndex2].value
+
+				_gcd = self._getGCD(posPrimal, targetPrimal)
+				posItem = None
+
+				print('  * pos blocks joining: posPrimal {} targetPrimal {} gcd {}'.format(posPrimal, targetPrimal, _gcd))
+				if _gcd > 1: # Just process pos blocks joining > 1
+					print(colored('  * append pos block: {}'.format(_gcd), 'green'))
+					posItem = PositionEncodedItem(_gcd, idx, None)
+				# -
+
+				if posItem != None:
+					if idx > 0:
+						_posItemsJoined[-1].nextPos = posItem
+					_posItemsJoined.append(posItem)
+				# -
+
+			else:
+				print(colored('  * pos blocks joining:', 'white'),
+					colored('IGNORE different block idx {} {}'.format(blockIdx, targetIdx), 'yellow'))
+			# -
+
+			startIndex1 += 1
+			startIndex2 += 1
+		# -
+		# infoStr = 
+		# infoStr = reduce(lambda ret, posItemStr: '{}\n'.format(ret) + posItemStr , list(map(lambda x: x.getDescription(), _posItemsJoined)))
+		infoStr = helper.getPosItemsStr(_posItemsJoined)
+		print(colored('extendBlocks w/ posJoined: {} --'.format(infoStr), 'cyan'))
+		return _posItemsJoined
+	# -
 
 	# Refer data/resource/ItemsetExtension.png
 	# Can exec under parallel process
@@ -61,52 +107,38 @@ class Prism:
 	def _extendSingleBlock(self, 
 		seqPrimal, offsets, posItems,
 		targetSeqPrimal, targetOffsets, targetPosItems,
-		extendItemsetMode = True):
+		isMask = False):
 
 		gcd = self._getGCD(seqPrimal, targetSeqPrimal)
 		print('> seqPrimal {} - targetSeqPrimal {} - gcd {}'.format(seqPrimal, targetSeqPrimal, gcd))
 
 		primeIdx = 0
 		offsetIdx = 0
+		_posItems = []
+
+		if gcd == 1:
+			return gcd, _posItems
+		# -
 
 		while gcd > 1:
 			primeVal = self.primeArray[primeIdx]
 			print(' > gcd: {}'.format(gcd))
-			if gcd % primeVal == 0: # Valid block to count pos blocks
+			if gcd % primeVal == 0:
 				# Get pos blocks to calculate
-				print(' > Process at {}'.format(primeIdx))
-
+				print(colored(' > Process at {}'.format(gcd, primeIdx)), 'green')
 				length = min(offsets[primeIdx].length, targetOffsets[primeIdx].length)
-
 				startIndex1 = offsets[primeIdx].value
 				startIndex2 = targetOffsets[primeIdx].value
-
-				for tempIdx in range(0, length): # No need to process tempIdx
-					blockIdx = posItems[startIndex1].blockIndex
-					targetIdx = targetPosItems[startIndex2].blockIndex
-
-					# Make sure they same block index
-					if blockIdx == targetIdx:
-						posPrimal = posItems[startIndex1].value
-						targetPrimal = targetPosItems[startIndex2].value
-
-						_gcd = self._getGCD(posPrimal, targetPrimal)
-						print('  > pos blocks joining: posPrimal {} targetPrimal {} gcd {}'.format(posPrimal, targetPrimal, _gcd))
-					else:
-						print(colored('  > pos blocks joining:', 'white'),
-							colored('IGNORE different block idx {} {}'.format(blockIdx, targetIdx), 'red'))
-					# -
-
-					startIndex1 += 1
-					startIndex2 += 1
-				# -
-				print('  < pos blocks joined')
+				posItemsJoined = self._joinBlocksInSingleSequence(startIndex1, startIndex2, length, posItems, targetPosItems)
+				_posItems += posItemsJoined
 			# -
 
 			gcd /= self.primeArray[primeIdx]
 			primeIdx += 1
 		# -
-		print(colored('--- extendItemsetSingleBlock', 'magenta'))
+		mode = 'Seq Block' if isMask == True else 'Itemset Block'
+		posItemsStr = helper.getPosItemsStr(_posItems)
+		print(colored('- extendItemsetSingleBlock of {} w/ posJoined\n{}'.format(mode, posItemsStr), 'magenta'))
 		return 1
 	# --
 
@@ -149,8 +181,6 @@ if __name__ == "__main__":
 		prism._extendSingleBlock(
 			prismItems[_idx].seqPrimals[idx], prismItems[_idx].offsets[idx], prismItems[_idx].posItems,
 			prismItems[_targetIdx].seqPrimals[idx], prismItems[_targetIdx].offsets[idx], prismItems[_targetIdx].posItems)
-
-
 
 
 
