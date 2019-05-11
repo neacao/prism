@@ -196,7 +196,9 @@ class PrismHelper:
 	# --
 
 	def getPosItemsStr(self, posItems):
-		info = reduce(lambda ret, posItemStr: '{}\n'.format(ret) + posItemStr , list(map(lambda x: x.getDescription(), posItems)))
+		info = ''
+		if len(posItems) > 0:
+			info = reduce(lambda ret, posItemStr: '{}\n'.format(ret) + posItemStr , list(map(lambda x: x.getDescription(), posItems)))
 		return info
 	# --
 
