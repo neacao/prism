@@ -7,6 +7,7 @@ from termcolor import colored
 from PrismHelper import *
 from PrismLookupTable import *
 from PositionEncodedItem import *
+from OffsetItem import *
 from functools import reduce
 
 class Prism:
@@ -55,93 +56,6 @@ class Prism:
 		return ret
 	# --
 
-	def _joinBlocksInSingleSequence(self, startIndex1, startIndex2, length, posItems, targetPosItems, isMask = False):
-		_posItemsJoined = []
-
-		print(colored('-- extendBlocks', 'cyan'))
-
-		for idx in range(0, length):
-			blockIdx = posItems[startIndex1].blockIndex
-			targetIdx = targetPosItems[startIndex2].blockIndex
-
-			# Make sure they same block index
-			if blockIdx == targetIdx:
-				posPrimal = posItems[startIndex1].value
-				targetPrimal = targetPosItems[startIndex2].value
-
-				_gcd = self._getGCD(posPrimal, targetPrimal)
-				posItem = None
-
-				print('  * pos blocks joining: posPrimal {} targetPrimal {} gcd {}'.format(posPrimal, targetPrimal, _gcd))
-				if _gcd > 1: # Just process pos blocks joining > 1
-					print(colored('  * append pos block: {}'.format(_gcd), 'green'))
-					posItem = PositionEncodedItem(_gcd, idx, None)
-				# -
-
-				if posItem != None:
-					if idx > 0:
-						_posItemsJoined[-1].nextPos = posItem
-					_posItemsJoined.append(posItem)
-				# -
-
-			else:
-				print(colored('  * pos blocks joining:', 'white'),
-					colored('IGNORE different block idx {} {}'.format(blockIdx, targetIdx), 'yellow'))
-			# -
-
-			startIndex1 += 1
-			startIndex2 += 1
-		# -
-		# infoStr = 
-		# infoStr = reduce(lambda ret, posItemStr: '{}\n'.format(ret) + posItemStr , list(map(lambda x: x.getDescription(), _posItemsJoined)))
-		infoStr = helper.getPosItemsStr(_posItemsJoined)
-		print(colored('extendBlocks w/ posJoined: {} --'.format(infoStr), 'cyan'))
-		return _posItemsJoined
-	# -
-
-	# Refer data/resource/ItemsetExtension.png
-	# Can exec under parallel process
-	# seqPrimal: array of seq primal value
-	# offsets: array of indexing of each pos primal in posItems
-	# posItems: all pos primal blocks belong to that item
-	def _extendSingleBlock(self, 
-		seqPrimal, offsets, posItems,
-		targetSeqPrimal, targetOffsets, targetPosItems,
-		isMask = False):
-
-		gcd = self._getGCD(seqPrimal, targetSeqPrimal)
-		print('> seqPrimal {} - targetSeqPrimal {} - gcd {}'.format(seqPrimal, targetSeqPrimal, gcd))
-
-		primeIdx = 0
-		offsetIdx = 0
-		_posItems = []
-
-		if gcd == 1:
-			return gcd, _posItems
-		# -
-
-		while gcd > 1:
-			primeVal = self.primeArray[primeIdx]
-			print(' > gcd: {}'.format(gcd))
-			if gcd % primeVal == 0:
-				# Get pos blocks to calculate
-				print(colored(' > Process at {}'.format(gcd, primeIdx)), 'green')
-				length = min(offsets[primeIdx].length, targetOffsets[primeIdx].length)
-				startIndex1 = offsets[primeIdx].value
-				startIndex2 = targetOffsets[primeIdx].value
-				posItemsJoined = self._joinBlocksInSingleSequence(startIndex1, startIndex2, length, posItems, targetPosItems)
-				_posItems += posItemsJoined
-			# -
-
-			gcd /= self.primeArray[primeIdx]
-			primeIdx += 1
-		# -
-		mode = 'Seq Block' if isMask == True else 'Itemset Block'
-		posItemsStr = helper.getPosItemsStr(_posItems)
-		print(colored('- extendItemsetSingleBlock of {} w/ posJoined\n{}'.format(mode, posItemsStr), 'magenta'))
-		return 1
-	# --
-
 	def _maskPosItems(self, posItems):
 		def _printLog():
 			posItemsStr = ""
@@ -165,6 +79,139 @@ class Prism:
 		# -
 		return ret
 	# --
+
+	def _joinBlocksInSingleSequence(self, startIndex1, startIndex2, length, posItems, targetPosItems, isMask = False):
+		_posItemsJoined = []
+
+		print(colored('-- _joinBlocksInSingleSequence', 'cyan'))
+
+		for idx in range(0, length):
+			blockIdx = posItems[startIndex1].blockIndex
+			targetIdx = targetPosItems[startIndex2].blockIndex
+
+			# Make sure they same block index
+			if blockIdx == targetIdx:
+				posPrimal = posItems[startIndex1].value
+				targetPrimal = targetPosItems[startIndex2].value
+
+				_gcd = self._getGCD(posPrimal, targetPrimal)
+				posItem = None
+
+				print('  * pos blocks joining: posPrimal {} targetPrimal {} gcd {}'.format(posPrimal, targetPrimal, _gcd))
+				if _gcd > 1:
+					print(colored('  * append pos block: {}'.format(_gcd), 'green'))
+					posItem = PositionEncodedItem(_gcd, idx, None)
+				# -
+
+				if posItem != None:
+					if idx > 0:
+						_posItemsJoined[-1].nextPos = posItem
+					_posItemsJoined.append(posItem)
+				# -
+
+			else:
+				print(colored('  * pos blocks joining:', 'white'),
+					colored('IGNORE different block idx {} {}'.format(blockIdx, targetIdx), 'yellow'))
+			# -
+
+			startIndex1 += 1
+			startIndex2 += 1
+		# -
+		# infoStr = 
+		# infoStr = reduce(lambda ret, posItemStr: '{}\n'.format(ret) + posItemStr , list(map(lambda x: x.getDescription(), _posItemsJoined)))
+		infoStr = helper.getPosItemsStr(_posItemsJoined)
+		print(colored('_joinBlocksInSingleSequence w/ posJoined: {} --'.format(infoStr), 'cyan'))
+		return _posItemsJoined
+	# --
+
+	# Refer data/resource/ItemsetExtension.png
+	# Can exec under parallel process
+	# seqPrimal: array of seq primal value
+	# offsets: array of indexing of each pos primal in posItems
+	# posItems: all pos primal blocks belong to that item
+	def _extendSingleSeqBlock(self, 
+		seqPrimal, offsets, posItems,
+		targetSeqPrimal, targetOffsets, targetPosItems,
+		isMask = False):
+
+		gcd = self._getGCD(seqPrimal, targetSeqPrimal)
+		_gcd = gcd
+		print('> seqPrimal {} - targetSeqPrimal {} - gcd {}'.format(seqPrimal, targetSeqPrimal, gcd))
+
+		primeIdx = 0
+		curOffsetIdx = 0
+		_posItems = []
+		_offsets = []
+
+		if gcd == 1:
+			return gcd, _posItems, _offsets
+		# -
+
+		def __printLogs():
+			posItemsStr = helper.getPosItemsStr(_posItems)
+			offsetsStr = helper.getOffsetsStr(_offsets)
+			print(colored('  + gcd: {}\n  + posItemsStr:\n{}\n  + offsetStr:\n{}'.format(_gcd, posItemsStr, offsetsStr), 'green'))
+		# -
+
+		while gcd > 1:
+			primeVal = self.primeArray[primeIdx]
+			print(' > gcd: {}'.format(gcd))
+			if gcd % primeVal == 0:
+				# Get pos blocks to calculate
+				info = colored(' > Process at {}'.format(gcd, primeIdx), 'magenta')
+				print(info)
+
+				length = min(offsets[primeIdx].length, targetOffsets[primeIdx].length)
+				startIndex1 = offsets[primeIdx].value
+				startIndex2 = targetOffsets[primeIdx].value
+
+				posItemsJoined = self._joinBlocksInSingleSequence(startIndex1, startIndex2, length, posItems, targetPosItems)
+				joinedLength = len(posItemsJoined)
+				offset = OffsetItem(curOffsetIdx, joinedLength)
+
+				_posItems += posItemsJoined
+				_offsets.append(offset)
+			# -
+
+			gcd /= self.primeArray[primeIdx]
+			primeIdx += 1
+		# -
+		__printLogs()
+		return _gcd, _offsets, _posItems
+	# --
+
+
+	def _extendSeqBlocks(self, 
+		seqPrimals, offsetsList, posItems,
+		targetSeqPrimals, targetOffsetList, targetPosItems, 
+		isMask = False):
+
+		seqJoined = []
+		offsetsListJoined = []
+		posItemsJoined = []
+
+		length = min(len(seqPrimals), len(targetSeqPrimals))
+		for idx in range(0, length):
+			print(colored('_extendSeqBlocks idx {}'.format(idx), 'blue'))
+
+			seq = seqPrimals[idx]
+			targetSeq = targetSeqPrimals[idx]
+			offsets = offsetsList[idx]
+			targetOffsets = targetOffsetList[idx]
+
+			_gcd, _offsets, _posItems = self._extendSingleSeqBlock(
+				seq, offsets, posItems, 
+				targetSeq, targetOffsets, targetPosItems,
+				isMask)
+
+			seqJoined.append(_gcd)
+			offsetsListJoined.append(_offsets)
+			posItemsJoined += _posItems
+			print(colored('_extendSeqBlocks -----', 'blue'))
+
+		# -
+		return seqJoined, offsetsListJoined, posItemsJoined
+	# --
  
 # ---
 
@@ -177,10 +224,9 @@ if __name__ == "__main__":
 	_targetIdx = 1
 
 	maskPosItems = prism._maskPosItems(prismItems[_idx].posItems)
-	for idx in range(0, 2):
-		prism._extendSingleBlock(
-			prismItems[_idx].seqPrimals[idx], prismItems[_idx].offsets[idx], prismItems[_idx].posItems,
-			prismItems[_targetIdx].seqPrimals[idx], prismItems[_targetIdx].offsets[idx], prismItems[_targetIdx].posItems)
+	prism._extendSeqBlocks(
+			prismItems[_idx].seqPrimals, prismItems[_idx].offsets, prismItems[_idx].posItems,
+			prismItems[_targetIdx].seqPrimals, prismItems[_targetIdx].offsets, prismItems[_targetIdx].posItems)
 
 
 

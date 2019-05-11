@@ -201,6 +201,14 @@ class PrismHelper:
 	# --
 
 
+	def getOffsetsStr(self, offsets):
+		ret = ""
+		ret += reduce(lambda ret, itemStr: '{}, '.format(ret) + itemStr, list(map(lambda x: x.getDescription(), offsets)))
+		# -
+		return ret
+	# --
+
+
 	def mockup(self, display=False):
 		string = [
 			"a.b->b->b->a.b->b->a",
