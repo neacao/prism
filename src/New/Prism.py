@@ -8,10 +8,11 @@ from PrismHelper import *
 from PrismLookupTable import *
 from PositionEncodedItem import *
 from OffsetItem import *
+from Logger import *
 from functools import reduce
 
 class Prism:
-	def __init__(self, helper):
+	def __init__(self, helper, logger):
 		self.helper = helper
 		self.rankList = RANK
 		self.rankSupportList = SUPPORT
@@ -19,6 +20,7 @@ class Prism:
 		self.rankGCDList = GCD
 		self.primeArray = PRIME_ARRAY
 		self.primeLength = PRIME_LENGTH
+		self.logger = logger
 	# --
 
 	def _getRank(self, val):
@@ -57,12 +59,7 @@ class Prism:
 	# --
 
 	def _maskPosItems(self, posItems):
-		def _printLog():
-			posItemsStr = ""
-			for item in posItems:
-				posItemsStr += "{}, ".format(item.getDescription())
-			print(colored('_maskPosItems {}'.format(posItemsStr[:-2]), 'magenta'))
-		# -
+		# self.logger.log(colored('_maskPosItems {}'.format(reduce(lambda ret, info: '{}, '.format(ret) + info, map(lambda item: item.getDescription(), posItems))[:-2]), 'magenta'))
 
 		idx = 0
 		length = len(posItems)
@@ -88,7 +85,7 @@ class Prism:
 
 
 	def _joinBlocksInSingleSequence(self, posItems, offset, targetPosItems, targetOffset, isMask):
-		print(colored('-- _joinBlocksInSingleSequence', 'cyan'))
+		self.logger.log(colored('-- _joinBlocksInSingleSequence', 'cyan'))
 
 		_posItemsProcess = []
 		_targetPosItemsProcess = []
@@ -113,12 +110,11 @@ class Prism:
 		_targetPosItemsProcess = copy.deepcopy(targetPosItems[_targetIndex:(_targetIndex+targetLength)])
 		_length = min(length, targetLength)
 
-		# print('process w/ length: {}'.format(_length))
-		# # print logs 
-		# print(colored('start from {} length {}, posItems: {}'.format(
-		# 	_index, length, helper.getPosItemsStr(_posItemsProcess)), 'red'))
-		# print(colored('start from {} length {}, targetPosItems: {}'.format(
-		# 	_targetIndex, targetLength, helper.getPosItemsStr(_targetPosItemsProcess)), 'red'))
+		self.logger.log('process w/ length: {}'.format(_length))
+		self.logger.log(colored('start from {} length {}, posItems: {}'.format(
+			_index, length, helper.getPosItemsStr(_posItemsProcess)), 'red'))
+		self.logger.log(colored('start from {} length {}, targetPosItems: {}'.format(
+			_targetIndex, targetLength, helper.getPosItemsStr(_targetPosItemsProcess)), 'red'))
 
 		for idx in range(0, _length):
 			blockIdx = _posItemsProcess[idx].blockIndex
@@ -132,9 +128,9 @@ class Prism:
 				_gcd = self._getGCD(posPrimal, targetPrimal)
 				posItem = None
 
-				print('  * pos blocks joining: posPrimal {} targetPrimal {} gcd {}'.format(posPrimal, targetPrimal, _gcd))
+				self.logger.log('  * pos blocks joining: posPrimal {} targetPrimal {} gcd {}'.format(posPrimal, targetPrimal, _gcd))
 				if _gcd > 1:
-					print(colored('  * append pos block: {}'.format(_gcd), 'green'))
+					self.logger.log(colored('  * append pos block: {}'.format(_gcd), 'green'))
 					posItem = PositionEncodedItem(_gcd, idx, None)
 				# -
 
@@ -145,15 +141,14 @@ class Prism:
 				# -
 
 			else:
-				print(colored('  * pos blocks joining:', 'white'),
+				self.logger.log(colored('  * pos blocks joining:', 'white'),
 					colored('IGNORE different block idx {} {}'.format(blockIdx, targetIdx), 'yellow'))
 			# -
 
 			_index += 1
 			_targetIndex += 1
 		# -
-		infoStr = helper.getPosItemsStr(_posItemsJoined)
-		print(colored('_joinBlocksInSingleSequence w/ posJoined: {} --'.format(infoStr), 'cyan'))
+		self.logger.log(colored('_joinBlocksInSingleSequence w/ posJoined: {} --'.format(helper.getPosItemsStr(_posItemsJoined)), 'cyan'))
 		return _posItemsJoined
 	# --
 
@@ -273,7 +268,7 @@ class Prism:
 
 if __name__ == "__main__":
 	helper = PrismHelper(['a', 'b', 'c'])
-	prism = Prism(helper)
+	prism = Prism(helper, Logger(True))
 	prismItems = list(helper.mockup())
 
 	_idx = 0
