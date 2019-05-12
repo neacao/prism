@@ -3,7 +3,7 @@
 from termcolor import colored
 
 class Logger:
-	def __init__(self, isDebugMode):
+	def __init__(self, isDebugMode=False):
 		self.isDebugMode = isDebugMode
 	# --
 

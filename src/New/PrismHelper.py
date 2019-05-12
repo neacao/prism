@@ -205,7 +205,10 @@ class PrismHelper:
 
 	def getOffsetsStr(self, offsets):
 		ret = ""
-		ret += reduce(lambda ret, itemStr: '{}, '.format(ret) + itemStr, list(map(lambda x: x.getDescription(), offsets)))
+		if len(offsets) == 0:
+			ret = "[]"
+		else:
+			ret = reduce(lambda ret, itemStr: '{}, '.format(ret) + itemStr, list(map(lambda x: x.getDescription(), offsets)))
 		# -
 		return ret
 	# --
