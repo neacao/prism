@@ -164,12 +164,10 @@ class Prism:
 
 		def __printLogs(target = 'output'):
 			if target == 'output':
-				posItemsStr = helper.getPosItemsStr(_posItems)
-				offsetsStr = helper.getOffsetsStr(_offsets)
-				print(colored('  + gcd: {}\n  + posItemsStr:\n{}\n  + offsetStr:\n{}'.format(_gcd, posItemsStr, offsetsStr), 'green'))
+				self.logger.log(colored('  + gcd: {}\n  + posItemsStr:\n{}\n  + offsetStr:\n{}'.format(_gcd, helper.getPosItemsStr(_posItems), helper.getOffsetsStr(_offsets)), 'green'))
 			else :
-				print(colored(' - (1) posItemsStr:\n{}\n  + offsetStr:\n{}'.format(helper.getPosItemsStr(posItems), helper.getOffsetsStr(offsets)), 'white'))
-				print(colored(' - (2) posItemsStr:\n{}\n  + offsetStr:\n{}'.format(helper.getPosItemsStr(targetPosItems), helper.getOffsetsStr(targetOffsets)), 'white'))
+				self.logger.log(colored(' - (1) posItemsStr:\n{}\n  + offsetStr:\n{}'.format(helper.getPosItemsStr(posItems), helper.getOffsetsStr(offsets)), 'white'))
+				self.logger.log(colored(' - (2) posItemsStr:\n{}\n  + offsetStr:\n{}'.format(helper.getPosItemsStr(targetPosItems), helper.getOffsetsStr(targetOffsets)), 'white'))
 			# -
 		# -
 
@@ -188,7 +186,7 @@ class Prism:
 		while gcd > 1:
 			primeVal = self.primeArray[primeIdx]
 			isValid = True if gcd % primeVal == 0 else False
-			print(' > gcd: {} -> {}'.format(gcd, ('Process' if isValid else 'IGNORE') + ' idx {}'.format(primeIdx)))
+			self.logger.log(' > gcd: {} -> {}'.format(gcd, ('Process' if isValid else 'IGNORE') + ' idx {}'.format(primeIdx)))
 
 			if isValid:
 				posItemsJoined = self._joinBlocksInSingleSequence(posItems, offsets[primeIdx], targetPosItems, targetOffsets[primeIdx], isMask)
@@ -198,7 +196,8 @@ class Prism:
 					_posItems += posItemsJoined
 					curOffsetIdx += joinedLength
 				else:
-					print(colored('_joinBlocksInSingleSequence return empty joined block -> should device _gcd {} for {}'.format(_gcd, primeVal),'red'))
+					self.logger.log(colored('_joinBlocksInSingleSequence return empty joined block -> should device _gcd {} for {}'.format(_gcd, primeVal),'red'))
+
 					_gcd = int(_gcd/primeVal)
 				# -
 			# -
@@ -222,20 +221,20 @@ class Prism:
 		lastOffsetIdx = 0
 
 		def __printLogs():
-			print('seqJoined: {}'.format(seqJoined))
+			self.logger.log('seqJoined: {}'.format(seqJoined))
 			offsetStr = '['
 			for offsets in offsetsListJoined:
 				if len(offsets) == 0: 
 					offsetStr += '[], '
 				else:
 					offsetStr += '[' + reduce(lambda ret, _info: '{}, '.format(ret) + _info, map(lambda offset: offset.getDescription(), offsets)) + '], '
-			print('offsetsListJoined: {}'.format(offsetStr[:-2]))
-			print('posItemsJoined: {}'.format(reduce(lambda ret, info: '{}, '.format(ret) + info, map(lambda posItem: posItem.getDescription(), posItemsJoined))))
+			self.logger.log('offsetsListJoined: {}'.format(offsetStr[:-2]))
+			self.logger.log('posItemsJoined: {}'.format(reduce(lambda ret, info: '{}, '.format(ret) + info, map(lambda posItem: posItem.getDescription(), posItemsJoined))))
 		# -
 
 		length = min(len(seqPrimals), len(targetSeqPrimals))
 		for idx in range(0, length):
-			print(colored('_extendSeqBlocks idx {}'.format(idx), 'blue'))
+			self.logger.log(colored('_extendSeqBlocks idx {}'.format(idx), 'blue'))
 
 			seq = seqPrimals[idx]
 			targetSeq = targetSeqPrimals[idx]
@@ -251,7 +250,7 @@ class Prism:
 			offsetsListJoined.append(_offsets)
 			posItemsJoined += _posItems
 			lastOffsetIdx = _curOffsetIdx
-			print(colored('_extendSeqBlocks -----', 'blue'))
+			self.logger.log(colored('_extendSeqBlocks -----', 'blue'))
 
 		# -
 		__printLogs()
