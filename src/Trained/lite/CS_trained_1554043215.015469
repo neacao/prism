@@ -1,0 +1,486 @@
+[
+  {
+    "frequent": "B->D->F->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->F->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->F->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->F->I",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->F->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->F->K",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->F->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->F",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->I",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->K",
+    "support": 5
+  },
+  {
+    "frequent": "B->D->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->D",
+    "support": 5
+  },
+  {
+    "frequent": "B->F->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->F->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "B->F->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->F->I",
+    "support": 5
+  },
+  {
+    "frequent": "B->F->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->F->K",
+    "support": 5
+  },
+  {
+    "frequent": "B->F->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->F",
+    "support": 5
+  },
+  {
+    "frequent": "B->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "B->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->I",
+    "support": 5
+  },
+  {
+    "frequent": "B->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B->K",
+    "support": 5
+  },
+  {
+    "frequent": "B->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->F->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->F->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->F->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->F->I",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->F->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->F->K",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->F->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->F",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->I",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->K",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->D",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->F->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->F->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->F->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->F->I",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->F->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->F->K",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->F->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->F",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->I",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->K",
+    "support": 5
+  },
+  {
+    "frequent": "B.C->R",
+    "support": 5
+  },
+  {
+    "frequent": "B.C",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->F->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->F->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->F->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->F->I",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->F->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->F->K",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->F->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->F",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->I",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->K",
+    "support": 5
+  },
+  {
+    "frequent": "C->D->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->D",
+    "support": 5
+  },
+  {
+    "frequent": "C->F->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->F->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "C->F->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->F->I",
+    "support": 5
+  },
+  {
+    "frequent": "C->F->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->F->K",
+    "support": 5
+  },
+  {
+    "frequent": "C->F->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->F",
+    "support": 5
+  },
+  {
+    "frequent": "C->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "C->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->I",
+    "support": 5
+  },
+  {
+    "frequent": "C->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "C->K",
+    "support": 5
+  },
+  {
+    "frequent": "C->R",
+    "support": 5
+  },
+  {
+    "frequent": "D->F->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "D->F->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "D->F->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "D->F->I",
+    "support": 5
+  },
+  {
+    "frequent": "D->F->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "D->F->K",
+    "support": 5
+  },
+  {
+    "frequent": "D->F->R",
+    "support": 5
+  },
+  {
+    "frequent": "D->F",
+    "support": 5
+  },
+  {
+    "frequent": "D->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "D->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "D->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "D->I",
+    "support": 5
+  },
+  {
+    "frequent": "D->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "D->K",
+    "support": 5
+  },
+  {
+    "frequent": "D->R",
+    "support": 5
+  },
+  {
+    "frequent": "F->I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "F->I->K",
+    "support": 5
+  },
+  {
+    "frequent": "F->I->R",
+    "support": 5
+  },
+  {
+    "frequent": "F->I",
+    "support": 5
+  },
+  {
+    "frequent": "F->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "F->K",
+    "support": 5
+  },
+  {
+    "frequent": "F->R",
+    "support": 5
+  },
+  {
+    "frequent": "I->K->R",
+    "support": 5
+  },
+  {
+    "frequent": "I->K",
+    "support": 5
+  },
+  {
+    "frequent": "I->R",
+    "support": 5
+  },
+  {
+    "frequent": "K->R",
+    "support": 5
+  },
+  {
+    "frequent": "X->Z",
+    "support": 5
+  }
+]

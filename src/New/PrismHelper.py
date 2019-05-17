@@ -213,6 +213,15 @@ class PrismHelper:
 		return ret
 	# --
 
+	def getOffsetsListStr(self, offsestList):
+		offsetStr = '['
+		for offsets in offsestList:
+			if len(offsets) == 0: 
+				offsetStr += '[], '
+			else:
+				offsetStr += self.getOffsetsStr(offsets)
+			#- 
+		return offsetStr[:-2]
 
 	def mockup(self, display=False):
 		string = [

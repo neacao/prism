@@ -149,7 +149,8 @@ class Prism:
 			_index += 1
 			_targetIndex += 1
 		# -
-		Log.log(colored('_joinBlocksInSingleSequence w/ posJoined: {} --'.format(helper.getPosItemsStr(_posItemsJoined)), 'cyan'))
+		Log.log(colored('_joinBlocksInSingleSequence return:', 'white'))
+		Log.log(colored(helper.getPosItemsStr(_posItemsJoined), 'cyan'))
 		return _posItemsJoined
 	# --
 
@@ -165,6 +166,7 @@ class Prism:
 
 		def __printLogs(target = 'output'):
 			if target == 'output':
+				Log.log(colored('_extendSingleSeqBlock return:', 'white'))
 				Log.log(colored('  + gcd: {}\n  + posItemsStr:\n{}\n  + offsetStr:\n{}'.format(_gcd, helper.getPosItemsStr(_posItems), helper.getOffsetsStr(_offsets)), 'green'))
 			else :
 				Log.log(colored(' - (1) posItemsStr:\n{}\n  + offsetStr:\n{}'.format(helper.getPosItemsStr(posItems), helper.getOffsetsStr(offsets)), 'white'))
@@ -237,8 +239,6 @@ class Prism:
 				return
 		# -
 
-		__printLogs()
-
 		length = min(len(seqPrimals), len(targetSeqPrimals))
 		for idx in range(0, length):
 			Log.log(colored('_extendSeqBlocks idx {}'.format(idx), 'blue'))
@@ -259,14 +259,31 @@ class Prism:
 			lastOffsetIdx = _curOffsetIdx
 			Log.log(colored('_extendSeqBlocks -----', 'blue'))
 
-		# -
-		__printLogs()
 		return seqJoined, offsetsListJoined, posItemsJoined
 	# --
 
 
-	def _extendItems(self, lastSeq, items):
-		return 1
+	def extendItems(self, lastSeq, items,
+		seqPrimals, offsetsList, posItems,
+		targetSeqPrimals, targetOffsetsList, targetPosItems, 
+		isMask):
+		
+		for item in items:
+			seqJoined, offsetsListJoined, posItemsJoined = self._extendSeqBlocks(
+				seqPrimals, offsetsList, posItems,
+				targetSeqPrimals, targetOffsetsList, targetPosItems,
+				True)
+
+			Log.log(colored('- Extend extension got'), 'white')
+			Log.log(colored('seqPrimals {}', reduce(lambda ret, x: ret + x, seqJoined)))
+			Log.log(colored('offsetsList {}', helper.getOffsetsListStr(offsetsListJoined)))
+			Log.log(corlored('posItemsJoined {}', helper.getPosItemsStr(posItemsJoined)))
+
+			# seqJoined2, offsetsListJoined2, posItemsJoined2 = self._extendSeqBlocks(
+			# 	seqPrimals, offsetsList, posItems,
+			# 	targetSeqPrimals, targetOffsetsList, targetPosItems,
+			# 	False)
+
 	# --
  	
 # ---
@@ -282,11 +299,7 @@ if __name__ == "__main__":
 	_idx = 0
 	_targetIdx = 2
 
-	maskPosItems = prism._maskPosItems(prismItems[_idx].posItems)
-	prism._extendSeqBlocks(
-		prismItems[_idx].seqPrimals, prismItems[_idx].offsets, prismItems[_idx].posItems,
-		prismItems[_targetIdx].seqPrimals, prismItems[_targetIdx].offsets, prismItems[_targetIdx].posItems,
-		True)
+	self.extendItems('a', ['a', 'b', 'c'], )
 
 
 
