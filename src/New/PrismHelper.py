@@ -221,7 +221,8 @@ class PrismHelper:
 			else:
 				offsetStr += self.getOffsetsStr(offsets)
 			#- 
-		return offsetStr[:-2]
+		offsetStr = offsetStr[:-2] + ']'
+		return offsetStr
 
 	def mockup(self, display=False):
 		string = [

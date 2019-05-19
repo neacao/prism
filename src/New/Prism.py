@@ -182,7 +182,7 @@ class Prism:
 		_offsets = []
 
 		if gcd == 1:
-			Log.log(colored('_extendSingleSeqBlock does not has gcd -> quick return empty', 'red'))
+			Log.log(colored('_extendSingleSeqBlock joined 1 from {} {} -> quick return empty'.format(seqPrimal, targetSeqPrimal), 'red'))
 			return gcd, _posItems, _offsets, lastOffsetIdx
 		# -
 
@@ -224,20 +224,8 @@ class Prism:
 		posItemsJoined = []
 		lastOffsetIdx = 0
 
-		def __printLogs(target='input'):
-			if target == 'output':
-				Log.log('seqJoined: {}'.format(seqJoined))
-				offsetStr = '['
-				for offsets in offsetsListJoined:
-					if len(offsets) == 0: 
-						offsetStr += '[], '
-					else:
-						offsetStr += '[' + reduce(lambda ret, _info: '{}, '.format(ret) + _info, map(lambda offset: offset.getDescription(), offsets)) + '], '
-				Log.log('offsetsListJoined: {}'.format(offsetStr[:-2]))
-				Log.log('posItemsJoined: {}'.format(reduce(lambda ret, info: '{}, '.format(ret) + info, map(lambda posItem: posItem.getDescription(), posItemsJoined))))
-			else:
-				return
-		# -
+		primalStr = reduce(lambda ret, x: '{}, '.format(ret) + str(x), targetSeqPrimals)
+		Log.log(colored('taget primal {}'.format(primalStr),'red'))
 
 		length = min(len(seqPrimals), len(targetSeqPrimals))
 		for idx in range(0, length):
@@ -257,7 +245,7 @@ class Prism:
 			offsetsListJoined.append(_offsets)
 			posItemsJoined += _posItems
 			lastOffsetIdx = _curOffsetIdx
-			Log.log(colored('_extendSeqBlocks -----', 'blue'))
+			Log.log(colored('_extendSeqBlocks idx {} end !'.format(idx), 'blue'))
 
 		return seqJoined, offsetsListJoined, posItemsJoined
 	# --
@@ -265,32 +253,40 @@ class Prism:
 
 	def extendItems(self, lastSeq, items,
 		seqPrimals, offsetsList, posItems,
-		targetSeqPrimals, targetOffsetsList, targetPosItems, 
-		isMask):
+		allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems):
 		
-		for item in items:
+		itemLength = len(items)
+		for idx in range(0, itemLength):
+			Log.log(colored('-> Extend lastSeq {} w/ item {}'.format(lastSeq, items[idx]), 'magenta'))
+
+			targetSeqPrimals = allTargetSeqPrimals[idx]
+			targetOffsetsList = allTargetOffsetsList[idx]
+			targetPosItems = allTargetPosItems[idx]
+
 			seqJoined, offsetsListJoined, posItemsJoined = self._extendSeqBlocks(
 				seqPrimals, offsetsList, posItems,
 				targetSeqPrimals, targetOffsetsList, targetPosItems,
 				True)
 
-			Log.log(colored('- Extend extension got'), 'white')
-			Log.log(colored('seqPrimals {}', reduce(lambda ret, x: ret + x, seqJoined)))
-			Log.log(colored('offsetsList {}', helper.getOffsetsListStr(offsetsListJoined)))
-			Log.log(corlored('posItemsJoined {}', helper.getPosItemsStr(posItemsJoined)))
-
-			# seqJoined2, offsetsListJoined2, posItemsJoined2 = self._extendSeqBlocks(
+			# seqJoined2, offsetsListJoine2, posItemsJoined2, = self._extendSeqBlocks(
 			# 	seqPrimals, offsetsList, posItems,
 			# 	targetSeqPrimals, targetOffsetsList, targetPosItems,
 			# 	False)
 
+			# Log.log(colored('- Extend extension got', 'magenta'))
+			# Log.log(colored('seqPrimals {}'.format(reduce(lambda ret, x: ret + x, seqJoined)), 'blue'))
+			# Log.log(colored('offsetsList {}'.format(helper.getOffsetsListStr(offsetsListJoined)) , 'blue'))
+			# Log.log(colored('posItemsJoined {}'.format(helper.getPosItemsStr(posItemsJoined)), 'blue'))
+			Log.log(colored('-----', 'magenta'))
+		# --
 	# --
  	
 # ---
 
 
 if __name__ == "__main__":
-	helper = PrismHelper(['a', 'b', 'c'])
+	items = ['a', 'b', 'c']
+	helper = PrismHelper(items)
 	
 	prism = Prism(helper)
 	prismItems = list(helper.mockup())
@@ -299,7 +295,13 @@ if __name__ == "__main__":
 	_idx = 0
 	_targetIdx = 2
 
-	self.extendItems('a', ['a', 'b', 'c'], )
+	targetSeqPrimals = list(map(lambda x: x.seqPrimals, prismItems))
+	offsetsList = list(map(lambda x: x.offsets, prismItems))
+	posItems = list(map(lambda x: x.posItems, prismItems))
+
+	prism.extendItems('a', items[:2], 
+	prismItems[_idx].seqPrimals, prismItems[_idx].offsets, prismItems[_idx].posItems, 
+	targetSeqPrimals, offsetsList, posItems)
 
 
 
