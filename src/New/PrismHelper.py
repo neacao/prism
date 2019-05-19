@@ -224,6 +224,12 @@ class PrismHelper:
 		offsetStr = offsetStr[:-2] + ']'
 		return offsetStr
 
+	def getPositionStringWithPrime(self, value):
+		info = map(lambda x: '1' if value % x == 0 else '0', self.primeArray)
+		infoStr = ' '.join(info)
+		return infoStr
+	# --
+
 	def mockup(self, display=False):
 		string = [
 			"a.b->b->b->a.b->b->a",
