@@ -119,7 +119,7 @@ class PrismHelper:
 		primeArrayCounter = 0 # Start index
 		primalBlocksListLength = len(primalBlocksList)
 
-		def appendItemAndOffset(_posItems, _offset, primalBlocks, length):
+		def appendItemAndOffset(_posItems, _offset, primalBlocks, length, primeVal):
 			previous = None
 			length = len(primalBlocks)
 
@@ -131,7 +131,7 @@ class PrismHelper:
 				# -
 				previous = item
 			# -
-			_offset.append(OffsetItem(curOffsetIdx, length))
+			_offset.append(OffsetItem(curOffsetIdx, length, primeVal))
 		# -
 
 		for idx in range(0, primalBlocksListLength):
@@ -140,7 +140,7 @@ class PrismHelper:
 			length = len(primalBlocks)
 			
 			if length > 0: # Ignore length is empty
-				appendItemAndOffset(posItems, offset, primalBlocks, length)
+				appendItemAndOffset(posItems, offset, primalBlocks, length, self.primeArray[primeArrayCounter-1])
 
 			if primeArrayCounter == self.primeLength or idx == primalBlocksListLength - 1:
 				offsets.append(offset)
@@ -221,13 +221,18 @@ class PrismHelper:
 			else:
 				offsetStr += self.getOffsetsStr(offsets)
 			#- 
-		offsetStr = offsetStr[:-2] + ']'
+		offsetStr = offsetStr + ']'
 		return offsetStr
 
 	def getPositionStringWithPrime(self, value):
 		info = map(lambda x: '1' if value % x == 0 else '0', self.primeArray)
 		infoStr = ' '.join(info)
 		return infoStr
+	# --
+
+	def getPositionArrayToLoopWithPrime(self, value):
+		info = list(map(lambda x: 1 if value % x == 0 else 0, self.primeArray))
+		return info 
 	# --
 
 	def mockup(self, display=False):
