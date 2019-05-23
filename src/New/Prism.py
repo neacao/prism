@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import copy, sys
+import copy, sys, os
 sys.path.insert(0, './Item')
 
 from termcolor import colored
@@ -364,6 +364,13 @@ def testExtendSingleSequence():
 
 
 if __name__ == "__main__":
+	logFile = 'debugSample.txt'
+	cmd = 'rm {}'.format(logFile)
+	os.system(cmd)
+
 	Log.isDebugMode = True
-	Log.logFilePath = 'debugSample2.txt'
+	Log.logFilePath = logFile
 	testExtendSingleSequence()
+
+	cmd = 'open {}'.format(logFile)
+	os.system(cmd)
