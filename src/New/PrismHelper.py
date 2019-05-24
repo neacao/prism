@@ -235,6 +235,21 @@ class PrismHelper:
 		return info 
 	# --
 
+	def getNextItemFromCurrent(self, item):
+		index = self.getNextIndexOfItem(item)
+		return None if index == None else self.items[index]
+	# --
+
+	def getNextIndexOfItem(self, item):
+		try:
+			_index = self.items.index(item)
+			_index += 1
+			return _index if _index < len(self.items) else None
+		except ValueError:
+			print("[FATAL ERROR] Not found item: {}".format(item))
+			exit(1)
+	# --
+
 	def mockup(self, display=False):
 		string = [
 			"a.b->b->b->a.b->b->a",

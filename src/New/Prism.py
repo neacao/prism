@@ -23,6 +23,7 @@ class Prism:
 		self.primeArray = PRIME_ARRAY
 		self.primeLength = PRIME_LENGTH
 		self.seqFound = []
+		self.debugCounter = 3
 	# --
 
 	def _getRank(self, val):
@@ -171,7 +172,7 @@ class Prism:
 
 		def __printLogs(target = 'output'):
 			if target == 'output':
-				Log.log(colored('_extendSingleSeqBlock return:', 'white'))
+				Log.log(colored('_extendSingleSeqBlock return:', 'blue'))
 				Log.log(colored('  + gcd: {}\n  + posItemsStr:\n{}\n  + offsetStr:\n{}'.format(_gcd, self.helper.getPosItemsStr(_posItems), self.helper.getOffsetsStr(_offsets)), 'green'))
 			else :
 				Log.log(colored(' - (1) posItemsStr:\n{}\n  + offsetStr:\n{}'.format(self.helper.getPosItemsStr(posItems), self.helper.getOffsetsStr(offsets)), 'white'))
@@ -235,35 +236,6 @@ class Prism:
 		# -
 		__printLogs()
 		return _gcd, _offsets, _posItems, curOffsetIdx
-
-		# print('> info {}'.format(gcdInfo))
-
-		# while gcd > 1:
-		# 	primeVal = self.primeArray[primeIdx]
-		# 	isValid = True if gcd % primeVal == 0 else False
-		# 	Log.log(' > gcd: {} at primeVal {} -> {}'.format(gcd, primeVal, ('Process' if isValid else 'IGNORE') + ' idx {}'.format(primeIdx)))
-
-		# 	if isValid:
-		# 		posItemsJoined = self._joinBlocksInSingleSequence(
-		# 			posItems, offsets[_offsetIndex], targetPosItems, targetOffsets[_targetOffsetIndex], isMask)
-		# 		_offsetIndex += 1
-		# 		_targetOffsetIndex += 1
-					
-		# 		joinedLength = len(posItemsJoined)
-		# 		if joinedLength > 0:
-		# 			_offsets.append(OffsetItem(curOffsetIdx, joinedLength, primeVal))
-		# 			_posItems += posItemsJoined
-		# 			curOffsetIdx += joinedLength
-		# 		else:
-		# 			Log.log(colored('_joinBlocksInSingleSequence return empty joined block -> should device gcdToBeReturn {} for {}'.format(_gcd, primeVal),'red'))
-		# 			_gcd = int(_gcd/primeVal)
-		# 		# -
-		# 		gcd = int(gcd/self.primeArray[primeIdx])
-		# 	# -
-		# 	primeIdx += 1
-		# # -
-		# __printLogs()
-		# return _gcd, _offsets, _posItems, curOffsetIdx
 	# --
 
 
@@ -273,23 +245,23 @@ class Prism:
 		posItemsJoined = []
 		lastOffsetIdx = 0
 
-		Log.log(colored('primal {}'.format(reduce(lambda ret, x: '{}, '.format(ret) + str(x), seqPrimals)), 'red'))
+		Log.log(colored('_extendSeqBlocks w/ mask {} ...\nprimal {}'.format(('YES' if isMask else 'NO'),reduce(lambda ret, x: '{}, '.format(ret) + str(x), seqPrimals)), 'red'))
 		Log.log(colored('target primal {}'.format(reduce(lambda ret, x: '{}, '.format(ret) + str(x), targetSeqPrimals)),'red'))
 
 		length = min(len(seqPrimals), len(targetSeqPrimals))
 		for idx in range(0, length):
 			Log.log(colored('_extendSeqBlocks idx {}'.format(idx), 'blue'))
 
-			seq = seqPrimals[idx]
-			targetSeq = targetSeqPrimals[idx]
-			offsets = offsetsList[idx]
-			targetOffsets = targetOffsetList[idx]
+			seq = copy.deepcopy(seqPrimals[idx])
+			targetSeq = copy.deepcopy(targetSeqPrimals[idx])
+			offsets = copy.deepcopy(offsetsList[idx])
+			targetOffsets = copy.deepcopy(targetOffsetList[idx])
 
 			_gcd, _offsets, _posItems, _curOffsetIdx = self._extendSingleSeqBlock(
-				seq, offsets, posItems, 
+				seq, offsets, posItems,
 				targetSeq, targetOffsets, targetPosItems,
 				lastOffsetIdx, isMask)
-
+			# Accept single seq block (8 seqs) to be 1 to process more
 			seqJoined.append(_gcd)
 			offsetsListJoined.append(_offsets)
 			posItemsJoined += _posItems
@@ -300,48 +272,111 @@ class Prism:
 	# --
 
 
-	def extendItems(self, lastSeq, items, seqPrimals, offsetsList, posItems, allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems):
+	def extendItems(self, lastSeq, lastItem, fromItemIdx, items, seqPrimals, offsetsList, posItems, allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems):
 		itemLength = len(items)
-		for idx in range(0, itemLength):
+		_seqPrimals = copy.deepcopy(seqPrimals)
+		_offsetsList = copy.deepcopy(offsetsList)
+		_posItems = copy.deepcopy(posItems)
+
+		for idx in range(fromItemIdx, itemLength):
 			item = items[idx]
-			Log.log(colored('-> Extend lastSeq {} w/ item {}'.format(lastSeq, item), 'magenta'))
+			
+			targetSeqPrimals = copy.deepcopy(allTargetSeqPrimals[idx])
+			targetOffsetsList = copy.deepcopy(allTargetOffsetsList[idx])
+			targetPosItems = copy.deepcopy(allTargetPosItems[idx])
 
-			targetSeqPrimals = allTargetSeqPrimals[idx]
-			targetOffsetsList = allTargetOffsetsList[idx]
-			targetPosItems = allTargetPosItems[idx]
-
+			Log.log(colored('-> Extend lastSeq {} - > {} from idx {}'.format(lastSeq, item, fromItemIdx), 'magenta'))
 			# Extend sequence 
 			seqJoined, offsetsListJoined, posItemsJoined = self._extendSeqBlocks(
-				seqPrimals, offsetsList, posItems,
+				_seqPrimals, _offsetsList, _posItems,
 				targetSeqPrimals, targetOffsetsList, targetPosItems,
 				True)
 
 			if self._getSupportOfList(seqJoined) > 0: # Could extend seq more
 				lastSeq += '->{}'.format(item)
-				self.extendItems(lastSeq, items, seqJoined, offsetsListJoined, posItemsJoined, allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems)
+				self.extendItems(lastSeq, item, 0, items, seqJoined, offsetsListJoined, posItemsJoined, 
+					allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems)
 
 				removeLength = len(item) + len('->')
 				lastSeq = lastSeq[:-removeLength]
 			# -
 
+			# Must not extend same item in itemset extension
+			_idx = self.helper.getNextIndexOfItem(item)
+			Log.log(colored('_idx {}'.format(_idx), 'red'))
+			if _idx == itemLength:
+				break
+
+			_item = items[_idx]
+			Log.log(colored('-> Extend lastSeq {} . {} from idx {}'.format(lastSeq, _item, fromItemIdx), 'magenta'))
+			
 			# Extend itemset
+			targetSeqPrimals2 = copy.deepcopy(allTargetSeqPrimals[_idx])
+			targetOffsetsList2 = copy.deepcopy(allTargetOffsetsList[_idx])
+			targetPosItems2 = copy.deepcopy(allTargetPosItems[_idx])
+
 			seqJoined2, offsetsListJoined2, posItemsJoined2 = self._extendSeqBlocks(
-				seqPrimals, offsetsList, posItems,
-				targetSeqPrimals, targetOffsetsList, targetPosItems,
+				_seqPrimals, _offsetsList, _posItems,
+				targetSeqPrimals2, targetOffsetsList2, targetPosItems2,
 				False)
 
-			if self._getSupportOfList(seqJoined) > 0: # Could extend itemset more
-				lastSeq += '.{}'.format(item)
-				self.extendItems(lastSeq, items[idx+1:], seqJoined2, offsetsListJoined2, posItemsJoined2, allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems)
+			if self._getSupportOfList(seqJoined2) > 0: # Could extend itemset more
+				lastSeq += '.{}'.format(_item)
+				self.extendItems(lastSeq, _item, _idx, items, seqJoined2, offsetsListJoined2, posItemsJoined2, 
+					allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems)
 
-				removeLength = len(item) + len('.')
+				removeLength = len(_item) + len('.')
 				lastSeq = lastSeq[:-removeLength]
 			# -
+		# - for
+		Log.log(colored('- Extend extension got', 'magenta'))
+		Log.log(colored('[x] lastSeq: {}'.format(lastSeq), 'magenta'))
+		Log.log('{} \n'.format(lastSeq), diskMode=True)
+		exit(1)
+	# --
 
-			Log.log(colored('- Extend extension got', 'magenta'))
-			Log.log(colored('[x] lastSeq: {}'.format(lastSeq), 'magenta'))
-			Log.log('{}\n'.format(lastSeq), diskMode=True)
-		# --
+	def extendItemsV2(self, lastSeq, fromItemIdx, items, seqPrimals, offsetsList, posItems, 
+		allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems, isMask):
+
+		for idx in range(fromItemIdx, len(items)):
+			_curItem = copy.deepcopy(items[idx])
+
+			_seqPrimals = copy.deepcopy(seqPrimals)
+			_offsetsList = copy.deepcopy(offsetsList)
+			_posItems = copy.deepcopy(posItems)
+
+			_targetSeqPrimals = copy.deepcopy(allTargetSeqPrimals[idx])
+			_targetOffsetsList = copy.deepcopy(allTargetOffsetsList[idx])
+			_targetPosItems = copy.deepcopy(allTargetPosItems[idx])
+
+			seqJoined, offsetsListJoined, posItemsJoined = self._extendSeqBlocks(
+				_seqPrimals, _offsetsList, _posItems,
+				_targetSeqPrimals, _targetOffsetsList, _targetPosItems,
+				isMask)
+
+			if self._getSupportOfList(seqJoined) == 0: # Could not extend seq more
+				continue
+
+			_lastSeq = copy.deepcopy(lastSeq)
+			if isMask:
+				_lastSeq += '->{}'.format(_curItem)
+			else:
+				_lastSeq += '.{}'.format(_curItem)
+			# -
+			Log.log('{}\n'.format(_lastSeq), diskMode=True)
+
+			self.extendItemsV2(_lastSeq, 0, items, seqJoined, offsetsListJoined, posItemsJoined, 
+				allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems, True)
+
+			# removeLength = len('->') + len(_curItem)
+			# lastSeq = lastSeq[:-removeLength]
+
+			self.extendItemsV2(_lastSeq, idx + 1, items, seqJoined, offsetsListJoined, posItemsJoined, 
+				allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems, False)
+
+			# removeLength = len('.') + len(_curItem)
+			# lastSeq = lastSeq[:-removeLength]
+
 	# --
 	
 # ---
@@ -357,13 +392,12 @@ def testExtendSingleSequence():
 	allOffsetsList = list(map(lambda element: element.offsets, prismItems))
 	allPosItems = list(map(lambda element: element.posItems, prismItems))
 
-	prism.extendItems('a', items[:1],
+	prism.extendItemsV2('a', 0, items[:2],
 		prismItems[0].seqPrimals, prismItems[0].offsets, prismItems[0].posItems,
-		allSeqPrimals, allOffsetsList, allPosItems)
+		allSeqPrimals, allOffsetsList, allPosItems, True)
 # --
 
-
-if __name__ == "__main__":
+def test():
 	logFile = 'debugSample.txt'
 	cmd = 'rm {}'.format(logFile)
 	os.system(cmd)
@@ -374,3 +408,7 @@ if __name__ == "__main__":
 
 	cmd = 'open {}'.format(logFile)
 	os.system(cmd)
+# --
+
+if __name__ == "__main__":
+	test()
