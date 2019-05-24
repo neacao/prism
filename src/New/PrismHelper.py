@@ -10,11 +10,14 @@ from OffsetItem import *
 from PrismLookupTable import *
 
 class PrismHelper:
-	def __init__(self, items):
+	def __init__(self):
 		self.primeArray = PRIME_ARRAY
 		self.primeLength = PRIME_LENGTH
-		# self.items = list(range(1, 442)) # Based on data/lite/CourseGradeMap.json last value
-		self.items = items
+		self.dataRootPath = '../../data/lite'
+		self.courseGradeMap = 'CourseGradeMap.json'
+		self.horizontalResource = 'CourseGradeEncodedHorizontal.json'
+		self.horizontalResourceTest = 'CourseGradeEncodedHorizontal2.json'
+		self.items = []
 	# --
 
 	def convertHorizontalRecord(self, resourcePath, outputPath):
@@ -68,7 +71,11 @@ class PrismHelper:
 		with open(horizontalRecordPath, 'r') as fp:
 			seqList = json.load(fp)
 
-		ret = map(lambda item: self.createPrimalItem(item, seqList), self.items)
+		return self.createFullPrimalEncodedFromData(seqList)
+	# --
+
+	def createFullPrimalEncodedFromData(self, data):
+		ret = map(lambda item: self.createPrimalItem(item, data), self.items)
 		return ret
 	# --
 
@@ -250,19 +257,28 @@ class PrismHelper:
 			exit(1)
 	# --
 
-	def mockup(self, display=False):
-		string = [
-			"a.b->b->b->a.b->b->a",
-			"a.b->b->b",
-			"b->a.b",
-			"b->b->b",
-			"a.b->a.b->a.b->a->b.c"
-		]
+	def load(self):
+		# Load items
+		courseGradeMapJsonPath = self.dataRootPath + '/' + self.courseGradeMap
+		with open(courseGradeMapJsonPath, 'r') as fp:
+			courseGradeDict = json.load(fp)
+		self.items = list(courseGradeDict.keys())
 
+		# Load resource to be mined
+		encodedHorizontalPath = self.dataRootPath + '/' + self.horizontalResourceTest
+		with open(encodedHorizontalPath, 'r') as fp:
+			seqs = json.load(fp)
+		self.data = seqs
+
+		return seqs
+	# --
+
+	def mockup(self, display=False):
 		prismItems = self.createFullPrimalEncoded("./ResourceSample.json")
+
 		if display == True:
-			# for item in prismItems:
-			list(prismItems)[0].description()
+			for item in prismItems:
+				item.description()
 		# -
 		return prismItems
 	# --

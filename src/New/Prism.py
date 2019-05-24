@@ -377,9 +377,11 @@ class Prism:
 
 def testExtendSingleSequence():
 	items = ['a', 'b', 'c']
-	helper = PrismHelper(items)
-	prism = Prism(helper)
+	helper = PrismHelper()
+	helper.items = items
+	# seqList = helper.load()
 	prismItems = list(helper.mockup())
+	prism = Prism(helper)
 
 	allSeqPrimals = list(map(lambda element: element.seqPrimals, prismItems))
 	allOffsetsList = list(map(lambda element: element.offsets, prismItems))
