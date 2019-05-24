@@ -10,14 +10,15 @@ from OffsetItem import *
 from PrismLookupTable import *
 
 class PrismHelper:
-	def __init__(self):
+	def __init__(self, items = []):
 		self.primeArray = PRIME_ARRAY
 		self.primeLength = PRIME_LENGTH
 		self.dataRootPath = '../../data/lite'
 		self.courseGradeMap = 'CourseGradeMap.json'
 		self.horizontalResource = 'CourseGradeEncodedHorizontal.json'
 		self.horizontalResourceTest = 'CourseGradeEncodedHorizontal2.json'
-		self.items = []
+		self.items = items
+		self.debugMode = False
 	# --
 
 	def convertHorizontalRecord(self, resourcePath, outputPath):
@@ -259,28 +260,23 @@ class PrismHelper:
 
 	def load(self):
 		# Load items
-		courseGradeMapJsonPath = self.dataRootPath + '/' + self.courseGradeMap
-		with open(courseGradeMapJsonPath, 'r') as fp:
-			courseGradeDict = json.load(fp)
-		self.items = list(courseGradeDict.keys())
+		if self.debugMode:
+			self.items = ['a', 'b', 'c']
+		else:
+			courseGradeMapJsonPath = self.dataRootPath + '/' + self.courseGradeMap
+			with open(courseGradeMapJsonPath, 'r') as fp:
+				courseGradeDict = json.load(fp)
+			self.items = list(courseGradeDict.keys())
+		# -
 
 		# Load resource to be mined
-		encodedHorizontalPath = self.dataRootPath + '/' + self.horizontalResourceTest
+		encodedHorizontalPath = self.dataRootPath + '/' + (self.horizontalResourceTest if self.debugMode else self.horizontalResource)
 		with open(encodedHorizontalPath, 'r') as fp:
 			seqs = json.load(fp)
 		self.data = seqs
-
-		return seqs
-	# --
-
-	def mockup(self, display=False):
-		prismItems = self.createFullPrimalEncoded("./ResourceSample.json")
-
-		if display == True:
-			for item in prismItems:
-				item.description()
 		# -
-		return prismItems
+
+		return self.items, self.data
 	# --
 # --- PrismHelper
 
