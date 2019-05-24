@@ -368,17 +368,10 @@ class Prism:
 			self.extendItemsV2(_lastSeq, 0, items, seqJoined, offsetsListJoined, posItemsJoined, 
 				allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems, True)
 
-			# removeLength = len('->') + len(_curItem)
-			# lastSeq = lastSeq[:-removeLength]
-
 			self.extendItemsV2(_lastSeq, idx + 1, items, seqJoined, offsetsListJoined, posItemsJoined, 
 				allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems, False)
-
-			# removeLength = len('.') + len(_curItem)
-			# lastSeq = lastSeq[:-removeLength]
-
-	# --
-	
+		# -
+	# --	
 # ---
 
 
