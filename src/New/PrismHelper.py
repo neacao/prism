@@ -4,7 +4,7 @@ import openpyxl, json, sys, argparse
 sys.path.insert(0, './Item')
 
 ap = argparse.ArgumentParser()
-ap.add_argument("-f", "--func", required = True, help = "Function name")
+ap.add_argument("-f", "--func", required = False, help = "Function name")
 args = vars(ap.parse_args())
 
 from functools import reduce
@@ -164,7 +164,7 @@ class PrismHelper:
 				# -
 				previous = item
 			# -
-			_offset.append(OffsetIte(curOffsetIdx, length, primeVal))
+			_offset.append(OffsetItem(curOffsetIdx, length, primeVal))
 		# -
 
 		for idx in range(0, primalBlocksListLength):
