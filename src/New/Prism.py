@@ -392,21 +392,25 @@ def testExtendSingleSequence():
 		prismItems[_idx].seqPrimals, prismItems[_idx].offsets, prismItems[_idx].posItems,
 		allSeqPrimals, allOffsetsList, allPosItems, True)
 	
-	minedInfo = reduce(lambda ret, x: '{}\n'.format(ret) + x, prism.seqFound)
-	Log.log(minedInfo, diskMode=True)
+	minedEncodedInfo = reduce(lambda ret, x: '{}\n'.format(ret) + x, prism.seqFound)
+	readableArray = helper.parseReadableSeqsMined(prism.seqFound)
+	readableInfo = reduce(lambda ret, x: '{}\n'.format(ret) + x, readableArray)
+	
+	Log.log(minedEncodedInfo, diskMode=True)
+	Log.log(readableInfo, diskMode=True)
 # --
 
 def test():
-	logFile = 'output/mined.txt'
+	logFile = 'output/mined'
 	cmd = 'rm {}'.format(logFile)
-	os.system(cmd)
+	# os.system(cmd)
 
 	Log.isDebugMode = False
 	Log.logFilePath = logFile
 	testExtendSingleSequence()
 
 	cmd = 'open {}'.format(logFile)
-	os.system(cmd)
+	# os.system(cmd)
 # --
 
 if __name__ == "__main__":

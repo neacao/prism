@@ -368,12 +368,33 @@ class PrismHelper:
 			courseGradeInfo = self.courseGradeDict[key]
 			for rangeKey in courseGradeInfo["range"]:
 				if courseGradeInfo["range"][rangeKey] == val:
-					print('Detect course name: {} - range: {}'.format(courseGradeInfo["name"], rangeKey))
-					return
+					info = '{} ({})'.format(courseGradeInfo["name"], rangeKey)
+					# print('Detected {}'.format(info))
+					return info
 				# -
 			# -
 		# -
 		print('Not found {}'.format(val))
+		exit(1)
+		return None
+	# --
+
+	def parseReadableSeqsMined(self, seqs):
+		self.loadCourseGradeMap()
+		ret = []
+		for seq in seqs:
+			itemsetList = seq.split('->')
+			seqStr = ''
+			for itemset in itemsetList:
+				items = itemset.split('.')
+				_items = list(map(lambda x: int(x), items))
+				info = map(lambda x: self.getCourseGradeInfoWithEncodedVal(x), _items)
+				infoStr = ", ".join(info)
+				seqStr += ('->' if len(seqStr) > 0 else '') + infoStr
+			# -
+			ret.append(seqStr)
+		# -
+		return ret
 	# --
 
 # --- PrismHelper
@@ -390,7 +411,7 @@ if __name__ == "__main__":
 		helper.reCollectItem()
 	elif func == 'loadCourseGradeMap':
 		helper.loadCourseGradeMap()
-		helper.getCourseGradeInfoWithEncodedVal(441)
+		# helper.getCourseGradeInfoWithEncodedVal(441)
 	else:
 		print('Not found this func: {}'.format(func))
 	# -
