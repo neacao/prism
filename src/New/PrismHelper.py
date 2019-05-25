@@ -22,13 +22,15 @@ class PrismHelper:
 		self.horizontalResource = 'CourseGradeEncodedHorizontal.json'
 		self.horizontalResourceTest = 'CourseGradeEncodedHorizontal2.json'
 		self.excelResourceFile = 'CourseGradeEncoded.xlsx'
+		self.excelResourceFile2 = 'CourseGradeEncoded2.xlsx'
 		self.items = items
 		self.debugMode = False
 	# --
 
 	def convertHorizontalRecord(self, resourcePath, outputPath, ouputFileName = 'CourseGradeEncodedHorizontal.json', cacheEncodeVal = False):
 		if resourcePath == None:
-			resourcePath = self.dataRootPath + '/' + self.excelResourceFile
+			# resourcePath = self.dataRootPath + '/' + self.excelResourceFile
+			resourcePath = self.dataRootPath + '/' + self.excelResourceFile2
 		# -
 
 		wb = openpyxl.load_workbook(resourcePath)
@@ -42,36 +44,63 @@ class PrismHelper:
 		nextPosSyntax = "."
 		seqList = []
 		encodeValArr = []
+		_encodeValArrTemp = []
 
 		curStudentID = "" # Append new string to seqList
 		curSemester = 0 # Append new nextSeqSyntax
 		curString = "" # To be added into seqList's element
 
-		for row in wsRange:	
+		firstRow = True
+
+		for row in wsRange:
 			studentID = str(row[studentIDIdx].value)
 			semester = row[semesterIdx].value
 			gradeEncodeVal = row[gradeEncodeIDIdx].value
 			encodeVal = str(gradeEncodeVal)
+
+			_encodeValArrTemp.append(gradeEncodeVal)
 			encodeValArr.append(gradeEncodeVal)
+
+			if firstRow:
+				firstRow = False
+				curStudentID = studentID
+				curSemester = semester
+			# -
 
 			# New student
 			if studentID != curStudentID:
+				_encodeValArrTemp.sort()
+				stringTemp = str(reduce(lambda ret, x: '{}.'.format(ret) + str(x), _encodeValArrTemp))
+				print(stringTemp)
+
+				curString += ((nextSeqSyntax if len(curString) > 0 else '') + stringTemp)
 				seqList.append(curString)
+
 				curStudentID = studentID
 				curSemester = semester
-				curString = encodeVal
+				curString = ""
+				_encodeValArrTemp = []
+
 			# New semester
 			elif semester != curSemester:
 				curSemester = semester
-				curString += (nextSeqSyntax + encodeVal)
-			# New course
-			else:
-				curString += (nextPosSyntax + encodeVal)
+
+				_encodeValArrTemp.sort()
+				stringTemp = str(reduce(lambda ret, x: '{}.'.format(ret) + str(x), _encodeValArrTemp))
+				print(stringTemp)
+				curString += ((nextSeqSyntax if len(curString) > 0 else '') + stringTemp)
+				_encodeValArrTemp = []
 			# -
 		# -
 
-		seqList = seqList[1:] # Remove first redundant element
-		seqList.append(curString) # Append last student info
+		# Append last student
+		_encodeValArrTemp.sort()
+		stringTemp = str(reduce(lambda ret, x: '{}.'.format(ret) + str(x), _encodeValArrTemp))
+		print(stringTemp)
+
+		curString += ((nextSeqSyntax if len(curString) > 0 else '') + stringTemp)
+		seqList.append(curString)
+		# -
 
 		fileOutputPath = '{}/{}'.format(outputPath, ouputFileName)
 		with open(fileOutputPath, 'w') as fp:
