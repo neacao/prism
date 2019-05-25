@@ -432,7 +432,6 @@ class PrismHelper:
 		ret = []
 		for seq in seqs:
 			index = seq.find(query)
-			print('Search {} - found {}'.format(seq, index))
 			if index != -1:
 				ret.append(seq)
 		return ret

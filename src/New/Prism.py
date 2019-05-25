@@ -408,16 +408,21 @@ def train():
 
 def predict(minedFilePath):
 	predictStr = 'Nhập môn Tin học (B)->Toán A2 (F)'
+	Log.log(colored('predict {}'.format(predictStr), 'magenta'), forceDisplay=True)
 	predictEncoded = helper.parsePredictRawStringToEncoded(predictStr)
-	Log.log(colored('predict {}'.format(predictEncoded), 'green'), forceDisplay=True)
+	Log.log(colored('predict encoded {}'.format(predictEncoded), 'magenta'), forceDisplay=True)
 
 	with open(minedFilePath, 'r') as fp:
 		data = fp.readlines()
 	seqs = list(map(lambda x: x.strip(), data))
 
-	ret = helper.find(predictEncoded, seqs)
-	if ret != None:
-		print('Found {}'.format(ret))
+	seqFound = helper.find(predictEncoded, seqs)
+	if len(seqFound) > 0:
+		seqFoundReadble = helper.parseReadableSeqsMined(seqFound)
+
+		Log.logFilePath = 'output/predictResult'
+		seqFoundReadbleInfo = reduce(lambda ret, x: '{}\n'.format(ret) + x, seqFoundReadble)
+		Log.log(seqFoundReadbleInfo, forceDisplay=True, diskMode=True)
 	else:
 		print("NOT found {}".format(predictEncoded))
 	# -
