@@ -141,7 +141,7 @@ class Prism:
 				# -
 
 				if posItem != None:
-					if idx > 0:
+					if idx > 0 and len(_posItemsJoined) > 1:
 						_posItemsJoined[-1].nextPos = posItem
 					_posItemsJoined.append(posItem)
 				# -
@@ -386,8 +386,8 @@ def testExtendSingleSequence():
 	allOffsetsList = list(map(lambda element: element.offsets, prismItems))
 	allPosItems = list(map(lambda element: element.posItems, prismItems))
 
-	prism.extendItemsV2(items[0], 0, items[:2],
-		prismItems[0].seqPrimals, prismItems[0].offsets, prismItems[0].posItems,
+	prism.extendItemsV2('347', 0, items,
+		prismItems[346].seqPrimals, prismItems[346].offsets, prismItems[346].posItems,
 		allSeqPrimals, allOffsetsList, allPosItems, True)
 # --
 

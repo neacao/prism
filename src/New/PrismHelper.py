@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
-import openpyxl, json, sys
+import openpyxl, json, sys, argparse
 sys.path.insert(0, './Item')
+
+ap = argparse.ArgumentParser()
+ap.add_argument("-f", "--func", required = True, help = "Function name")
+args = vars(ap.parse_args())
 
 from functools import reduce
 from PrismEncodedItem import *
@@ -17,21 +21,27 @@ class PrismHelper:
 		self.courseGradeMap = 'CourseGradeMap.json'
 		self.horizontalResource = 'CourseGradeEncodedHorizontal.json'
 		self.horizontalResourceTest = 'CourseGradeEncodedHorizontal2.json'
+		self.excelResourceFile = 'CourseGradeEncoded.xlsx'
 		self.items = items
 		self.debugMode = False
 	# --
 
-	def convertHorizontalRecord(self, resourcePath, outputPath):
+	def convertHorizontalRecord(self, resourcePath, outputPath, ouputFileName = 'CourseGradeEncodedHorizontal.json', cacheEncodeVal = False):
+		if resourcePath == None:
+			resourcePath = self.dataRootPath + '/' + self.excelResourceFile
+		# -
+
 		wb = openpyxl.load_workbook(resourcePath)
 		ws = wb.active
 		wsRange = ws['A{}:I{}'.format(ws.min_row, ws.max_row)]
 
 		studentIDIdx = 1
 		semesterIdx = 3
-		encodeIDIdx = 8
+		gradeEncodeIDIdx = 8
 		nextSeqSyntax = "->"
 		nextPosSyntax = "."
 		seqList = []
+		encodeValArr = []
 
 		curStudentID = "" # Append new string to seqList
 		curSemester = 0 # Append new nextSeqSyntax
@@ -40,7 +50,9 @@ class PrismHelper:
 		for row in wsRange:	
 			studentID = str(row[studentIDIdx].value)
 			semester = row[semesterIdx].value
-			encodeVal = str(row[encodeIDIdx].value)
+			gradeEncodeVal = row[gradeEncodeIDIdx].value
+			encodeVal = str(gradeEncodeVal)
+			encodeValArr.append(gradeEncodeVal)
 
 			# New student
 			if studentID != curStudentID:
@@ -61,10 +73,23 @@ class PrismHelper:
 		seqList = seqList[1:] # Remove first redundant element
 		seqList.append(curString) # Append last student info
 
-		fileOutputPath = '{}/CourseGradeEncodedHorizontal.json'.format(outputPath)
+		fileOutputPath = '{}/{}'.format(outputPath, ouputFileName)
 		with open(fileOutputPath, 'w') as fp:
 			json.dump(seqList, fp, indent=2)
-		return fileOutputPath
+		# -
+
+		_encodeValArrSet = list(set(encodeValArr))
+		_encodeValArrStr = list(map(lambda x: str(x), _encodeValArrSet))
+		encodedValPath = None
+		if cacheEncodeVal:
+			encodedValPath = '{}/{}'.format(outputPath, 'courseGradeEncodedVal.json')
+			with open(encodedValPath, 'w') as fp:
+				json.dump(_encodeValArrStr, fp)
+		# -
+
+		print('Number of seqs: {}'.format(len(seqList)))
+		print('Number of items: {}'.format(len(_encodeValArrStr)))
+		return fileOutputPath, encodedValPath
 	# --
 
 
@@ -139,7 +164,7 @@ class PrismHelper:
 				# -
 				previous = item
 			# -
-			_offset.append(OffsetItem(curOffsetIdx, length, primeVal))
+			_offset.append(OffsetIte(curOffsetIdx, length, primeVal))
 		# -
 
 		for idx in range(0, primalBlocksListLength):
@@ -263,10 +288,8 @@ class PrismHelper:
 		if self.debugMode:
 			self.items = ['a', 'b', 'c']
 		else:
-			courseGradeMapJsonPath = self.dataRootPath + '/' + self.courseGradeMap
-			with open(courseGradeMapJsonPath, 'r') as fp:
-				courseGradeDict = json.load(fp)
-			self.items = list(courseGradeDict.keys())
+			for idx in range(1, 442):
+				self.items.append('{}'.format(idx))
 		# -
 
 		# Load resource to be mined
@@ -282,9 +305,15 @@ class PrismHelper:
 
 
 if __name__ == "__main__":
-	litePath = "../../data/lite"
-	helper = PrismHelper(['a', 'b', 'c'])
-	helper.mockup(True)
+	helper = PrismHelper()
+
+	func = args['func']
+
+	if func == 'convertHorizontal':
+		helper.convertHorizontalRecord(None, "output", cacheEncodeVal=True)
+	else:
+		print('Not found this func: {}'.format(func))
+	# -
 
 # ---
 
