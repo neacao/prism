@@ -29,8 +29,7 @@ class PrismHelper:
 
 	def convertHorizontalRecord(self, resourcePath, outputPath, ouputFileName = 'CourseGradeEncodedHorizontal.json', cacheEncodeVal = False):
 		if resourcePath == None:
-			# resourcePath = self.dataRootPath + '/' + self.excelResourceFile
-			resourcePath = self.dataRootPath + '/' + self.excelResourceFile2
+			resourcePath = self.dataRootPath + '/' + self.excelResourceFile
 		# -
 
 		wb = openpyxl.load_workbook(resourcePath)
@@ -71,7 +70,6 @@ class PrismHelper:
 			if studentID != curStudentID:
 				_encodeValArrTemp.sort()
 				stringTemp = str(reduce(lambda ret, x: '{}.'.format(ret) + str(x), _encodeValArrTemp))
-				print(stringTemp)
 
 				curString += ((nextSeqSyntax if len(curString) > 0 else '') + stringTemp)
 				seqList.append(curString)
@@ -87,7 +85,7 @@ class PrismHelper:
 
 				_encodeValArrTemp.sort()
 				stringTemp = str(reduce(lambda ret, x: '{}.'.format(ret) + str(x), _encodeValArrTemp))
-				print(stringTemp)
+
 				curString += ((nextSeqSyntax if len(curString) > 0 else '') + stringTemp)
 				_encodeValArrTemp = []
 			# -
@@ -96,7 +94,6 @@ class PrismHelper:
 		# Append last student
 		_encodeValArrTemp.sort()
 		stringTemp = str(reduce(lambda ret, x: '{}.'.format(ret) + str(x), _encodeValArrTemp))
-		print(stringTemp)
 
 		curString += ((nextSeqSyntax if len(curString) > 0 else '') + stringTemp)
 		seqList.append(curString)

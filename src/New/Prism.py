@@ -381,13 +381,15 @@ def testExtendSingleSequence():
 	prismItems = list(helper.createFullPrimalEncodedFromData(seqList))
 	prism = Prism(helper)
 
+	_idx = items.index('310')
+
 	allSeqPrimals = list(map(lambda element: element.seqPrimals, prismItems))
 	allOffsetsList = list(map(lambda element: element.offsets, prismItems))
 	allPosItems = list(map(lambda element: element.posItems, prismItems))
 
-	# prism.extendItemsV2('347', 0, items,
-	# 	prismItems[index].seqPrimals, prismItems[index].offsets, prismItems[0].posItems,
-	# 	allSeqPrimals, allOffsetsList, allPosItems, True)
+	prism.extendItemsV2(items[_idx], 0, items,
+		prismItems[_idx].seqPrimals, prismItems[_idx].offsets, prismItems[_idx].posItems,
+		allSeqPrimals, allOffsetsList, allPosItems, True)
 # --
 
 def test():
