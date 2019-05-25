@@ -309,6 +309,25 @@ class PrismHelper:
 			exit(1)
 	# --
 
+	def reCollectItem(self, threashold = 180):
+		seqsPath = 'output/CourseGradeEncodedHorizontal.json'
+		with open(seqsPath, 'r') as fp:
+			seqs = json.load(fp)
+		
+		items = []
+		for seq in seqs:
+			itemsetList = seq.split('->')
+			for itemset in itemsetList:
+				_items = itemset.split('.')
+				_itemsTemp = list(map(lambda x: int(x), _items))
+				items += list(filter(lambda x: x > threashold, _itemsTemp))
+		# -
+		_items = list(set(items))
+		_items.sort()
+		print('total number: {}'.format(len(_items)))
+		return _items
+	# --
+
 	def load(self, defaultMode=True):
 		# Load items
 		if self.debugMode:
@@ -335,6 +354,7 @@ class PrismHelper:
 
 		return self.items, self.data
 	# --
+
 # --- PrismHelper
 
 
@@ -345,6 +365,8 @@ if __name__ == "__main__":
 
 	if func == 'convertHorizontal':
 		helper.convertHorizontalRecord(None, "output", cacheEncodeVal=True)
+	elif func == 'reCollectItem':
+		helper.reCollectItem()
 	else:
 		print('Not found this func: {}'.format(func))
 	# -
