@@ -8,10 +8,11 @@ class Logger:
 		self.logFilePath = logFilePath
 	# --
 
-	def log(self, content, diskMode = False):
+	def log(self, content, forceDisplay = False, diskMode = False):
 		if diskMode:
 			self._writeLog(content)
-		else:
+
+		if forceDisplay or self.isDebugMode:
 			print(content)
 	# --
 

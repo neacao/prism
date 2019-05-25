@@ -363,7 +363,8 @@ class Prism:
 			else:
 				_lastSeq += '.{}'.format(_curItem)
 			# -
-			Log.log('{}\n'.format(_lastSeq), diskMode=True)
+			Log.log('{}\n'.format(_lastSeq), forceDisplay=True)
+			self.seqFound.append(_lastSeq)
 
 			self.extendItemsV2(_lastSeq, 0, items, seqJoined, offsetsListJoined, posItemsJoined, 
 				allTargetSeqPrimals, allTargetOffsetsList, allTargetPosItems, True)
@@ -390,6 +391,9 @@ def testExtendSingleSequence():
 	prism.extendItemsV2(items[_idx], 0, items,
 		prismItems[_idx].seqPrimals, prismItems[_idx].offsets, prismItems[_idx].posItems,
 		allSeqPrimals, allOffsetsList, allPosItems, True)
+	
+	minedInfo = reduce(lambda ret, x: '{}\n'.format(ret) + x, prism.seqFound)
+	Log.log(minedInfo, diskMode=True)
 # --
 
 def test():
@@ -397,7 +401,7 @@ def test():
 	cmd = 'rm {}'.format(logFile)
 	os.system(cmd)
 
-	Log.isDebugMode = True
+	Log.isDebugMode = False
 	Log.logFilePath = logFile
 	testExtendSingleSequence()
 
