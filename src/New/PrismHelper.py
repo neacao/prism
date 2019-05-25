@@ -82,7 +82,7 @@ class PrismHelper:
 		_encodeValArrStr = list(map(lambda x: str(x), _encodeValArrSet))
 		encodedValPath = None
 		if cacheEncodeVal:
-			encodedValPath = '{}/{}'.format(outputPath, 'courseGradeEncodedVal.json')
+			encodedValPath = '{}/{}'.format(outputPath, 'CourseGradeEncodedVal.json')
 			with open(encodedValPath, 'w') as fp:
 				json.dump(_encodeValArrStr, fp)
 		# -
@@ -283,20 +283,28 @@ class PrismHelper:
 			exit(1)
 	# --
 
-	def load(self):
+	def load(self, defaultMode=True):
 		# Load items
 		if self.debugMode:
 			self.items = ['a', 'b', 'c']
+		elif defaultMode:
+			itemsPath = 'output/CourseGradeEncodedVal.json'
+			with open(itemsPath, 'r') as fp:
+				self.items = json.load(fp)
 		else:
 			for idx in range(1, 442):
 				self.items.append('{}'.format(idx))
 		# -
 
 		# Load resource to be mined
-		encodedHorizontalPath = self.dataRootPath + '/' + (self.horizontalResourceTest if self.debugMode else self.horizontalResource)
-		with open(encodedHorizontalPath, 'r') as fp:
-			seqs = json.load(fp)
-		self.data = seqs
+		if defaultMode:
+			seqsPath = 'output/CourseGradeEncodedHorizontal.json'
+			with open(seqsPath, 'r') as fp:
+				self.data = json.load(fp)
+		else:
+			encodedHorizontalPath = self.dataRootPath + '/' + (self.horizontalResourceTest if self.debugMode else self.horizontalResource)
+			with open(encodedHorizontalPath, 'r') as fp:
+				self.data = json.load(fp)
 		# -
 
 		return self.items, self.data
