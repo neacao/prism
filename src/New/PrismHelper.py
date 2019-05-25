@@ -428,6 +428,16 @@ class PrismHelper:
 		return ret
 	# --
 
+	def find(self, query, seqs):
+		ret = []
+		for seq in seqs:
+			index = seq.find(query)
+			print('Search {} - found {}'.format(seq, index))
+			if index != -1:
+				ret.append(seq)
+		return ret
+	# --
+
 # --- PrismHelper
 
 
@@ -468,3 +478,4 @@ if __name__ == "__main__":
 
 
 
+# 

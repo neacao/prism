@@ -11,9 +11,12 @@ from OffsetItem import *
 from Logger import *
 from functools import reduce
 
-
+ap = argparse.ArgumentParser()
+ap.add_argument('-f', '--func', required = False, help = "Function Name")
+args = vars(ap.parse_args())
 
 Log = Logger()
+helper = PrismHelper()
 
 class Prism:
 	def __init__(self, helper):
@@ -377,16 +380,13 @@ class Prism:
 	# --	
 # ---
 
-def test():
-	logFile = 'output/mined'
-
+def train():
 	Log.isDebugMode = False
-	Log.logFilePath = logFile
+	Log.logFilePath = 'output/mined'
 	
-	helper = PrismHelper()
+	prism = Prism(helper)
 	items, seqList = helper.load(defaultMode=True)
 	prismItems = list(helper.createFullPrimalEncodedFromData(seqList))
-	prism = Prism(helper)
 
 	_idx = items.index('310')
 
@@ -406,5 +406,28 @@ def test():
 	Log.log(readableInfo, diskMode=True)
 # --
 
+def predict(minedFilePath):
+	predictStr = 'Nhập môn Tin học (B)->Toán A2 (F)'
+	predictEncoded = helper.parsePredictRawStringToEncoded(predictStr)
+	Log.log(colored('predict {}'.format(predictEncoded), 'green'), forceDisplay=True)
+
+	with open(minedFilePath, 'r') as fp:
+		data = fp.readlines()
+	seqs = list(map(lambda x: x.strip(), data))
+
+	ret = helper.find(predictEncoded, seqs)
+	if ret != None:
+		print('Found {}'.format(ret))
+	else:
+		print("NOT found {}".format(predictEncoded))
+	# -
+# --
+
 if __name__ == "__main__":
-	test()
+	func = args['func']
+
+	if func == 'train':
+		train()
+	else:
+		predict('output/mined155877044953_test')
+	# -
