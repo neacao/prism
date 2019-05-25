@@ -397,7 +397,7 @@ def testExtendSingleSequence():
 # --
 
 def test():
-	logFile = 'debugSample.txt'
+	logFile = 'output/mined.txt'
 	cmd = 'rm {}'.format(logFile)
 	os.system(cmd)
 

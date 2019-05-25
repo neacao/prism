@@ -355,6 +355,27 @@ class PrismHelper:
 		return self.items, self.data
 	# --
 
+	def loadCourseGradeMap(self):
+		# Should optimize this process
+		path = self.dataRootPath + '/'+ self.courseGradeMap
+		with open(path, 'r') as fp:
+			self.courseGradeDict = json.load(fp)
+		# -
+	# --
+
+	def getCourseGradeInfoWithEncodedVal(self, val):
+		for key in self.courseGradeDict:
+			courseGradeInfo = self.courseGradeDict[key]
+			for rangeKey in courseGradeInfo["range"]:
+				if courseGradeInfo["range"][rangeKey] == val:
+					print('Detect course name: {} - range: {}'.format(courseGradeInfo["name"], rangeKey))
+					return
+				# -
+			# -
+		# -
+		print('Not found {}'.format(val))
+	# --
+
 # --- PrismHelper
 
 
@@ -367,6 +388,9 @@ if __name__ == "__main__":
 		helper.convertHorizontalRecord(None, "output", cacheEncodeVal=True)
 	elif func == 'reCollectItem':
 		helper.reCollectItem()
+	elif func == 'loadCourseGradeMap':
+		helper.loadCourseGradeMap()
+		helper.getCourseGradeInfoWithEncodedVal(441)
 	else:
 		print('Not found this func: {}'.format(func))
 	# -
