@@ -375,8 +375,12 @@ class Prism:
 	# --	
 # ---
 
+def test():
+	logFile = 'output/mined'
 
-def testExtendSingleSequence():
+	Log.isDebugMode = False
+	Log.logFilePath = logFile
+	
 	helper = PrismHelper()
 	items, seqList = helper.load(defaultMode=True)
 	prismItems = list(helper.createFullPrimalEncodedFromData(seqList))
@@ -398,19 +402,6 @@ def testExtendSingleSequence():
 	
 	Log.log(minedEncodedInfo, diskMode=True)
 	Log.log(readableInfo, diskMode=True)
-# --
-
-def test():
-	logFile = 'output/mined'
-	cmd = 'rm {}'.format(logFile)
-	# os.system(cmd)
-
-	Log.isDebugMode = False
-	Log.logFilePath = logFile
-	testExtendSingleSequence()
-
-	cmd = 'open {}'.format(logFile)
-	# os.system(cmd)
 # --
 
 if __name__ == "__main__":
