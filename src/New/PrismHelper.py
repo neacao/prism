@@ -379,6 +379,20 @@ class PrismHelper:
 		return None
 	# --
 
+	def getEncodedValFromCourseGradeInfo(self, info): # info = { 'name', 'range' }
+		self.loadCourseGradeMap()
+		for key in self.courseGradeDict:
+			courseGradeInfo = self.courseGradeDict[key]
+			if info['name'] == courseGradeInfo['name']:
+				encodedVal = str(courseGradeInfo['range'][info['range']])
+				return encodedVal
+			# -
+		# -
+		print('Not found {}'.format(info))
+		exit(1)
+		return None
+	# --
+
 	def parseReadableSeqsMined(self, seqs):
 		self.loadCourseGradeMap()
 		ret = []
@@ -393,6 +407,23 @@ class PrismHelper:
 				seqStr += ('->' if len(seqStr) > 0 else '') + infoStr
 			# -
 			ret.append(seqStr)
+		# -
+		return ret
+	# --
+
+	def parsePredictRawStringToEncoded(self, predictRawString):
+		rawItemsetList = predictRawString.split('->')
+		ret = ''
+		for rawItemset in rawItemsetList:
+			rawItems = rawItemset.split('.')
+			itemsetStr = ''
+			for rawItem in rawItems:
+				components = rawItem.split('(')
+				name = components[0].strip()
+				courseRange = components[1][:-1]
+				itemsetStr += ('.' if len(itemsetStr) > 0 else '') + self.getEncodedValFromCourseGradeInfo({'name': name, 'range': courseRange})
+			# -
+			ret += ('->' if len(ret) > 0 else '') + itemsetStr
 		# -
 		return ret
 	# --
@@ -412,6 +443,9 @@ if __name__ == "__main__":
 	elif func == 'loadCourseGradeMap':
 		helper.loadCourseGradeMap()
 		# helper.getCourseGradeInfoWithEncodedVal(441)
+	elif func == 'parsePredictRawStringToEncoded':
+		ret = helper.parsePredictRawStringToEncoded('Nhập môn Tin học (B+)->Toán A2 (F)')
+		print(ret)
 	else:
 		print('Not found this func: {}'.format(func))
 	# -
