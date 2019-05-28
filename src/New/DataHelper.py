@@ -1,20 +1,29 @@
 #!/usr/bin/env python3
 
-import os, sys, openpyxl, json
+import os, sys, openpyxl, json, argparse
+from shutil import copyfile
+
+ap = argparse.ArgumentParser()
+ap.add_argument('-f', '--func', required = False, help = 'Function Name')
+args = vars(ap.parse_args())
 
 class DataHelper:
-	def __init__(self, resourceRootPath, courseGradePath):
-		self.resourceRootPath = resourceRootPath
+	def __init__(self, dataRootPath, courseGradePath):
+		self.dataRootPath = dataRootPath
 		self.courseGradePath = courseGradePath
-		self.targetPath = "{}/{}".format(resourceRootPath, courseGradePath)
+		self.targetPath = "{}/{}".format(dataRootPath, courseGradePath)
 		self.alphaRange = ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F']
 	# --
 
 
 	# Encoded grade rage [0...10] to [A...F] in *.xlsx files
+	# Return file path that has been symbolzied
 	def symbolizeCourseGrade(self):
-		fullPath = "{0}/{1}".format(self.resourceRootPath, courseGradePath)
-		wb 	= openpyxl.load_workbook(fullPath)
+		originPath = "{0}/{1}".format(self.dataRootPath, self.courseGradePath)
+		desPath = "{0}/{1}".format(self.dataRootPath, 'resource/resourceSymbolized.xlsx')
+		copyfile(originPath, desPath)
+
+		wb 	= openpyxl.load_workbook(desPath)
 		ws = wb.active
 		wsRange = ws['A{}:H{}'.format(ws.min_row, ws.max_row)]
 
@@ -46,12 +55,14 @@ class DataHelper:
 
 			row[gradeTypeIdx].value = key
 		
-		wb.save(fullPath)
+		wb.save(desPath)
+		return desPath
 	# --
 
 
-	def encodeCourseGrade(self, courseGradeMapPath, outputPath):
-		wb = openpyxl.load_workbook(self.targetPath)
+	def encodeCourseGrade(self, symbolizedCourseGradePath, courseGradeMapPath, outputPath, outputName = 'resourceEncoded.xlsx'):
+
+		wb = openpyxl.load_workbook(symbolizedCourseGradePath)
 		ws = wb.active
 		wsRange = ws['A{}:I{}'.format(ws.min_row, ws.max_row)]
 
@@ -59,7 +70,8 @@ class DataHelper:
 		courseAlphaIdx = 7
 		courseEncodeIdx = 8
 
-		with open(courseGradeMapPath, 'r') as fp:
+		courseGradeMapFullPath = self.dataRootPath + '/' + courseGradeMapPath
+		with open(courseGradeMapFullPath, 'r') as fp:
 			courseGradeMap = json.load(fp)
 
 		for row in wsRange:
@@ -69,9 +81,9 @@ class DataHelper:
 			encodeVal = courseGradeMap[courseID]['range'][courseAlpha]
 			row[courseEncodeIdx].value = encodeVal
 		# -
-		fileOutputPath = '{}/CourseGradeEncoded.xlsx'.format(outputPath)
-		wb.save(fileOutputPath)
-		return fileOutputPath
+		retPath = '{}/{}'.format(outputPath, outputName)
+		wb.save(retPath)
+		return retPath
 	# --
 
 
@@ -142,7 +154,7 @@ class DataHelper:
 	# --
 
 
-	def createCourseGradeWorkbookForPreview(self, symbolizedCourseMapPath, outputPath):
+	def createCourseGradeWorkbookForPreview(self, symbolizedCourseMapPath, outputPath, ouputFileName = 'IDAndSymbolizeGradeMap.xlsx'):
 		with open(symbolizedCourseMapPath, 'r') as fp:
 			symbolizedDict = json.load(fp)
 
@@ -177,14 +189,14 @@ class DataHelper:
 				counter += 1
 		# - (C)
  
-		fileOutputPath = '{}/IDAndSymbolizeGradeMap.xlsx'.format(outputPath)
+		fileOutputPath = '{}/{}'.format(outputPath, ouputFileName)
 		wb.save(fileOutputPath)
 		return fileOutputPath
 	# --
 # --- Data Helper
 
 
-if __name__ == "__main__":
+def test():
 	dataPath = "../../data"
 	litePath = "../../data/lite"
 	data = DataHelper(dataPath, "resource/KHMT_lite.xlsx")
@@ -194,6 +206,27 @@ if __name__ == "__main__":
 	# Test
 	retPath = data.encodeCourseGrade(courseGradeMapPath, litePath)
 	os.system('open {}'.format(retPath))
+# --
+
+def encodeResource():
+	data = DataHelper("../../data", "resource/KHMT_lite.xlsx")
+	symbolizedPath = data.symbolizeCourseGrade()
+	encodedPath = data.encodeCourseGrade(symbolizedPath, 'lite/CourseGradeMap.json', '../../data/resource')
+
+	cmd = 'open {}'.format(encodedPath)
+	os.system(cmd)
+# --
+
+if __name__ == "__main__":
+	func = args['func']
+
+	if func == 'encodeResource':
+		encodeResource()
+	else:
+		test()
+	# -
+
+	
 
 
 
