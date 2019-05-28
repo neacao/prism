@@ -1,0 +1,23 @@
+#!/bin/bash 
+
+# - Preprocess
+
+# 1. Display content of KHMT_lite.xlsx
+open ../../data/resource/KHMT_lite.xlsx
+read
+
+# 2. Display content of Alphabet resource (json file)
+open ../../data/resource/Alphabet.json
+read
+
+# 3. Display content of mapping Alphabet & course ID
+
+# 4. Process encode course grade (should show some logs) & display content KHMT_lite_encoded.xlsx after that
+
+# - Process
+
+# 1. Convert KHMT_lite_encoded.xlsx record to horizontal records & display it
+
+# 2. Training
+
+# 3. Show some cases that can be predicted
