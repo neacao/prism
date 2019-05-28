@@ -10,7 +10,11 @@ read
 open ../../data/resource/Alphabet.json
 read
 
-# 3. Display content of mapping Alphabet & course ID
+# 3. Process collect course ID, name & display it
+./DataHelper.py -f collectCourse
+read
+
+# 4. Display content of mapping Alphabet & course ID
 
 # 4. Process encode course grade (should show some logs) & display content KHMT_lite_encoded.xlsx after that
 

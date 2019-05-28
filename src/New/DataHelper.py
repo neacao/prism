@@ -88,7 +88,7 @@ class DataHelper:
 
 
 	# Mapping course ID & name to the output path as json
-	def collectCourseID(self, outputPath):
+	def collectCourse(self, outputPath = 'lite/CourseCollection.json'):
 		wb = openpyxl.load_workbook(self.targetPath)
 		ws = wb.active
 		wsRange = ws['A{}:F{}'.format(ws.min_row, ws.max_row)]
@@ -111,11 +111,11 @@ class DataHelper:
 			# -
 		# -
 
-		fileOutputPath = "{}/IDAndNameMap.json".format(outputPath)
-		with open(fileOutputPath, 'w') as f:
+		retPath = self.dataRootPath + '/' + outputPath
+		with open(retPath, 'w') as f:
 			json.dump(retJson, f, ensure_ascii=False, indent=2, sort_keys=True)
 
-		return fileOutputPath
+		return retPath
 	# --
 
 
@@ -217,11 +217,21 @@ def encodeResource():
 	os.system(cmd)
 # --
 
+def collectCourse():
+	data = DataHelper("../../data", "resource/KHMT_lite.xlsx")
+	retPath = data.collectCourse()
+
+	cmd = 'open {}'.format(retPath)
+	os.system(cmd)
+# --
+
 if __name__ == "__main__":
 	func = args['func']
 
 	if func == 'encodeResource':
 		encodeResource()
+	elif func == 'collectCourse':
+		collectCourse()
 	else:
 		test()
 	# -
