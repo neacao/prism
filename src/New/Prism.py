@@ -13,6 +13,7 @@ from functools import reduce
 
 ap = argparse.ArgumentParser()
 ap.add_argument('-f', '--func', required = False, help = "Function Name")
+ap.add_argument('-q', '--query', required = False, help = 'Input your query')
 args = vars(ap.parse_args())
 
 Log = Logger()
@@ -408,8 +409,9 @@ def train():
 	Log.log(readableInfo, diskMode=True)
 # --
 
-def predict(minedFilePath = 'output/mined_origin2'):
-	predictStr = 'Nhập môn Tin học (B)->Cấu trúc rời rạc I (C+)'
+def predict(query, minedFilePath = 'output/mined_origin2'):
+	predictStr = 'Nhập môn Tin học (B)->Cấu trúc rời rạc I (C+)' if query == None else query 
+
 	Log.log(colored('predict {}'.format(predictStr), 'magenta'), forceDisplay=True)
 	predictEncoded = helper.parsePredictRawStringToEncoded(predictStr)
 	Log.log(colored('predict encoded {}'.format(predictEncoded), 'magenta'), forceDisplay=True)
@@ -436,5 +438,5 @@ if __name__ == "__main__":
 	if func == 'train':
 		train()
 	else:
-		predict()
+		predict(args['query'])
 	# -

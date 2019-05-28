@@ -3,15 +3,16 @@
 import openpyxl, json, sys, argparse, os
 sys.path.insert(0, './Item')
 
-ap = argparse.ArgumentParser()
-ap.add_argument("-f", "--func", required = False, help = "Function name")
-args = vars(ap.parse_args())
-
 from functools import reduce
 from PrismEncodedItem import *
 from PositionEncodedItem import *
 from OffsetItem import *
 from PrismLookupTable import *
+
+ap = argparse.ArgumentParser()
+ap.add_argument('-f', '--func', required = False, help = "Function Name")
+ap.add_argument('-q', '--query', required = False, help = 'Input your query')
+args = vars(ap.parse_args())
 
 class PrismHelper:
 	def __init__(self, items = []):
