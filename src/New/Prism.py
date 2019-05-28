@@ -369,11 +369,7 @@ class Prism:
 				_lastSeq += '.{}'.format(_curItem)
 			# -
 			# Log.log('{}\n'.format(_lastSeq), forceDisplay=True)
-			# Log.log(colored('[x]{}\n'.format(_lastSeq), 'green'), forceDisplay=True)
-			self.debugCounter -= 1
-
-			# if self.debugCounter == 0:
-			# 	exit(1)
+			Log.log(colored('[x]{}\n'.format(_lastSeq), 'green'), forceDisplay=True)
 
 			self.seqFound.append(_lastSeq)
 
@@ -412,8 +408,8 @@ def train():
 	Log.log(readableInfo, diskMode=True)
 # --
 
-def predict(minedFilePath):
-	predictStr = 'Nhập môn Tin học (C)->Toán A2 (F)'
+def predict(minedFilePath = 'output/mined_origin2'):
+	predictStr = 'Nhập môn Tin học (B)->Cấu trúc rời rạc I (C+)'
 	Log.log(colored('predict {}'.format(predictStr), 'magenta'), forceDisplay=True)
 	predictEncoded = helper.parsePredictRawStringToEncoded(predictStr)
 	Log.log(colored('predict encoded {}'.format(predictEncoded), 'magenta'), forceDisplay=True)
@@ -440,5 +436,5 @@ if __name__ == "__main__":
 	if func == 'train':
 		train()
 	else:
-		predict('output/mined155877044953_test')
+		predict()
 	# -

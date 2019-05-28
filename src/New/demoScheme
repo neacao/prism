@@ -16,12 +16,16 @@ read
 
 # 4. Display content of mapping Alphabet & course ID
 
-# 4. Process encode course grade (should show some logs) & display content KHMT_lite_encoded.xlsx after that
+# 5. Process encode course grade (should show some logs) & display content KHMT_lite_encoded.xlsx after that
+./DataHelper.py -f encodeResource
+read
 
 # - Process
 
 # 1. Convert KHMT_lite_encoded.xlsx record to horizontal records & display it
+ ./PrismHelper.py -f convertHorizontal
+ read
 
 # 2. Training
-
-# 3. Show some cases that can be predicted
+echo 'Run training process'
+./Prism.py -f train

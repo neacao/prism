@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import openpyxl, json, sys, argparse
+import openpyxl, json, sys, argparse, os
 sys.path.insert(0, './Item')
 
 ap = argparse.ArgumentParser()
@@ -113,8 +113,8 @@ class PrismHelper:
 				json.dump(_encodeValArrStr, fp)
 		# -
 
-		print('Number of seqs: {}'.format(len(seqList)))
-		print('Number of items: {}'.format(len(_encodeValArrStr)))
+		# print('Number of seqs: {}'.format(len(seqList)))
+		# print('Number of items: {}'.format(len(_encodeValArrStr)))
 		return fileOutputPath, encodedValPath
 	# --
 
@@ -333,7 +333,7 @@ class PrismHelper:
 		if self.debugMode:
 			self.items = ['a', 'b', 'c']
 		elif defaultMode:
-			itemsPath = 'output/CourseGradeEncodedVal.json'
+			itemsPath = 'output/CourseGradeEncodedVal_origin.json'
 			with open(itemsPath, 'r') as fp:
 				self.items = json.load(fp)
 		else:
@@ -343,7 +343,7 @@ class PrismHelper:
 
 		# Load resource to be mined
 		if defaultMode:
-			seqsPath = 'output/CourseGradeEncodedHorizontal.json'
+			seqsPath = 'output/CourseGradeEncodedHorizontal_origin.json'
 			with open(seqsPath, 'r') as fp:
 				self.data = json.load(fp)
 		else:
@@ -439,6 +439,14 @@ class PrismHelper:
 
 # --- PrismHelper
 
+def convertHorizontal():
+	helper = PrismHelper()
+	fileOuputPath, encodedValPath = helper.convertHorizontalRecord(None, "output", cacheEncodeVal=True)
+	
+	cmd = 'open {} {}'.format(fileOuputPath, encodedValPath)
+	os.system(cmd)
+# --
+
 
 if __name__ == "__main__":
 	helper = PrismHelper()
@@ -446,7 +454,7 @@ if __name__ == "__main__":
 	func = args['func']
 
 	if func == 'convertHorizontal':
-		helper.convertHorizontalRecord(None, "output", cacheEncodeVal=True)
+		convertHorizontal()
 	elif func == 'reCollectItem':
 		helper.reCollectItem()
 	elif func == 'loadCourseGradeMap':

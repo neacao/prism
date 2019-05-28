@@ -154,8 +154,8 @@ class DataHelper:
 	# --
 
 
-	def createCourseGradeWorkbookForPreview(self, symbolizedCourseMapPath, outputPath, ouputFileName = 'IDAndSymbolizeGradeMap.xlsx'):
-		with open(symbolizedCourseMapPath, 'r') as fp:
+	def createCourseGradeWorkbookForPreview(self, courseGradeMap, outputPath = 'lite/CourseGradeMapPreview.xlsx'):
+		with open(courseGradeMap, 'r') as fp:
 			symbolizedDict = json.load(fp)
 
 		wb = openpyxl.Workbook()
@@ -188,10 +188,10 @@ class DataHelper:
 				ws['{}{}'.format(wsAlpha, wsNumber)] = counter
 				counter += 1
 		# - (C)
- 
-		fileOutputPath = '{}/{}'.format(outputPath, ouputFileName)
-		wb.save(fileOutputPath)
-		return fileOutputPath
+
+		retPath = self.dataRootPath + '/' + outputPath
+		wb.save(retPath)
+		return retPath
 	# --
 # --- Data Helper
 
@@ -206,6 +206,14 @@ def test():
 	# Test
 	retPath = data.encodeCourseGrade(courseGradeMapPath, litePath)
 	os.system('open {}'.format(retPath))
+# --
+
+def previewCourseGradeMap(): # To be reviewed
+	data = DataHelper("../../data", "")
+	retPath = data.createCourseGradeWorkbookForPreview(courseGradeMap='../../data/lite/CourseGradeMap.json')
+
+	cmd = 'open {}'.format(retPath)
+	os.system(cmd)
 # --
 
 def encodeResource():
@@ -232,6 +240,8 @@ if __name__ == "__main__":
 		encodeResource()
 	elif func == 'collectCourse':
 		collectCourse()
+	# elif func == 'previewCourseGradeMap':
+	# 	previewCourseGradeMap()
 	else:
 		test()
 	# -
