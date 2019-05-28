@@ -28,7 +28,7 @@ class Prism:
 		self.primeArray = PRIME_ARRAY
 		self.primeLength = PRIME_LENGTH
 		self.seqFound = []
-		self.debugCounter = 3
+		self.debugCounter = 6
 	# --
 
 	def _getRank(self, val):
@@ -368,7 +368,13 @@ class Prism:
 			else:
 				_lastSeq += '.{}'.format(_curItem)
 			# -
-			Log.log('{}\n'.format(_lastSeq), forceDisplay=True)
+			# Log.log('{}\n'.format(_lastSeq), forceDisplay=True)
+			# Log.log(colored('[x]{}\n'.format(_lastSeq), 'green'), forceDisplay=True)
+			self.debugCounter -= 1
+
+			# if self.debugCounter == 0:
+			# 	exit(1)
+
 			self.seqFound.append(_lastSeq)
 
 			self.extendItemsV2(_lastSeq, 0, items, seqJoined, offsetsListJoined, posItemsJoined, 
@@ -388,7 +394,7 @@ def train():
 	items, seqList = helper.load(defaultMode=True)
 	prismItems = list(helper.createFullPrimalEncodedFromData(seqList))
 
-	_idx = items.index('310')
+	_idx = items.index('310') # Nhập môn tin học (C)
 
 	allSeqPrimals = list(map(lambda element: element.seqPrimals, prismItems))
 	allOffsetsList = list(map(lambda element: element.offsets, prismItems))
@@ -407,7 +413,7 @@ def train():
 # --
 
 def predict(minedFilePath):
-	predictStr = 'Nhập môn Tin học (B)->Toán A2 (F)'
+	predictStr = 'Nhập môn Tin học (C)->Toán A2 (F)'
 	Log.log(colored('predict {}'.format(predictStr), 'magenta'), forceDisplay=True)
 	predictEncoded = helper.parsePredictRawStringToEncoded(predictStr)
 	Log.log(colored('predict encoded {}'.format(predictEncoded), 'magenta'), forceDisplay=True)

@@ -187,7 +187,7 @@ class DataHelper:
 if __name__ == "__main__":
 	dataPath = "../../data"
 	litePath = "../../data/lite"
-	data = DataHelper(dataPath, "resource/KHMT_lite2.xlsx")
+	data = DataHelper(dataPath, "resource/KHMT_lite.xlsx")
 	courseIDCollectionPath = data.collectCourseID(litePath)
 	courseGradeMapPath = data.createCourseGradeMap(courseIDCollectionPath, litePath)
 
