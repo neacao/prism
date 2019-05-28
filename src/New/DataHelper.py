@@ -173,7 +173,7 @@ class DataHelper:
 		dictLength = len(symbolizedDict)
 		startIdx = 2
 		for key in symbolizedDict:
-			ws['A{}'.format(startIdx)] = symbolizedDict[key]
+			ws['A{}'.format(startIdx)] = symbolizedDict[key]['name']
 			ws['B{}'.format(startIdx)] = key
 			startIdx += 1
 		# - (B)
@@ -240,8 +240,8 @@ if __name__ == "__main__":
 		encodeResource()
 	elif func == 'collectCourse':
 		collectCourse()
-	# elif func == 'previewCourseGradeMap':
-	# 	previewCourseGradeMap()
+	elif func == 'previewCourseGradeMap':
+		previewCourseGradeMap()
 	else:
 		test()
 	# -

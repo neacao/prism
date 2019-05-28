@@ -15,6 +15,8 @@ read
 read
 
 # 4. Display content of mapping Alphabet & course ID
+./DataHelper.py -f previewCourseGradeMap
+read
 
 # 5. Process encode course grade (should show some logs) & display content KHMT_lite_encoded.xlsx after that
 ./DataHelper.py -f encodeResource
