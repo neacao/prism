@@ -66,6 +66,75 @@ def loadTrainedData(filePath):
 	return trainedData
 
 
+def parseReadableFromPrismEncodeResult(resultArray, mappingDict):
+	if not resultArray or not mappingDict:
+		print("resultArray or mappingDict is empty")
+		return []
+
+	result = []
+
+	for sequence in resultArray:
+		sequenceLength = len(sequence)
+
+		encodedString = ""
+		index = 0
+
+		while index < sequenceLength:
+			# Check if current char is "." or "-"
+			# print("Process index: {0} of sequence {1}".format(index, sequence))
+			isDot = (sequence[index] == ".")
+			isDash = (sequence[index] == "-" and index+1 < sequenceLength and sequence[index+1] == ">")
+
+			if isDot:
+				encodedString += ", "
+				index += 0
+
+			elif isDash:
+				encodedString += " -> "
+				index += 1
+
+			else:
+				encodedKey, increaseVal = getKeyFromString(sequence[index:])
+				index += increaseVal
+
+				courseName = getKeyFrom(value=encodedKey, dict=mappingDict)
+				if courseName:
+					encodedString += courseName
+				else:
+					print("What the heck is this encodedKey: {0} mappingDict: {1}".format(encodedKey, mappingDict))
+					exit(0)
+
+			index += 1
+		# End while
+		result.append(encodedString)
+
+	return result
+# ---------------
+
+
+def getKeyFrom(value, dict):
+	for key, val in dict.items(): 
+		if val == value: 
+			return key 
+	return None
+# ------
+
+
+def getKeyFromString(string):
+	stringLength = len(string)
+
+	# Empty string
+	if stringLength == 0:
+		return "", 0
+
+	# Next is empty or "." or "->"
+	if stringLength == 1 or string[1] == "." or string[1] == "-":
+		return string[0], 0
+
+	# If not here is a numberic [0...9] -> Return 2 characters
+	# Currently we just support 2 characters for a course name e.g A1, Z9 ...
+	return string[:2], 1 # index should increase 1
+# ----------------
 	
 
 	

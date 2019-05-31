@@ -25,9 +25,9 @@ def computePosBlocksInSequence(key, targetKey,
  isSeqExt = False, DEBUG = False):
 
 	# Get the primal pos block length
-	minNumberOfPosBlocks 		= min( posOffset["numberOfBlocksInSeq"], posOffsetTarget["numberOfBlocksInSeq"] )
-	posBlockIndex 					= posOffset["blockStartOffset"]
-	posBlockIndexTarget 		= posOffsetTarget["blockStartOffset"]
+	minNumberOfPosBlocks = min( posOffset["numberOfBlocksInSeq"], posOffsetTarget["numberOfBlocksInSeq"] )
+	posBlockIndex = posOffset["blockStartOffset"]
+	posBlockIndexTarget = posOffsetTarget["blockStartOffset"]
 
 	posBlocksExt = []
 
@@ -48,21 +48,21 @@ def computePosBlocksInSequence(key, targetKey,
 		startIndex += 1
 
 		for index in range(startIndex, minNumberOfPosBlocks):
-			posBlocks[index]["primalValue"] = maxRankValue()
+			posBlocks[index]["primalValue"] = Computer.maxRankValue()
 
 
 	for blockIndex in range(0, minNumberOfPosBlocks):
-		realIndex 			= blockIndex + posBlockIndex - 1
+		realIndex = blockIndex + posBlockIndex - 1
 		realIndexTarget = blockIndex + posBlockIndexTarget - 1
 
 		posBlock 				= posBlocks[realIndex]
 		posBlockTarget 	= posBlocksTarget[realIndexTarget]
 
-		posBlockIndex 			= posBlock["posBlockIndexInSeq"]
+		posBlockIndex = posBlock["posBlockIndexInSeq"]
 		posBlockIndexTarget	= posBlockTarget["posBlockIndexInSeq"]
 
 		if posBlockIndex == posBlockIndexTarget:
-			posBlockVal 			= posBlock["primalValue"]
+			posBlockVal = posBlock["primalValue"]
 			posBlockValTarget = posBlockTarget["primalValue"]
 
 			posBlockJoin = Computer.computeGCDOfPrimalsValue( posBlockVal, posBlockValTarget )
@@ -103,17 +103,17 @@ def computeSingleSeqBlock(key, targetKey,
 		return 1, [], [], lastPosBlockOffset
 
 	posOffsetsExt = []
-	posBlocksExt	= []
+	posBlocksExt = []
 
-	lazyPosOffsetIndex 				= 0
-	lazyPosOffsetIndexTarget 	= 0
+	lazyPosOffsetIndex = 0
+	lazyPosOffsetIndexTarget = 0
 
-	posOffsetsLength 				= len(posOffsets)
-	posOffsetsLengthTarget 	= len(posOffsetsTarget)
+	posOffsetsLength = len(posOffsets)
+	posOffsetsLengthTarget = len(posOffsetsTarget)
 
 	while lazyPosOffsetIndex < posOffsetsLength and lazyPosOffsetIndexTarget < posOffsetsLengthTarget:
-		encode 				= posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
-		encodeTarget 	= posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
+		encode = posOffsets[lazyPosOffsetIndex]["seqPrimeIndex"]
+		encodeTarget = posOffsetsTarget[lazyPosOffsetIndexTarget]["seqPrimeIndex"]
 
 		# Move the pointer to the right if not correct primal block
 		while seqBlockExt % encode != 0 and lazyPosOffsetIndex < posOffsetsLength - 1:
@@ -210,16 +210,6 @@ def extend(key, targetKey,
 		posOffsetsListExt[seqIndex] += _posOffsetsExt
 		posBlocksExt += _posBlocksExt
 	return (seqBlocksExt, posOffsetsListExt, posBlocksExt)
-
-
-
-# TESTING PURPOSE
-def test():
-	return
-	
-
-if __name__ == "__main__":
-	test()
 
 
 

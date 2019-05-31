@@ -125,9 +125,11 @@ def searchItemset(itemset, itemsetTarget):
 def predict(queryEncoded, minSup, trainedDataPath):
 	trainedDataList = Helper.loadTrainedData(trainedDataPath)
 
+	result = []
+
 	# Split based on sequence
-	itemsetQueryComponents 				= queryEncoded.split("->")
-	itemsetQueryComponentsLength 	= len(itemsetQueryComponents)
+	itemsetQueryComponents = queryEncoded.split("->")
+	itemsetQueryComponentsLength = len(itemsetQueryComponents)
 
 	for trainedData in trainedDataList:
 		trainedItemsetComponents = trainedData["frequent"].split("->")
@@ -141,10 +143,10 @@ def predict(queryEncoded, minSup, trainedDataPath):
 				if minSup and int(trainedData["support"]) < minSup:
 					continue
 
-				print("{0} - {1}".format(trainedData["frequent"], trainedData["support"]))
+				# print("{0} - {1}".format(trainedData["frequent"], trainedData["support"]))
+				result.append(trainedData)
 				break
-
-	return
+	return result
 # --- END PREDICT ---
 
 

@@ -1,7 +1,8 @@
 .pyc
-thingstobedone
-.pdf
-data/
 __pycache__/
+<<<<<<< HEAD
 src/Resource
 raw/
+=======
+debugSample.txt
+>>>>>>> development

@@ -1,0 +1,33 @@
+#!/bin/bash 
+
+# - Preprocess
+
+# 1. Display content of KHMT_lite.xlsx
+open ../../data/resource/KHMT_lite.xlsx
+read
+
+# 2. Display content of Alphabet resource (json file)
+open ../../data/resource/Alphabet.json
+read
+
+# 3. Process collect course ID, name & display it
+./DataHelper.py -f collectCourse
+read
+
+# 4. Display content of mapping Alphabet & course ID
+./DataHelper.py -f previewCourseGradeMap
+read
+
+# 5. Process encode course grade (should show some logs) & display content KHMT_lite_encoded.xlsx after that
+./DataHelper.py -f encodeResource
+read
+
+# - Process
+
+# 1. Convert KHMT_lite_encoded.xlsx record to horizontal records & display it
+ ./PrismHelper.py -f convertHorizontal
+ read
+
+# 2. Training
+echo 'Run training process'
+./Prism.py -f train
